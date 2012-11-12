@@ -1,0 +1,124 @@
+{
+	; comment
+	;
+	;;;
+	
+	var while_tests = function ()
+	{
+		while 1
+		{
+			var g = 0
+			var h = 0
+			g = 1 * 2 + 3
+			h = 1 + 2 * 3
+			h = -1 + -2 + -3 + -4
+			h = +1 + +2 + +3 + +4 + 5
+			function () { var e = 1 << 2 + 3 * 4 >> 5 == 6 < 7 > 8 <= 9 >= 10 }
+			function ()
+			{
+				var tbl = []
+				var e = tbl.a | tbl.b & tbl.c ^ tbl.d
+			}
+			function ()
+			{
+				var a = b && c || d
+				var o = 65535 ;+ 65536
+				o = 99;99999999999999999999999999
+			}
+		}
+	}
+
+	var table_tests = function ()
+	{
+		var t0 = []
+		t0.elem = 1
+		var e = t0.elem
+
+		var t1 = [a = 0]
+		var t2 = [abc = t0, def = t1]
+		var t3 = [abc = t0, def = t1, ]
+		var t4 = [abc = 12345, def = 23446, ]
+		var t5 = [x1 = 1, x2 = 2, x3 = 3, x4 = 4, x4 = 4, x5 = 5, x6 = 6, x7 = 7]
+		var t6 = [x8 = 8, x9 = 9, x10 = 10, x11 = 11, x12 = 12, x13 = 13, x14 = 14, x15 = 15]
+		var t7 = [a = 0, a = 0, ]
+	}
+	table_tests()
+
+	var unary_tests = function ()
+	{
+		var n = -~!1
+		{-n}
+		{~n}
+		{!n}
+	}
+	unary_tests()
+
+	var string_tests = function ()
+	{
+		var s0 = ""
+		var s1 = "abc"
+		var s2 = "\\ \' \" \n \r \t"
+		var s3 = "abc" "def"
+		var s4 = "\x00\x01\x02\x10\x11\x12\x49\x4A\x4b\x4C\xFf\x20abc"
+		var s5 = "\x0a\x0b"
+	}
+	string_tests()
+
+	var x = 0
+	{
+		{
+			var i = x
+			var f = function { var a = 0 a = a return 123 }
+			var g = function (a, b, c)
+			{
+				var add = function (a, b) {}
+				a = c
+				return add(a, b)
+			}
+			var h = function (s) { var a = s }
+			function (a, b) {a = b a = b a = b b = a b = 1 b = 2}
+			f()
+			var r = g(1, 2, 3)
+			h(null)
+			null
+			var p = null
+			p = null
+			;qq = 12
+			;function (){} = 0
+			if p
+			{
+				function ()
+				{
+					var i = 0
+					var j = i
+				}
+			}
+			else
+			{
+				if 123
+				{
+				}
+				
+				; loop
+				while 1
+				{
+					break
+					continue
+				}
+			}
+
+			function ()
+			{
+				if (0)
+				{
+					var a = 2
+				}
+				else
+				{
+					var a = 4
+				}
+			}
+			()
+		}
+	}
+}
