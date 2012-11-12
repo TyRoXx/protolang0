@@ -9,5 +9,6 @@ endif(UNIX)
 include_directories(".")
 
 add_subdirectory(p0i)
+add_subdirectory(p0compile)
 add_subdirectory(p0c)
 add_subdirectory(p0)

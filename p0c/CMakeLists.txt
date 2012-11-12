@@ -5,4 +5,4 @@ file(GLOB files
 
 add_executable(p0c ${files})
 
-target_link_libraries(p0c p0i)
+target_link_libraries(p0c p0compile p0i)
