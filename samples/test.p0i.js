@@ -1,0 +1,3 @@
+{
+    "integer-width": "64"
+}
