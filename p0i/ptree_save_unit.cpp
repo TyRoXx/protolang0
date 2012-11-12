@@ -76,7 +76,6 @@ namespace p0
 					auto const &function = unit.functions()[i];
 
 					boost::property_tree::ptree function_tree;
-					function_tree.add("id", i);
 
 					save_function(
 						function_tree,

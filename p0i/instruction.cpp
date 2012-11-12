@@ -1,4 +1,5 @@
 #include "instruction.hpp"
+#include <string>
 
 
 namespace p0
@@ -53,6 +54,20 @@ namespace p0
 			return
 				(instruction >= instruction_type::add) &&
 				(instruction <= instruction_type::greater_equal);
+		}
+
+		instruction_type::Enum find_instruction_by_name(std::string const &name)
+		{
+			int i = 0;
+			for (; i < instruction_type::count_; ++i)
+			{
+				if (name == get_instruction_info(static_cast<instruction_type::Enum>(i)).name)
+				{
+					break;
+				}
+			}
+
+			return static_cast<instruction_type::Enum>(i);
 		}
 
 

@@ -51,6 +51,7 @@ namespace p0
 				get_element,
 
 				count_,
+				invalid_ = count_,
 			};
 		};
 
@@ -65,6 +66,7 @@ namespace p0
 
 		instruction_info const &get_instruction_info(instruction_type::Enum instruction);
 		bool is_binary_arithmetic(instruction_type::Enum instruction);
+		instruction_type::Enum find_instruction_by_name(std::string const &name);
 
 
 		struct instruction
