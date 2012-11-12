@@ -113,6 +113,9 @@ namespace p0
 				);
 		}
 
+		bool const was_integer = m_was_integer;
+		m_was_integer = false;
+
 		switch (*m_pos)
 		{
 		case '(': return eat_single_char_token(token_type::parenthesis_left);
@@ -200,7 +203,7 @@ namespace p0
 		default:
 			if (is_identifer_first(*m_pos))
 			{
-				if (m_was_integer)
+				if (was_integer)
 				{
 					throw compiler_error(
 						"An integer may not be directly followed by an identifier or a keyword", 
@@ -244,6 +247,7 @@ namespace p0
 				auto const integer_end = m_pos;
 
 				m_was_integer = true;
+
 				return token(
 					token_type::integer_10,
 					source_range(integer_begin, integer_end)
@@ -283,6 +287,7 @@ namespace p0
 			if (is_whitespace(*m_pos))
 			{
 				++m_pos;
+
 				m_was_integer = false;
 				continue;
 			}
@@ -298,6 +303,7 @@ namespace p0
 					(m_pos != m_end) &&
 					(*m_pos != '\n')
 					);
+
 				m_was_integer = false;
 				continue;
 			}
