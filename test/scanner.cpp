@@ -1,8 +1,6 @@
-#define BOOST_TEST_MODULE scanner
-#include <boost/test/unit_test.hpp>
-
 #include "p0compile/scanner.hpp"
 #include "p0compile/compiler_error.hpp"
+#include <boost/test/unit_test.hpp>
 
 
 namespace
