@@ -221,4 +221,41 @@ BOOST_AUTO_TEST_CASE(integer_identifier_test)
 		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
 	});
 
+	scan("123 if", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::if_);
+	});
+}
+
+BOOST_AUTO_TEST_CASE(skip_line_test)
+{
+	scan("123 abc", [](p0::scanner &scanner)
+	{
+		scanner.skip_line();
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
+
+	scan("123 abc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		scanner.skip_line();
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
+
+	scan("123\nabc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		scanner.skip_line();
+		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
+
+	scan("123 ?? def \nabc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		scanner.skip_line();
+		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
 }
