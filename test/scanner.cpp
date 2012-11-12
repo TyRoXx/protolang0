@@ -25,6 +25,21 @@ BOOST_AUTO_TEST_CASE(empty_source_test)
 	{
 		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
 	});
+
+	scan("    \n\n\t\r\n    ", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
+
+	scan("; comment", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
+
+	scan("; comment\n", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
+	});
 }
 
 namespace
@@ -164,4 +179,46 @@ BOOST_AUTO_TEST_CASE(exception_test)
 	BOOST_CHECK(check_expected_exception("123e", 3));
 	BOOST_CHECK(check_expected_exception("\"\xff\"", 1));
 	BOOST_CHECK(check_expected_exception("\"hallo", 6));
+}
+
+namespace
+{
+	bool is_integer(
+		std::string const &value,
+		p0::token const &token
+		)
+	{
+		return
+			(token.type == p0::token_type::integer_10) &&
+			(p0::source_range_to_string(token.content) == value);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(integer_identifier_test)
+{
+	scan("123 abc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
+	});
+
+	scan("123\nabc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
+	});
+
+	scan("123;comment\nabc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
+	});
+
+	scan("123+abc", [](p0::scanner &scanner)
+	{
+		BOOST_CHECK(is_integer("123", scanner.next_token()));
+		BOOST_CHECK(scanner.next_token().type == p0::token_type::plus);
+		BOOST_CHECK(is_identifier("abc", scanner.next_token()));
+	});
+
 }
