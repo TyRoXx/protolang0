@@ -22,6 +22,7 @@ namespace p0
 	private:
 
 		source_range::iterator m_pos, m_end;
+		bool m_was_integer;
 
 
 		void skip_whitespace();

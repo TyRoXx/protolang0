@@ -97,6 +97,7 @@ namespace p0
 		)
 		: m_pos(source.begin())
 		, m_end(source.end())
+		, m_was_integer(false)
 	{
 	}
 
@@ -199,6 +200,14 @@ namespace p0
 		default:
 			if (is_identifer_first(*m_pos))
 			{
+				if (m_was_integer)
+				{
+					throw compiler_error(
+						"An integer may not be directly followed by an identifier or a keyword", 
+						source_range(m_pos, m_pos + 1)
+						);
+				}
+
 				auto const identifier_begin = m_pos;
 				do
 				{
@@ -234,6 +243,7 @@ namespace p0
 					is_digit_10(*m_pos));
 				auto const integer_end = m_pos;
 
+				m_was_integer = true;
 				return token(
 					token_type::integer_10,
 					source_range(integer_begin, integer_end)
@@ -273,6 +283,7 @@ namespace p0
 			if (is_whitespace(*m_pos))
 			{
 				++m_pos;
+				m_was_integer = false;
 				continue;
 			}
 
@@ -287,6 +298,7 @@ namespace p0
 					(m_pos != m_end) &&
 					(*m_pos != '\n')
 					);
+				m_was_integer = false;
 				continue;
 			}
 
