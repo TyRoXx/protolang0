@@ -172,13 +172,32 @@ namespace
 	}
 }
 
-BOOST_AUTO_TEST_CASE(exception_test)
+BOOST_AUTO_TEST_CASE(general_error_test)
 {
 	BOOST_CHECK(check_expected_exception("abc?", 3));
 	BOOST_CHECK(check_expected_exception("?", 0));
+	BOOST_CHECK(check_expected_exception("\\", 0));
 	BOOST_CHECK(check_expected_exception("123e", 3));
+}
+
+BOOST_AUTO_TEST_CASE(string_error_test)
+{
+	//these characters may not occur unescaped in a string
 	BOOST_CHECK(check_expected_exception("\"\xff\"", 1));
+	BOOST_CHECK(check_expected_exception("\"\x7f\"", 1));
+	BOOST_CHECK(check_expected_exception("\"\x1f\"", 1));
+	BOOST_CHECK(check_expected_exception("\"\x00\"", 1));
+	BOOST_CHECK(check_expected_exception("\"\x05\"", 1));
+	BOOST_CHECK(check_expected_exception("\"\x0a\"", 1));
+
+	//missing closing quote
 	BOOST_CHECK(check_expected_exception("\"hallo", 6));
+
+	//missing escape character(s) after backslash
+	BOOST_CHECK(check_expected_exception("\"hallo\\", 7));
+
+	//the second quote is escaped so it is expected not to close the string
+	BOOST_CHECK(check_expected_exception("\"hallo\\\"", 8));
 }
 
 namespace
