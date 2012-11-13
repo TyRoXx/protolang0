@@ -180,7 +180,7 @@ int main(int argc, char **argv)
 					);
 				if (!json_file)
 				{
-					throw std::runtime_error("Could not JSON file");
+					throw std::runtime_error("Could not open JSON file");
 				}
 				boost::property_tree::write_json(
 					json_file,
