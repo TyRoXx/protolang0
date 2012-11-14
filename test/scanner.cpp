@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(operator_test)
 	BOOST_CHECK(scan_single_token("%", modulo));
 	BOOST_CHECK(scan_single_token("&", ampersand));
 	BOOST_CHECK(scan_single_token("&&", ampersands));
-	BOOST_CHECK(scan_single_token("|", pipe));
+	BOOST_CHECK(scan_single_token("|", p0::token_type::pipe));
 	BOOST_CHECK(scan_single_token("||", pipes));
 	BOOST_CHECK(scan_single_token("<<", shift_left));
 	BOOST_CHECK(scan_single_token(">>", shift_right));
