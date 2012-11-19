@@ -174,10 +174,6 @@ namespace p0
 	{
 		block_tree::statement_vector body;
 
-		//this block is only left with:
-		//	break - on the closing '}'
-		//	end_of_file_error - becase the block is incomplete in the input
-		//	compiler_error - when the error handling function returns false
 		for (;;)
 		{
 			try
