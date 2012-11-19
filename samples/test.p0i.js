@@ -167,7 +167,7 @@
                 },
                 {
                     "type": "jump",
-                    "arg0": "42"
+                    "arg0": "41"
                 },
                 {
                     "type": "set_from_constant",
@@ -189,12 +189,8 @@
                     "arg1": "1"
                 },
                 {
-                    "type": "not",
-                    "arg0": "13"
-                },
-                {
-                    "type": "jump_if",
-                    "arg0": "42",
+                    "type": "jump_if_not",
+                    "arg0": "41",
                     "arg1": "13"
                 },
                 {
@@ -509,12 +505,8 @@
                     "arg1": "1"
                 },
                 {
-                    "type": "not",
-                    "arg0": "0"
-                },
-                {
-                    "type": "jump_if",
-                    "arg0": "47",
+                    "type": "jump_if_not",
+                    "arg0": "46",
                     "arg1": "0"
                 },
                 {

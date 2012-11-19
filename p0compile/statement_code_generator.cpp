@@ -132,7 +132,7 @@ namespace p0
 
 		auto const jump_if_address = m_emitter.get_current_jump_address();
 		m_emitter.jump_if(
-			0,
+			-1,
 			condition_variable.address().local_address()
 			);
 
@@ -149,7 +149,7 @@ namespace p0
 		if (on_false)
 		{
 			m_emitter.jump(
-				0
+				-1
 				);
 		}
 
@@ -193,11 +193,9 @@ namespace p0
 			statement.condition().accept(condition);
 		}
 
-		m_emitter.not_(condition_variable.address().local_address());
-
 		const auto at_skip_body = m_emitter.get_current_jump_address();
-		m_emitter.jump_if(
-			0,
+		m_emitter.jump_if_not(
+			-1,
 			condition_variable.address().local_address()
 			);
 
