@@ -158,91 +158,99 @@ function 5
 02: copy                       2         0
 03: set_string                 3         4
 04: set_element                2         3         1
-05: copy                       1         0
-06: set_string                 2         4
-07: get_element                1         2         1
-08: new_table                  2
-09: set_string                 3         0
-10: set_from_constant          4         0
-11: set_element                2         3         4
-12: new_table                  3
-13: set_string                 4         5
-14: copy                       5         0
-15: set_element                3         4         5
-16: set_string                 4         6
-17: copy                       5         2
-18: set_element                3         4         5
-19: new_table                  4
-20: set_string                 5         5
-21: copy                       6         0
-22: set_element                4         5         6
-23: set_string                 5         6
-24: copy                       6         2
-25: set_element                4         5         6
-26: new_table                  5
-27: set_string                 6         5
-28: set_from_constant          7     12345
-29: set_element                5         6         7
-30: set_string                 6         6
-31: set_from_constant          7     23446
-32: set_element                5         6         7
-33: new_table                  6
-34: set_string                 7         7
-35: set_from_constant          8         1
-36: set_element                6         7         8
-37: set_string                 7         8
-38: set_from_constant          8         2
-39: set_element                6         7         8
-40: set_string                 7         9
-41: set_from_constant          8         3
-42: set_element                6         7         8
-43: set_string                 7        10
-44: set_from_constant          8         4
-45: set_element                6         7         8
-46: set_string                 7        10
-47: set_from_constant          8         4
-48: set_element                6         7         8
-49: set_string                 7        11
-50: set_from_constant          8         5
-51: set_element                6         7         8
-52: set_string                 7        12
-53: set_from_constant          8         6
-54: set_element                6         7         8
-55: set_string                 7        13
-56: set_from_constant          8         7
-57: set_element                6         7         8
-58: new_table                  7
-59: set_string                 8        14
-60: set_from_constant          9         8
-61: set_element                7         8         9
-62: set_string                 8        15
-63: set_from_constant          9         9
-64: set_element                7         8         9
-65: set_string                 8        16
-66: set_from_constant          9        10
-67: set_element                7         8         9
-68: set_string                 8        17
-69: set_from_constant          9        11
-70: set_element                7         8         9
-71: set_string                 8        18
-72: set_from_constant          9        12
-73: set_element                7         8         9
-74: set_string                 8        19
-75: set_from_constant          9        13
-76: set_element                7         8         9
-77: set_string                 8        20
-78: set_from_constant          9        14
-79: set_element                7         8         9
-80: set_string                 8        21
-81: set_from_constant          9        15
-82: set_element                7         8         9
-83: new_table                  8
-84: set_string                 9         0
-85: set_from_constant         10         0
-86: set_element                8         9        10
-87: set_string                 9         0
-88: set_from_constant         10         0
-89: set_element                8         9        10
+05: set_from_constant          1         1
+06: copy                       2         0
+07: set_string                 3         4
+08: set_element                2         3         1
+09: set_from_constant          1       456
+10: copy                       2         0
+11: set_from_constant          3       123
+12: set_element                2         3         1
+13: copy                       1         0
+14: set_string                 2         4
+15: get_element                1         2         1
+16: new_table                  2
+17: set_string                 3         0
+18: set_from_constant          4         0
+19: set_element                2         3         4
+20: new_table                  3
+21: set_string                 4         5
+22: copy                       5         0
+23: set_element                3         4         5
+24: set_string                 4         6
+25: copy                       5         2
+26: set_element                3         4         5
+27: new_table                  4
+28: set_string                 5         5
+29: copy                       6         0
+30: set_element                4         5         6
+31: set_string                 5         6
+32: copy                       6         2
+33: set_element                4         5         6
+34: new_table                  5
+35: set_string                 6         5
+36: set_from_constant          7     12345
+37: set_element                5         6         7
+38: set_string                 6         6
+39: set_from_constant          7     23446
+40: set_element                5         6         7
+41: new_table                  6
+42: set_string                 7         7
+43: set_from_constant          8         1
+44: set_element                6         7         8
+45: set_string                 7         8
+46: set_from_constant          8         2
+47: set_element                6         7         8
+48: set_string                 7         9
+49: set_from_constant          8         3
+50: set_element                6         7         8
+51: set_string                 7        10
+52: set_from_constant          8         4
+53: set_element                6         7         8
+54: set_string                 7        10
+55: set_from_constant          8         4
+56: set_element                6         7         8
+57: set_string                 7        11
+58: set_from_constant          8         5
+59: set_element                6         7         8
+60: set_string                 7        12
+61: set_from_constant          8         6
+62: set_element                6         7         8
+63: set_string                 7        13
+64: set_from_constant          8         7
+65: set_element                6         7         8
+66: new_table                  7
+67: set_string                 8        14
+68: set_from_constant          9         8
+69: set_element                7         8         9
+70: set_string                 8        15
+71: set_from_constant          9         9
+72: set_element                7         8         9
+73: set_string                 8        16
+74: set_from_constant          9        10
+75: set_element                7         8         9
+76: set_string                 8        17
+77: set_from_constant          9        11
+78: set_element                7         8         9
+79: set_string                 8        18
+80: set_from_constant          9        12
+81: set_element                7         8         9
+82: set_string                 8        19
+83: set_from_constant          9        13
+84: set_element                7         8         9
+85: set_string                 8        20
+86: set_from_constant          9        14
+87: set_element                7         8         9
+88: set_string                 8        21
+89: set_from_constant          9        15
+90: set_element                7         8         9
+91: new_table                  8
+92: set_string                 9         0
+93: set_from_constant         10         0
+94: set_element                8         9        10
+95: set_string                 9         0
+96: set_from_constant         10         0
+97: set_element                8         9        10
 end
 
 function 6

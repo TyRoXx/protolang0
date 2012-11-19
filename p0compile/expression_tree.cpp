@@ -296,4 +296,36 @@ namespace p0
 	{
 		return m_element_name;
 	}
+
+
+	subscript_expression_tree::subscript_expression_tree(
+		std::unique_ptr<expression_tree> table,
+		std::unique_ptr<expression_tree> key,
+		source_range position
+		)
+		: m_table(std::move(table))
+		, m_key(std::move(key))
+		, m_position(position)
+	{
+	}
+
+	void subscript_expression_tree::accept(expression_tree_visitor &visitor) const
+	{
+		visitor.visit(*this);
+	}
+
+	source_range subscript_expression_tree::position() const
+	{
+		return m_position;
+	}
+
+	expression_tree const &subscript_expression_tree::table() const
+	{
+		return *m_table;
+	}
+
+	expression_tree const &subscript_expression_tree::key() const
+	{
+		return *m_key;
+	}
 }

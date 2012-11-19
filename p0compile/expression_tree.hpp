@@ -21,6 +21,7 @@ namespace p0
 	struct unary_expression_tree;
 	struct binary_expression_tree;
 	struct dot_element_expression_tree;
+	struct subscript_expression_tree;
 
 
 	struct expression_tree_visitor
@@ -36,6 +37,7 @@ namespace p0
 		virtual void visit(unary_expression_tree const &expression) = 0;
 		virtual void visit(binary_expression_tree const &expression) = 0;
 		virtual void visit(dot_element_expression_tree const &expression) = 0;
+		virtual void visit(subscript_expression_tree const &expression) = 0;
 	};
 
 
@@ -270,6 +272,25 @@ namespace p0
 
 		std::unique_ptr<expression_tree> m_table;
 		source_range m_element_name;
+	};
+
+
+	struct subscript_expression_tree : expression_tree
+	{
+		explicit subscript_expression_tree(
+			std::unique_ptr<expression_tree> table,
+			std::unique_ptr<expression_tree> key,
+			source_range position
+			);
+		virtual void accept(expression_tree_visitor &visitor) const override;
+		virtual source_range position() const override;
+		expression_tree const &table() const;
+		expression_tree const &key() const;
+
+	private:
+
+		std::unique_ptr<expression_tree> m_table, m_key;
+		source_range m_position;
 	};
 }
 

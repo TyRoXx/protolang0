@@ -32,6 +32,9 @@
 	{
 		var t0 = []
 		t0.elem = 1
+		t0["elem"] = 1
+		t0[123] = 456
+		
 		var e = t0.elem
 
 		var t1 = [a = 0]

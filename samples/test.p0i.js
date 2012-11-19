@@ -729,6 +729,48 @@
                     "arg2": "1"
                 },
                 {
+                    "type": "set_from_constant",
+                    "arg0": "1",
+                    "arg1": "1"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "2",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_string",
+                    "arg0": "3",
+                    "arg1": "4"
+                },
+                {
+                    "type": "set_element",
+                    "arg0": "2",
+                    "arg1": "3",
+                    "arg2": "1"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "1",
+                    "arg1": "456"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "2",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "3",
+                    "arg1": "123"
+                },
+                {
+                    "type": "set_element",
+                    "arg0": "2",
+                    "arg1": "3",
+                    "arg2": "1"
+                },
+                {
                     "type": "copy",
                     "arg0": "1",
                     "arg1": "0"

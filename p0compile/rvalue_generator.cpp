@@ -527,4 +527,8 @@ namespace p0
 				);
 		}
 	}
+
+	void rvalue_generator::visit(subscript_expression_tree const &expression)
+	{
+	}
 }

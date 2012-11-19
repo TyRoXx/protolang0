@@ -106,53 +106,111 @@ namespace p0
 			);
 	}
 
+	namespace
+	{
+		void generate_subscript(
+			local_frame &frame,
+			intermediate::emitter &emitter,
+			code_generator &function_generator,
+			reference &destination,
+			std::function<void ()> &commit_write,
+			expression_tree const &table_expression,
+			std::function<void (reference &key_destination)> const &emit_key
+			)
+		{
+			auto const element_variable = std::make_shared<temporary>(
+				std::ref(frame),
+				1
+				);
+
+			destination = element_variable->address();
+			
+			commit_write =
+				[&frame, &function_generator, &emitter,
+				element_variable, &table_expression, emit_key]()
+			{
+				temporary const table_variable(
+					std::ref(frame),
+					1
+					);
+
+				rvalue_generator table_generator(
+					function_generator,
+					emitter,
+					frame,
+					table_variable.address()
+					);
+				table_expression.accept(table_generator);
+
+				temporary const key_variable(
+					std::ref(frame),
+					1
+					);
+
+				reference key_address = key_variable.address();
+				emit_key(
+					key_address
+					);
+
+				emitter.set_element(
+					table_variable.address().local_address(),
+					key_address.local_address(),
+					element_variable->address().local_address()
+					);
+			};
+		}
+	}
+
 	void lvalue_generator::visit(dot_element_expression_tree const &expression)
 	{
-		auto const element_variable = std::make_shared<temporary>(
-			std::ref(m_frame),
-			1
-			);
-
-		m_address = element_variable->address();
-
-		auto &table_expression = expression.table();
 		auto const element_name = expression.element_name();
+		auto &function_generator = m_function_generator;
+		auto &emitter = m_emitter;
 
-		m_commit_write = [this, element_variable, &table_expression, element_name]()
+		generate_subscript(
+			m_frame,
+			m_emitter,
+			m_function_generator,
+			m_address,
+			m_commit_write,
+			expression.table(),
+			[element_name, &function_generator, &emitter](reference &key_destination)
 		{
-			temporary const table_variable(
-				std::ref(m_frame),
-				1
-				);
-
-			rvalue_generator table_generator(
-				m_function_generator,
-				m_emitter,
-				m_frame,
-				table_variable.address()
-				);
-			table_expression.accept(table_generator);
-
-			temporary const key_variable(
-				std::ref(m_frame),
-				1
-				);
-
 			auto key = source_range_to_string(element_name);
-			auto const key_string_id = m_function_generator.get_string_id(
+			auto const key_string_id = function_generator.get_string_id(
 				std::move(key)
 				);
 
-			m_emitter.set_string(
-				key_variable.address().local_address(),
+			emitter.set_string(
+				key_destination.local_address(),
 				key_string_id
 				);
+		});
+	}
 
-			m_emitter.set_element(
-				table_variable.address().local_address(),
-				key_variable.address().local_address(),
-				element_variable->address().local_address()
+	void lvalue_generator::visit(subscript_expression_tree const &expression)
+	{
+		auto const &key_expression = expression.key();
+		auto &function_generator = m_function_generator;
+		auto &emitter = m_emitter;
+		auto &frame = m_frame;
+
+		generate_subscript(
+			m_frame,
+			m_emitter,
+			m_function_generator,
+			m_address,
+			m_commit_write,
+			expression.table(),
+			[&key_expression, &function_generator, &emitter, &frame](reference &key_destination)
+		{
+			rvalue_generator key_generator(
+				function_generator,
+				emitter,
+				frame,
+				key_destination
 				);
-		};
+			key_expression.accept(key_generator);
+		});
 	}
 }

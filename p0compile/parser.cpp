@@ -436,6 +436,25 @@ namespace p0
 				left = std::move(call);
 			}
 
+			else if (try_skip_token(token_type::bracket_left))
+			{
+				auto key = parse_expression();
+				skip_token(
+					token_type::bracket_right,
+					"Closing bracket expected"
+					);
+
+				const auto position = key->position(); //TODO
+
+				std::unique_ptr<expression_tree> subscript(new subscript_expression_tree(
+					std::move(left),
+					std::move(key),
+					position
+					));
+
+				left = std::move(subscript);
+			}
+
 			else if (try_skip_token(token_type::dot))
 			{
 				auto const element_name = pop_token();
