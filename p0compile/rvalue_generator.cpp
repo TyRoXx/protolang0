@@ -488,47 +488,95 @@ namespace p0
 		}
 	}
 
+	namespace
+	{
+		void generate_subscript(
+			local_frame &frame,
+			intermediate::emitter &emitter,
+			code_generator &function_generator,
+			reference destination,
+			expression_tree const &table_expression,
+			std::function<void (reference &key_destination)> const &emit_key
+			)
+		{
+			auto const table_address = destination;
+			auto const value_address = destination;
+
+			rvalue_generator table_generator(
+				function_generator,
+				emitter,
+				frame,
+				table_address
+				);
+			table_expression.accept(table_generator);
+
+			temporary const key_variable(
+				frame,
+				1
+				);
+
+			auto key_address = key_variable.address();
+			emit_key(key_address);
+
+			if (destination.is_valid())
+			{
+				emitter.get_element(
+					table_address.local_address(),
+					key_address.local_address(),
+					value_address.local_address()
+					);
+			}
+		}
+	}
+
 	void rvalue_generator::visit(dot_element_expression_tree const &expression)
 	{
-		auto const table_address = m_destination;
-		auto const value_address = m_destination;
+		auto &function_generator = m_function_generator;
+		auto &emitter = m_emitter;
+		auto const element_name = expression.element_name();
 
-		rvalue_generator table_generator(
-			m_function_generator,
+		generate_subscript(
+			m_frame,
 			m_emitter,
-			m_frame,
-			table_address
-			);
-		expression.table().accept(table_generator);
-
-		temporary const key_variable(
-			m_frame,
-			1
-			);
-
-		auto const key_address = key_variable.address();
-
-		auto key = source_range_to_string(expression.element_name());
-		auto const key_string_id = m_function_generator.get_string_id(
-			std::move(key)
-			);
-
-		m_emitter.set_string(
-			key_address.local_address(),
-			key_string_id
-			);
-
-		if (m_destination.is_valid())
+			m_function_generator,
+			m_destination,
+			expression.table(),
+			[&function_generator, &emitter, element_name](reference &key_destination)
 		{
-			m_emitter.get_element(
-				table_address.local_address(),
-				key_address.local_address(),
-				value_address.local_address()
+			auto key = source_range_to_string(element_name);
+			auto const key_string_id = function_generator.get_string_id(
+				std::move(key)
 				);
-		}
+
+			emitter.set_string(
+				key_destination.local_address(),
+				key_string_id
+				);
+		});
 	}
 
 	void rvalue_generator::visit(subscript_expression_tree const &expression)
 	{
+		auto &function_generator = m_function_generator;
+		auto &emitter = m_emitter;
+		auto &frame = m_frame;
+		auto const &key_expression = expression.key();
+
+		generate_subscript(
+			m_frame,
+			m_emitter,
+			m_function_generator,
+			m_destination,
+			expression.table(),
+			[&function_generator, &emitter, &frame, &key_expression](reference &key_destination)
+		{
+			rvalue_generator key_generator(
+				function_generator,
+				emitter,
+				frame,
+				key_destination
+				);
+			key_expression.accept(key_generator);
+		});
 	}
 }
