@@ -46,6 +46,7 @@ namespace p0
 				call,
 				jump,
 				jump_if,
+				jump_if_not,
 				new_table,
 				set_element,
 				get_element,

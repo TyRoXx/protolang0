@@ -177,6 +177,18 @@ namespace p0
 				));
 		}
 
+		void emitter::jump_if_not(
+			instruction_argument destination,
+			instruction_argument condition_address
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::jump_if_not,
+				destination,
+				condition_address
+				));
+		}
+
 		void emitter::update_jump_destination(
 			size_t jump_address,
 			instruction_argument destination
@@ -186,7 +198,8 @@ namespace p0
 
 			assert(
 				jump.type() == instruction_type::jump ||
-				jump.type() == instruction_type::jump_if
+				jump.type() == instruction_type::jump_if ||
+				jump.type() == instruction_type::jump_if_not
 				);
 
 			jump.arguments()[0] = destination;

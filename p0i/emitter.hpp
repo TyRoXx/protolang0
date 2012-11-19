@@ -69,6 +69,10 @@ namespace p0
 				instruction_argument destination,
 				instruction_argument condition_address
 				);
+			void jump_if_not(
+				instruction_argument destination,
+				instruction_argument condition_address
+				);
 			void update_jump_destination(
 				size_t jump_address,
 				instruction_argument destination

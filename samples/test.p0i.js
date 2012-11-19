@@ -14,16 +14,16 @@
                 {
                     "type": "set_function",
                     "arg0": "1",
-                    "arg1": "5"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "2",
-                    "arg1": "1"
+                    "arg1": "4"
                 },
                 {
                     "type": "call",
                     "arg0": "0"
+                },
+                {
+                    "type": "set_function",
+                    "arg0": "1",
+                    "arg1": "5"
                 },
                 {
                     "type": "set_function",
@@ -54,9 +54,9 @@
                     "arg0": "0"
                 },
                 {
-                    "type": "set_from_constant",
+                    "type": "set_function",
                     "arg0": "4",
-                    "arg1": "0"
+                    "arg1": "8"
                 },
                 {
                     "type": "copy",
@@ -64,9 +64,18 @@
                     "arg1": "4"
                 },
                 {
-                    "type": "set_function",
+                    "type": "call",
+                    "arg0": "0"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "5",
+                    "arg1": "0"
+                },
+                {
+                    "type": "copy",
                     "arg0": "6",
-                    "arg1": "8"
+                    "arg1": "5"
                 },
                 {
                     "type": "set_function",
@@ -76,16 +85,12 @@
                 {
                     "type": "set_function",
                     "arg0": "8",
-                    "arg1": "11"
+                    "arg1": "10"
                 },
                 {
-                    "type": "copy",
+                    "type": "set_function",
                     "arg0": "9",
-                    "arg1": "6"
-                },
-                {
-                    "type": "call",
-                    "arg0": "0"
+                    "arg1": "12"
                 },
                 {
                     "type": "copy",
@@ -93,18 +98,27 @@
                     "arg1": "7"
                 },
                 {
-                    "type": "set_from_constant",
-                    "arg0": "12",
-                    "arg1": "1"
+                    "type": "call",
+                    "arg0": "0"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "11",
+                    "arg1": "8"
                 },
                 {
                     "type": "set_from_constant",
                     "arg0": "13",
-                    "arg1": "2"
+                    "arg1": "1"
                 },
                 {
                     "type": "set_from_constant",
                     "arg0": "14",
+                    "arg1": "2"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "15",
                     "arg1": "3"
                 },
                 {
@@ -113,17 +127,17 @@
                 },
                 {
                     "type": "copy",
-                    "arg0": "9",
-                    "arg1": "11"
+                    "arg0": "10",
+                    "arg1": "12"
                 },
                 {
                     "type": "copy",
-                    "arg0": "10",
-                    "arg1": "8"
+                    "arg0": "11",
+                    "arg1": "9"
                 },
                 {
                     "type": "set_null",
-                    "arg0": "12"
+                    "arg0": "13"
                 },
                 {
                     "type": "call",
@@ -131,34 +145,16 @@
                 },
                 {
                     "type": "set_null",
-                    "arg0": "10"
-                },
-                {
-                    "type": "set_null",
-                    "arg0": "10"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "11",
-                    "arg1": "10"
-                },
-                {
-                    "type": "not",
                     "arg0": "11"
                 },
                 {
-                    "type": "jump_if",
-                    "arg0": "32",
-                    "arg1": "11"
+                    "type": "set_null",
+                    "arg0": "11"
                 },
                 {
-                    "type": "jump",
-                    "arg0": "39"
-                },
-                {
-                    "type": "set_from_constant",
+                    "type": "copy",
                     "arg0": "12",
-                    "arg1": "123"
+                    "arg1": "11"
                 },
                 {
                     "type": "not",
@@ -170,31 +166,336 @@
                     "arg1": "12"
                 },
                 {
+                    "type": "jump",
+                    "arg0": "42"
+                },
+                {
                     "type": "set_from_constant",
-                    "arg0": "12",
+                    "arg0": "13",
+                    "arg1": "123"
+                },
+                {
+                    "type": "not",
+                    "arg0": "13"
+                },
+                {
+                    "type": "jump_if",
+                    "arg0": "38",
+                    "arg1": "13"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "13",
                     "arg1": "1"
                 },
                 {
                     "type": "not",
-                    "arg0": "12"
+                    "arg0": "13"
                 },
                 {
                     "type": "jump_if",
-                    "arg0": "39",
-                    "arg1": "12"
+                    "arg0": "42",
+                    "arg1": "13"
                 },
                 {
                     "type": "jump",
-                    "arg0": "35"
+                    "arg0": "38"
                 },
                 {
                     "type": "set_function",
-                    "arg0": "11",
-                    "arg1": "14"
+                    "arg0": "12",
+                    "arg1": "15"
                 },
                 {
                     "type": "call",
                     "arg0": "0"
+                }
+            ]
+        },
+        {
+            "parameters": "0",
+            "body":
+            [
+                {
+                    "type": "set_from_constant",
+                    "arg0": "0",
+                    "arg1": "11"
+                },
+                {
+                    "type": "jump_if_not",
+                    "arg0": "3",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "0",
+                    "arg1": "22"
+                }
+            ]
+        },
+        {
+            "parameters": "0",
+            "body":
+            [
+                {
+                    "type": "new_table",
+                    "arg0": "0"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "2",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_string",
+                    "arg0": "3",
+                    "arg1": "0"
+                },
+                {
+                    "type": "get_element",
+                    "arg0": "2",
+                    "arg1": "3",
+                    "arg2": "2"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "5",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_string",
+                    "arg0": "6",
+                    "arg1": "1"
+                },
+                {
+                    "type": "get_element",
+                    "arg0": "5",
+                    "arg1": "6",
+                    "arg2": "5"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "6",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_string",
+                    "arg0": "7",
+                    "arg1": "2"
+                },
+                {
+                    "type": "get_element",
+                    "arg0": "6",
+                    "arg1": "7",
+                    "arg2": "6"
+                },
+                {
+                    "type": "and",
+                    "arg0": "5",
+                    "arg1": "6"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "4",
+                    "arg1": "5"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "5",
+                    "arg1": "0"
+                },
+                {
+                    "type": "set_string",
+                    "arg0": "6",
+                    "arg1": "3"
+                },
+                {
+                    "type": "get_element",
+                    "arg0": "5",
+                    "arg1": "6",
+                    "arg2": "5"
+                },
+                {
+                    "type": "xor",
+                    "arg0": "4",
+                    "arg1": "5"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "3",
+                    "arg1": "4"
+                },
+                {
+                    "type": "or",
+                    "arg0": "2",
+                    "arg1": "3"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "1",
+                    "arg1": "2"
+                }
+            ]
+        },
+        {
+            "parameters": "0",
+            "body":
+            [
+                {
+                    "type": "set_from_constant",
+                    "arg0": "3",
+                    "arg1": "1"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "5",
+                    "arg1": "2"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "7",
+                    "arg1": "3"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "8",
+                    "arg1": "4"
+                },
+                {
+                    "type": "mul",
+                    "arg0": "7",
+                    "arg1": "8"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "6",
+                    "arg1": "7"
+                },
+                {
+                    "type": "add",
+                    "arg0": "5",
+                    "arg1": "6"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "4",
+                    "arg1": "5"
+                },
+                {
+                    "type": "shift_left",
+                    "arg0": "3",
+                    "arg1": "4"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "2",
+                    "arg1": "3"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "3",
+                    "arg1": "5"
+                },
+                {
+                    "type": "shift_right",
+                    "arg0": "2",
+                    "arg1": "3"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "1",
+                    "arg1": "2"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "6",
+                    "arg1": "6"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "7",
+                    "arg1": "7"
+                },
+                {
+                    "type": "less",
+                    "arg0": "6",
+                    "arg1": "7"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "5",
+                    "arg1": "6"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "6",
+                    "arg1": "8"
+                },
+                {
+                    "type": "greater",
+                    "arg0": "5",
+                    "arg1": "6"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "4",
+                    "arg1": "5"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "5",
+                    "arg1": "9"
+                },
+                {
+                    "type": "less_equal",
+                    "arg0": "4",
+                    "arg1": "5"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "3",
+                    "arg1": "4"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "4",
+                    "arg1": "10"
+                },
+                {
+                    "type": "greater_equal",
+                    "arg0": "3",
+                    "arg1": "4"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "2",
+                    "arg1": "3"
+                },
+                {
+                    "type": "equal",
+                    "arg0": "1",
+                    "arg1": "2"
+                },
+                {
+                    "type": "copy",
+                    "arg0": "0",
+                    "arg1": "1"
+                }
+            ]
+        },
+        {
+            "parameters": "0",
+            "body":
+            [
+                {
+                    "type": "set_from_constant",
+                    "arg0": "1",
+                    "arg1": "65535"
+                },
+                {
+                    "type": "set_from_constant",
+                    "arg0": "1",
+                    "arg1": "99"
                 }
             ]
         },
@@ -430,272 +731,6 @@
                 {
                     "type": "jump",
                     "arg0": "0"
-                }
-            ]
-        },
-        {
-            "parameters": "0",
-            "body":
-            [
-                {
-                    "type": "set_from_constant",
-                    "arg0": "3",
-                    "arg1": "1"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "5",
-                    "arg1": "2"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "7",
-                    "arg1": "3"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "8",
-                    "arg1": "4"
-                },
-                {
-                    "type": "mul",
-                    "arg0": "7",
-                    "arg1": "8"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "6",
-                    "arg1": "7"
-                },
-                {
-                    "type": "add",
-                    "arg0": "5",
-                    "arg1": "6"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "4",
-                    "arg1": "5"
-                },
-                {
-                    "type": "shift_left",
-                    "arg0": "3",
-                    "arg1": "4"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "2",
-                    "arg1": "3"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "3",
-                    "arg1": "5"
-                },
-                {
-                    "type": "shift_right",
-                    "arg0": "2",
-                    "arg1": "3"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "1",
-                    "arg1": "2"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "6",
-                    "arg1": "6"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "7",
-                    "arg1": "7"
-                },
-                {
-                    "type": "less",
-                    "arg0": "6",
-                    "arg1": "7"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "5",
-                    "arg1": "6"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "6",
-                    "arg1": "8"
-                },
-                {
-                    "type": "greater",
-                    "arg0": "5",
-                    "arg1": "6"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "4",
-                    "arg1": "5"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "5",
-                    "arg1": "9"
-                },
-                {
-                    "type": "less_equal",
-                    "arg0": "4",
-                    "arg1": "5"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "3",
-                    "arg1": "4"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "4",
-                    "arg1": "10"
-                },
-                {
-                    "type": "greater_equal",
-                    "arg0": "3",
-                    "arg1": "4"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "2",
-                    "arg1": "3"
-                },
-                {
-                    "type": "equal",
-                    "arg0": "1",
-                    "arg1": "2"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "0",
-                    "arg1": "1"
-                }
-            ]
-        },
-        {
-            "parameters": "0",
-            "body":
-            [
-                {
-                    "type": "new_table",
-                    "arg0": "0"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "2",
-                    "arg1": "0"
-                },
-                {
-                    "type": "set_string",
-                    "arg0": "3",
-                    "arg1": "0"
-                },
-                {
-                    "type": "get_element",
-                    "arg0": "2",
-                    "arg1": "3",
-                    "arg2": "2"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "5",
-                    "arg1": "0"
-                },
-                {
-                    "type": "set_string",
-                    "arg0": "6",
-                    "arg1": "1"
-                },
-                {
-                    "type": "get_element",
-                    "arg0": "5",
-                    "arg1": "6",
-                    "arg2": "5"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "6",
-                    "arg1": "0"
-                },
-                {
-                    "type": "set_string",
-                    "arg0": "7",
-                    "arg1": "2"
-                },
-                {
-                    "type": "get_element",
-                    "arg0": "6",
-                    "arg1": "7",
-                    "arg2": "6"
-                },
-                {
-                    "type": "and",
-                    "arg0": "5",
-                    "arg1": "6"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "4",
-                    "arg1": "5"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "5",
-                    "arg1": "0"
-                },
-                {
-                    "type": "set_string",
-                    "arg0": "6",
-                    "arg1": "3"
-                },
-                {
-                    "type": "get_element",
-                    "arg0": "5",
-                    "arg1": "6",
-                    "arg2": "5"
-                },
-                {
-                    "type": "xor",
-                    "arg0": "4",
-                    "arg1": "5"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "3",
-                    "arg1": "4"
-                },
-                {
-                    "type": "or",
-                    "arg0": "2",
-                    "arg1": "3"
-                },
-                {
-                    "type": "copy",
-                    "arg0": "1",
-                    "arg1": "2"
-                }
-            ]
-        },
-        {
-            "parameters": "0",
-            "body":
-            [
-                {
-                    "type": "set_from_constant",
-                    "arg0": "1",
-                    "arg1": "65535"
-                },
-                {
-                    "type": "set_from_constant",
-                    "arg0": "1",
-                    "arg1": "99"
                 }
             ]
         },
@@ -1370,7 +1405,7 @@
                 {
                     "type": "set_function",
                     "arg0": "3",
-                    "arg1": "10"
+                    "arg1": "11"
                 },
                 {
                     "type": "copy",

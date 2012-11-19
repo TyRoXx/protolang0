@@ -61,6 +61,7 @@ namespace p0
 				for (size_t i = 0; i < body.size(); ++i)
 				{
 					save_instruction(file, body[i], i, base10_address_width);
+					file.flush();
 				}
 				file << "end\n";
 			}

@@ -2,49 +2,116 @@ integer-width: 64
 
 function 0
 00: set_function               0         1
-01: set_function               1         5
-02: copy                       2         1
-03: call                       0
+01: set_function               1         4
+02: call                       0
+03: set_function               1         5
 04: set_function               2         6
 05: copy                       3         2
 06: call                       0
 07: set_function               3         7
 08: copy                       4         3
 09: call                       0
-10: set_from_constant          4         0
+10: set_function               4         8
 11: copy                       5         4
-12: set_function               6         8
-13: set_function               7         9
-14: set_function               8        11
-15: copy                       9         6
-16: call                       0
-17: copy                      10         7
-18: set_from_constant         12         1
-19: set_from_constant         13         2
-20: set_from_constant         14         3
-21: call                       3
-22: copy                       9        11
-23: copy                      10         8
-24: set_null                  12
-25: call                       1
-26: set_null                  10
-27: set_null                  10
-28: copy                      11        10
-29: not                       11
-30: jump_if                   32        11
-31: jump                      39
-32: set_from_constant         12       123
-33: not                       12
-34: jump_if                   35        12
-35: set_from_constant         12         1
-36: not                       12
-37: jump_if                   39        12
-38: jump                      35
-39: set_function              11        14
-40: call                       0
+12: call                       0
+13: set_from_constant          5         0
+14: copy                       6         5
+15: set_function               7         9
+16: set_function               8        10
+17: set_function               9        12
+18: copy                      10         7
+19: call                       0
+20: copy                      11         8
+21: set_from_constant         13         1
+22: set_from_constant         14         2
+23: set_from_constant         15         3
+24: call                       3
+25: copy                      10        12
+26: copy                      11         9
+27: set_null                  13
+28: call                       1
+29: set_null                  11
+30: set_null                  11
+31: copy                      12        11
+32: not                       12
+33: jump_if                   35        12
+34: jump                      42
+35: set_from_constant         13       123
+36: not                       13
+37: jump_if                   38        13
+38: set_from_constant         13         1
+39: not                       13
+40: jump_if                   42        13
+41: jump                      38
+42: set_function              12        15
+43: call                       0
 end
 
 function 1
+0: set_from_constant          0        11
+1: jump_if_not                3         0
+2: set_from_constant          0        22
+end
+
+function 2
+00: new_table                  0
+01: copy                       2         0
+02: set_string                 3         0
+03: get_element                2         3         2
+04: copy                       5         0
+05: set_string                 6         1
+06: get_element                5         6         5
+07: copy                       6         0
+08: set_string                 7         2
+09: get_element                6         7         6
+10: and                        5         6
+11: copy                       4         5
+12: copy                       5         0
+13: set_string                 6         3
+14: get_element                5         6         5
+15: xor                        4         5
+16: copy                       3         4
+17: or                         2         3
+18: copy                       1         2
+end
+
+function 3
+00: set_from_constant          3         1
+01: set_from_constant          5         2
+02: set_from_constant          7         3
+03: set_from_constant          8         4
+04: mul                        7         8
+05: copy                       6         7
+06: add                        5         6
+07: copy                       4         5
+08: shift_left                 3         4
+09: copy                       2         3
+10: set_from_constant          3         5
+11: shift_right                2         3
+12: copy                       1         2
+13: set_from_constant          6         6
+14: set_from_constant          7         7
+15: less                       6         7
+16: copy                       5         6
+17: set_from_constant          6         8
+18: greater                    5         6
+19: copy                       4         5
+20: set_from_constant          5         9
+21: less_equal                 4         5
+22: copy                       3         4
+23: set_from_constant          4        10
+24: greater_equal              3         4
+25: copy                       2         3
+26: equal                      1         2
+27: copy                       0         1
+end
+
+function 4
+0: set_from_constant          1     65535
+1: set_from_constant          1        99
+end
+
+function 5
 00: set_from_constant          0         1
 01: not                        0
 02: jump_if                   47         0
@@ -94,65 +161,7 @@ function 1
 46: jump                       0
 end
 
-function 2
-00: set_from_constant          3         1
-01: set_from_constant          5         2
-02: set_from_constant          7         3
-03: set_from_constant          8         4
-04: mul                        7         8
-05: copy                       6         7
-06: add                        5         6
-07: copy                       4         5
-08: shift_left                 3         4
-09: copy                       2         3
-10: set_from_constant          3         5
-11: shift_right                2         3
-12: copy                       1         2
-13: set_from_constant          6         6
-14: set_from_constant          7         7
-15: less                       6         7
-16: copy                       5         6
-17: set_from_constant          6         8
-18: greater                    5         6
-19: copy                       4         5
-20: set_from_constant          5         9
-21: less_equal                 4         5
-22: copy                       3         4
-23: set_from_constant          4        10
-24: greater_equal              3         4
-25: copy                       2         3
-26: equal                      1         2
-27: copy                       0         1
-end
-
-function 3
-00: new_table                  0
-01: copy                       2         0
-02: set_string                 3         0
-03: get_element                2         3         2
-04: copy                       5         0
-05: set_string                 6         1
-06: get_element                5         6         5
-07: copy                       6         0
-08: set_string                 7         2
-09: get_element                6         7         6
-10: and                        5         6
-11: copy                       4         5
-12: copy                       5         0
-13: set_string                 6         3
-14: get_element                5         6         5
-15: xor                        4         5
-16: copy                       3         4
-17: or                         2         3
-18: copy                       1         2
-end
-
-function 4
-0: set_from_constant          1     65535
-1: set_from_constant          1        99
-end
-
-function 5
+function 6
 000: new_table                  0
 001: set_from_constant          1         1
 002: copy                       2         0
@@ -265,14 +274,14 @@ function 5
 109: set_element                8         9        10
 end
 
-function 6
+function 7
 0: set_from_constant          0         1
 1: not                        0
 2: invert                     0
 3: negate                     0
 end
 
-function 7
+function 8
 0: set_string                 0        22
 1: set_string                 1         5
 2: set_string                 2        23
@@ -281,15 +290,15 @@ function 7
 5: set_string                 5        26
 end
 
-function 8
+function 9
 0: set_from_constant          0         0
 1: copy                       0         0
 2: set_from_constant          1       123
 3: return            
 end
 
-function 9
-0: set_function               3        10
+function 10
+0: set_function               3        11
 1: copy                       0         2
 2: copy                       5         3
 3: copy                       7         0
@@ -299,14 +308,14 @@ function 9
 7: return            
 end
 
-function 10
-end
-
 function 11
-0: copy                       1         0
 end
 
 function 12
+0: copy                       1         0
+end
+
+function 13
 0: copy                       0         1
 1: copy                       0         1
 2: copy                       0         1
@@ -315,12 +324,12 @@ function 12
 5: set_from_constant          1         2
 end
 
-function 13
+function 14
 0: set_from_constant          0         0
 1: copy                       1         0
 end
 
-function 14
+function 15
 0: set_from_constant          0         0
 1: not                        0
 2: jump_if                    5         0

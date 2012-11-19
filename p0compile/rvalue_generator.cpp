@@ -438,6 +438,44 @@ namespace p0
 		switch (expression.type())
 		{
 		case binary_operator::logical_and:
+			{
+				temporary const left_variable(
+					m_frame,
+					m_destination.is_valid() ? 0 : 1
+					);
+
+				auto const left_address =
+					(m_destination.is_valid() ? m_destination : left_variable.address());
+
+				rvalue_generator left_generator(
+					m_function_generator,
+					m_emitter,
+					m_frame,
+					left_address
+					);
+				expression.left().accept(left_generator);
+
+				auto const skip_right_address = m_emitter.get_current_jump_address();
+				m_emitter.jump_if_not(
+					-1,
+					left_address.local_address()
+					);
+
+				rvalue_generator right_generator(
+					m_function_generator,
+					m_emitter,
+					m_frame,
+					m_destination
+					);
+				expression.right().accept(right_generator);
+
+				m_emitter.update_jump_destination(
+					skip_right_address,
+					m_emitter.get_current_jump_address()
+					);
+				break;
+			}
+
 		case binary_operator::logical_or:
 			break; //TODO
 
