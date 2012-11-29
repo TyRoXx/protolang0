@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 2.8)
 
 project(protolang0)
 
-if(UNIX) #gcc or clang
+if(CMAKE_COMPILER_IS_GNUCXX )
 	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g")
-endif(UNIX)
+endif()
 
 include_directories(".")
 

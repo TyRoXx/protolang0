@@ -4,7 +4,9 @@
 
 
 #include <array>
+#include <string>
 #include <cstdint>
+#include <cstddef>
 
 
 namespace p0
