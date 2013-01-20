@@ -30,13 +30,12 @@ int main(int argc, char **argv)
 	namespace po = boost::program_options;
 
 	std::string file_name;
-	bool doCompileFile = true;
 
 	po::options_description desc("");
 	desc.add_options()
 		("help", "produce help message")
 		("file,f", po::value<std::string>(&file_name), "file name")
-		("compile,c", po::value<bool>(&doCompileFile), "")
+		("compile,c", "")
 		;
 
 	po::positional_options_description p;
@@ -65,7 +64,8 @@ int main(int argc, char **argv)
 
 	try
 	{
-		auto const unit = doCompileFile
+		bool const do_compile_file = (vm.count("compile") > 0);
+		auto const unit = do_compile_file
 				? p0::compile_unit_from_file(file_name)
 				: load_unit(file_name);
 		execute(unit);
