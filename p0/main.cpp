@@ -1,4 +1,5 @@
 #include "p0i/unit.hpp"
+#include "p0compile/compile_unit.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
@@ -17,22 +18,29 @@ namespace
 
 		throw std::runtime_error("Not implemented");
 	}
+
+	void execute(p0::intermediate::unit const &unit)
+	{
+		assert(!"not implemented");
+	}
 }
 
 int main(int argc, char **argv)
 {
 	namespace po = boost::program_options;
 
-	std::string source_file_name;
+	std::string file_name;
+	bool doCompileFile = true;
 
 	po::options_description desc("");
 	desc.add_options()
 		("help", "produce help message")
-		("source,s", po::value<std::string>(&source_file_name), "source file name")
+		("file,f", po::value<std::string>(&file_name), "file name")
+		("compile,c", po::value<bool>(&doCompileFile), "")
 		;
 
 	po::positional_options_description p;
-	p.add("source", 1);
+	p.add("file", 1);
 
 	po::variables_map vm;
 	try
@@ -57,8 +65,10 @@ int main(int argc, char **argv)
 
 	try
 	{
-		std::string const unit_file_name = argv[1];
-		auto const unit = load_unit(unit_file_name);
+		auto const unit = doCompileFile
+				? p0::compile_unit_from_file(file_name)
+				: load_unit(file_name);
+		execute(unit);
 	}
 	catch (std::exception const &ex)
 	{

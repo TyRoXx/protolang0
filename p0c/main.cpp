@@ -1,6 +1,7 @@
 #include "p0compile/compiler.hpp"
 #include "p0compile/compiler_error.hpp"
 #include "p0compile/pretty_print_error.hpp"
+#include "p0compile/compile_unit.hpp"
 #include "p0i/save_unit.hpp"
 #include <iostream>
 #include <fstream>
@@ -9,22 +10,6 @@
 #include <string>
 #include <boost/program_options.hpp>
 using namespace std;
-
-namespace
-{
-	std::vector<char> read_file(std::string const &path)
-	{
-		std::ifstream file(path, std::ios::binary);
-		if (!file)
-		{
-			throw std::runtime_error("Could not open file " + path);
-		}
-		return std::vector<char>(
-			std::istreambuf_iterator<char>(file),
-			std::istreambuf_iterator<char>()
-			);
-	}
-}
 
 int main(int argc, char **argv)
 {
@@ -65,73 +50,27 @@ int main(int argc, char **argv)
 		return 0;
 	}
 
-	auto &error_out = std::cerr;
 	try
 	{
-		auto const source_file_content = read_file(source_file_name);
+		auto const compiled_unit = p0::compile_unit_from_file(source_file_name);
 
-		p0::source_range const source(
-			source_file_content.data(),
-			source_file_content.data() + source_file_content.size()
+		std::ofstream target_file(
+			output_file_name,
+			std::ios::binary
 			);
-
-		size_t error_counter = 0;
-		auto const handle_error = [&](p0::compiler_error const &error)
+		if (!target_file)
 		{
-			++error_counter;
-			pretty_print_error(
-				error_out,
-				source,
-				error
+			throw std::runtime_error("Could not open target file " + output_file_name);
+		}
+
+		p0::intermediate::save_unit(
+			target_file,
+			compiled_unit
 			);
-			return true;
-		};
-
-		try
-		{
-			auto const integer_width = 64;
-
-			p0::compiler compiler(
-				source,
-				integer_width,
-				handle_error
-				);
-
-			p0::intermediate::unit const compiled_unit = compiler.compile();
-
-			std::ofstream target_file(
-				output_file_name,
-				std::ios::binary
-				);
-			if (!target_file)
-			{
-				throw std::runtime_error("Could not open target file " + output_file_name);
-			}
-
-			p0::intermediate::save_unit(
-				target_file,
-				compiled_unit
-				);
-		}
-		catch (p0::compiler_error const &e)
-		{
-			handle_error(e);
-		}
-
-		if (error_counter)
-		{
-			error_out << error_counter << " error";
-			if (error_counter != 1)
-			{
-				error_out << 's';
-			}
-			error_out << '\n';
-			return 1;
-		}
 	}
 	catch (std::runtime_error const &e)
 	{
-		error_out << e.what() << '\n';
+		std::cerr << e.what() << '\n';
 		return 1;
 	}
 }
