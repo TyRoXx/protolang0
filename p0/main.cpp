@@ -1,19 +1,10 @@
 #include "p0i/unit.hpp"
 #include <iostream>
 #include <fstream>
-
+#include <boost/program_options.hpp>
 
 namespace
 {
-	std::ostream &log()
-	{
-		return std::cerr;
-	}
-
-	void print_help()
-	{
-	}
-
 	p0::intermediate::unit load_unit(std::string const &file_name)
 	{
 		std::ifstream unit_file(file_name);
@@ -30,9 +21,37 @@ namespace
 
 int main(int argc, char **argv)
 {
-	if (argc <= 1)
+	namespace po = boost::program_options;
+
+	std::string source_file_name;
+
+	po::options_description desc("");
+	desc.add_options()
+		("help", "produce help message")
+		("source,s", po::value<std::string>(&source_file_name), "source file name")
+		;
+
+	po::positional_options_description p;
+	p.add("source", 1);
+
+	po::variables_map vm;
+	try
 	{
-		print_help();
+		po::store(
+			po::command_line_parser(argc, argv).options(desc).positional(p).run(),
+			vm);
+		po::notify(vm);
+	}
+	catch (const boost::program_options::error &e)
+	{
+		std::cerr << e.what() << "\n";
+		return 1;
+	}
+
+	if ((argc == 1) ||
+		vm.count("help"))
+	{
+		std::cerr << desc << "\n";
 		return 0;
 	}
 
@@ -43,7 +62,7 @@ int main(int argc, char **argv)
 	}
 	catch (std::exception const &ex)
 	{
-		log() << ex.what() << "\n";
+		std::cerr << ex.what() << "\n";
 		return 1;
 	}
 }
