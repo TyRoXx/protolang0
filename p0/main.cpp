@@ -1,49 +1,33 @@
 #include "p0i/unit.hpp"
 #include "p0compile/compile_unit.hpp"
+#include "p0run/interpreter.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
 
-namespace
+namespace p0
 {
-	p0::intermediate::unit load_unit(std::string const &file_name)
+	namespace
 	{
-		std::ifstream unit_file(file_name);
-		if (!unit_file)
+		intermediate::unit load_unit(std::string const &file_name)
 		{
-			throw std::runtime_error(
-				"Could not open unit file " + file_name
-				);
+			std::ifstream unit_file(file_name);
+			if (!unit_file)
+			{
+				throw std::runtime_error(
+					"Could not open unit file " + file_name
+					);
+			}
+
+			throw std::runtime_error("Not implemented");
 		}
 
-		throw std::runtime_error("Not implemented");
-	}
-
-	struct interpreter
-	{
-		explicit interpreter(p0::intermediate::unit const &program);
-		void call(p0::intermediate::function const &function);
-
-	private:
-
-		p0::intermediate::unit const &m_program;
-	};
-
-	interpreter::interpreter(p0::intermediate::unit const &program)
-		: m_program(program)
-	{
-	}
-
-	void interpreter::call(p0::intermediate::function const &function)
-	{
-		assert(!"not implemented");
-	}
-
-	void execute(p0::intermediate::unit const &program,
-				 p0::intermediate::function const &entry_point)
-	{
-		interpreter interpreter(program);
-		interpreter.call(entry_point);
+		void execute(intermediate::unit const &program,
+					 intermediate::function const &entry_point)
+		{
+			run::interpreter interpreter(program);
+			interpreter.call(entry_point);
+		}
 	}
 }
 
@@ -91,7 +75,7 @@ int main(int argc, char **argv)
 		bool const do_compile_file = (vm.count("compile") > 0);
 		auto const unit = do_compile_file
 				? p0::compile_unit_from_file(file_name)
-				: load_unit(file_name);
+				: p0::load_unit(file_name);
 
 		p0::intermediate::function const *entry_point = 0;
 		if (entry_point_id < unit.functions().size())
@@ -105,7 +89,7 @@ int main(int argc, char **argv)
 			return 1;
 		}
 
-		execute(unit, *entry_point);
+		p0::execute(unit, *entry_point);
 	}
 	catch (std::exception const &ex)
 	{
