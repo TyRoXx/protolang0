@@ -2,11 +2,16 @@ cmake_minimum_required(VERSION 2.8)
 
 project(protolang0)
 
-if(CMAKE_COMPILER_IS_GNUCXX )
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g")
+if(CMAKE_COMPILER_IS_GNUCXX)
+	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall -Wconversion -Wextra")
 endif()
 
+find_package(Boost REQUIRED unit_test_framework)
+
+include_directories(${Boost_INCLUDE_DIRS})
 include_directories(".")
+
+add_definitions("-DBOOST_TEST_DYN_LINK")
 
 add_subdirectory(p0i)
 add_subdirectory(p0compile)

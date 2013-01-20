@@ -19,7 +19,7 @@ namespace p0
 		, m_error_handler(std::move(error_handler))
 	{
 		assert(integer_width >= 1);
-		assert(integer_width <= std::numeric_limits<intermediate::instruction_argument>::digits);
+		assert(integer_width <= static_cast<size_t>(std::numeric_limits<intermediate::instruction_argument>::digits));
 	}
 
 	size_t code_generator::integer_width() const
@@ -84,7 +84,7 @@ namespace p0
 			emitter,
 			top_frame
 			);
-		
+
 		m_functions[function_index] = intermediate::function(
 			std::move(instructions),
 			function.parameters().size()

@@ -21,14 +21,14 @@ namespace p0
 		, m_destination(destination)
 	{
 	}
-	
+
 
 	void rvalue_generator::visit(name_expression_tree const &expression)
 	{
 		auto const address = m_frame.require_symbol(
 			expression.name()
 			);
-		
+
 		if (m_destination.is_valid())
 		{
 			m_emitter.copy(
@@ -146,12 +146,12 @@ namespace p0
 								++i;
 								if (i != end)
 								{
-									c = (hex_digit_value(i) * 16u);
+									c = static_cast<char>(hex_digit_value(i) * 16u);
 
 									++i;
 									if (i != end)
 									{
-										c += hex_digit_value(i);
+										c = static_cast<char>(c + hex_digit_value(i));
 										break;
 									}
 								}

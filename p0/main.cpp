@@ -1,6 +1,6 @@
-#include <boost/property_tree/json_parser.hpp>
-#include "p0i/ptree_load_unit.hpp"
 #include "p0i/unit.hpp"
+#include <iostream>
+#include <fstream>
 
 
 namespace
@@ -24,13 +24,7 @@ namespace
 				);
 		}
 
-		boost::property_tree::ptree unit_tree;
-		boost::property_tree::read_json(
-			unit_file,
-			unit_tree
-			);
-
-		return p0::intermediate::load_unit(unit_tree);
+		throw std::runtime_error("Not implemented");
 	}
 }
 

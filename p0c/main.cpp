@@ -1,13 +1,11 @@
 #include "p0compile/compiler.hpp"
 #include "p0compile/compiler_error.hpp"
 #include "p0i/save_unit.hpp"
-#include "p0i/ptree_save_unit.hpp"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <string>
-#include <boost/property_tree/json_parser.hpp>
 using namespace std;
 
 namespace
@@ -170,24 +168,6 @@ int main(int argc, char **argv)
 				target_file,
 				compiled_unit
 				);
-
-			{
-				boost::property_tree::ptree unit_tree;
-				p0::intermediate::save_unit(unit_tree, compiled_unit);
-
-				std::ofstream json_file(
-					target_file_name + ".js"
-					);
-				if (!json_file)
-				{
-					throw std::runtime_error("Could not open JSON file");
-				}
-				boost::property_tree::write_json(
-					json_file,
-					unit_tree,
-					true
-					);
-			}
 		}
 		catch (p0::compiler_error const &e)
 		{

@@ -5,4 +5,4 @@ file(GLOB files
 
 add_executable(test ${files})
 
-target_link_libraries(test p0compile p0i)
+target_link_libraries(test p0compile p0i ${Boost_LIBRARIES})

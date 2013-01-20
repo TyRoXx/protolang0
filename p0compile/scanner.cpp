@@ -24,7 +24,7 @@ namespace p0
 
 		bool is_identifer_first(char c)
 		{
-			c = std::tolower(c);
+			c = static_cast<char>(std::tolower(c));
 			return
 				((c >= 'a') && (c <= 'z')) ||
 				(c == '_');
@@ -206,7 +206,7 @@ namespace p0
 				if (was_integer)
 				{
 					throw compiler_error(
-						"An integer may not be directly followed by an identifier or a keyword", 
+						"An integer may not be directly followed by an identifier or a keyword",
 						source_range(m_pos, m_pos + 1)
 						);
 				}
