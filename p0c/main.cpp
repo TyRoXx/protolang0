@@ -7,17 +7,11 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <boost/program_options.hpp>
 using namespace std;
 
 namespace
 {
-	std::string const default_output_filename = "out.p0i";
-
-	void print_help()
-	{
-		cout << "p0c [source file] [target file, default " << default_output_filename << "]\n";
-	}
-
 	std::vector<char> read_file(std::string const &path)
 	{
 		std::ifstream file(path, std::ios::binary);
@@ -34,19 +28,47 @@ namespace
 
 int main(int argc, char **argv)
 {
-	if (argc <= 1)
+	namespace po = boost::program_options;
+
+	std::string source_file_name;
+	std::string output_file_name = "out.p0i";
+
+	po::options_description desc("");
+	desc.add_options()
+		("help", "produce help message")
+		("source,s", po::value<std::string>(&source_file_name), "source file name")
+		("out,o", po::value<std::string>(&output_file_name), "output file name")
+		;
+
+	po::positional_options_description p;
+	p.add("source", 1);
+	p.add("out", 1);
+
+	po::variables_map vm;
+	try
 	{
-		print_help();
+		po::store(
+			po::command_line_parser(argc, argv).options(desc).positional(p).run(),
+			vm);
+		po::notify(vm);
+	}
+	catch (const boost::program_options::error &e)
+	{
+		std::cerr << e.what() << "\n";
+		return 1;
+	}
+
+	if ((argc == 1) ||
+		vm.count("help"))
+	{
+		std::cerr << desc << "\n";
 		return 0;
 	}
 
 	auto &error_out = std::cerr;
 	try
 	{
-		std::string const source_file_name = argv[1];
 		auto const source_file_content = read_file(source_file_name);
-		std::string const target_file_name = (argc >= 3) ?
-			argv[2] : default_output_filename;
 
 		p0::source_range const source(
 			source_file_content.data(),
@@ -78,12 +100,12 @@ int main(int argc, char **argv)
 			p0::intermediate::unit const compiled_unit = compiler.compile();
 
 			std::ofstream target_file(
-				target_file_name,
+				output_file_name,
 				std::ios::binary
 				);
 			if (!target_file)
 			{
-				throw std::runtime_error("Could not open target file " + target_file_name);
+				throw std::runtime_error("Could not open target file " + output_file_name);
 			}
 
 			p0::intermediate::save_unit(
@@ -101,9 +123,9 @@ int main(int argc, char **argv)
 			error_out << error_counter << " error";
 			if (error_counter != 1)
 			{
-				error_out << "s";
+				error_out << 's';
 			}
-			error_out << "\n";
+			error_out << '\n';
 			return 1;
 		}
 	}

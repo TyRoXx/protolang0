@@ -6,7 +6,7 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall -Wconversion -Wextra")
 endif()
 
-find_package(Boost REQUIRED unit_test_framework)
+find_package(Boost REQUIRED unit_test_framework program_options)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(".")
