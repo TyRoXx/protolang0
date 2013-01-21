@@ -29,6 +29,14 @@ namespace p0
 			std::vector<value> m_values;
 		};
 
+		namespace
+		{
+			unsigned flag(unsigned index)
+			{
+				return (1u << index);
+			}
+		}
+
 
 		interpreter::interpreter(intermediate::unit const &program)
 			: m_program(program)
@@ -116,7 +124,7 @@ namespace p0
 					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 					auto const source_address = static_cast<size_t>(instr_arguments[1]);
 					auto &dest = locals.get(dest_address);
-					auto &source = locals.get(source_address);
+					auto const &source = locals.get(source_address);
 					if ((dest.type == value_type::integer) &&
 						(source.type == value_type::integer))
 					{
@@ -141,13 +149,34 @@ namespace p0
 				}
 
 				case not_:
+				{
+					auto const operand_address = static_cast<size_t>(instr_arguments[0]);
+					auto &operand = locals.get(operand_address);
+					operand = value(static_cast<integer>(to_boolean(operand)));
 					break;
+				}
 
 				case invert:
+				{
+					auto const operand_address = static_cast<size_t>(instr_arguments[0]);
+					auto &operand = locals.get(operand_address);
+					if (operand.type == value_type::integer)
+					{
+						operand.i = ~operand.i;
+					}
 					break;
+				}
 
 				case negate:
+				{
+					auto const operand_address = static_cast<size_t>(instr_arguments[0]);
+					auto &operand = locals.get(operand_address);
+					if (operand.type == value_type::integer)
+					{
+						operand.i = -operand.i;
+					}
 					break;
+				}
 
 				case and_:
 					break;
@@ -165,22 +194,31 @@ namespace p0
 					break;
 
 				case equal:
-					break;
-
 				case not_equal:
-					break;
-
 				case less:
-					break;
-
 				case less_equal:
-					break;
-
 				case greater:
-					break;
-
 				case greater_equal:
+				{
+					auto const left_address = static_cast<size_t>(instr_arguments[0]);
+					auto const right_address = static_cast<size_t>(instr_arguments[1]);
+					auto &left = locals.get(left_address);
+					auto const &right = locals.get(right_address);
+					int const status = compare(left, right);
+					namespace co = comparison_result;
+					static std::array<unsigned, 6> const expected_status =
+					{{
+						flag(co::equal),
+						flag(co::less) | flag(co::greater),
+						flag(co::less),
+						flag(co::less) | flag(co::equal),
+						flag(co::greater),
+						flag(co::greater) | flag(co::equal),
+					}};
+					bool const result = ((flag(status) & expected_status[operation - equal]) != 0);
+					left = value(static_cast<integer>(result ? 1 : 0));
 					break;
+				}
 
 				case intermediate::instruction_type::call:
 					break;

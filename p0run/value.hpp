@@ -49,6 +49,18 @@ namespace p0
 
 
 		bool to_boolean(value const &value);
+
+
+		namespace comparison_result
+		{
+			enum Enum
+			{
+				equal,
+				less,
+				greater,
+			};
+		}
+		comparison_result::Enum compare(value const &left, value const &right);
 	}
 }
 
