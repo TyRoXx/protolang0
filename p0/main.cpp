@@ -26,7 +26,8 @@ namespace p0
 					 intermediate::function const &entry_point)
 		{
 			run::interpreter interpreter(program);
-			interpreter.call(entry_point);
+			std::vector<run::value> arguments;
+			interpreter.call(entry_point, arguments);
 		}
 	}
 }

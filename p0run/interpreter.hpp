@@ -4,6 +4,7 @@
 
 
 #include "p0i/unit.hpp"
+#include "value.hpp"
 
 
 namespace p0
@@ -14,8 +15,9 @@ namespace p0
 		{
 			explicit interpreter(
 					intermediate::unit const &program);
-			void call(
-					intermediate::function const &function);
+			value call(
+					intermediate::function const &function,
+					const std::vector<value> &arguments);
 
 		private:
 
