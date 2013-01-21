@@ -1,5 +1,6 @@
 #include "interpreter.hpp"
 #include <cassert>
+#include <functional>
 #include <boost/static_assert.hpp>
 
 
@@ -107,6 +108,10 @@ namespace p0
 				}
 
 				case add:
+				case sub:
+				case mul:
+				case div:
+				case mod:
 				{
 					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 					auto const source_address = static_cast<size_t>(instr_arguments[1]);
@@ -115,22 +120,25 @@ namespace p0
 					if ((dest.type == value_type::integer) &&
 						(source.type == value_type::integer))
 					{
-						dest.i += source.i;
+						static auto const check_divisor = [](integer divisor)
+						{
+							if (divisor == 0)
+							{
+								throw std::runtime_error("Division by zero");
+							}
+						};
+						static std::array<std::function<void ()>, 5> const cases =
+						{{
+							[&](){ dest.i += source.i; },
+							[&](){ dest.i -= source.i; },
+							[&](){ dest.i *= source.i; },
+							[&](){ check_divisor(source.i); dest.i /= source.i; },
+							[&](){ check_divisor(source.i); dest.i %= source.i; },
+						}};
+						cases[operation - add]();
 					}
 					break;
 				}
-
-				case sub:
-					break;
-
-				case mul:
-					break;
-
-				case div:
-					break;
-
-				case mod:
-					break;
 
 				case not_:
 					break;
