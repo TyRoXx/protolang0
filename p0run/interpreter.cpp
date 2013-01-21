@@ -28,6 +28,7 @@ namespace p0
 			std::vector<value> m_values;
 		};
 
+
 		interpreter::interpreter(intermediate::unit const &program)
 			: m_program(program)
 		{
@@ -56,7 +57,7 @@ namespace p0
 
 				case return_:
 				{
-					const auto result_address = static_cast<size_t>(instr_arguments[0]);
+					auto const result_address = static_cast<size_t>(instr_arguments[0]);
 					return locals.get(result_address);
 				}
 
@@ -68,35 +69,56 @@ namespace p0
 
 				case set_from_constant:
 				{
-					const auto dest_address = static_cast<size_t>(instr_arguments[0]);
-					const auto constant = instr_arguments[1];
+					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+					auto const constant = instr_arguments[1];
 					locals.get(dest_address) = value(static_cast<integer>(constant));
 					break;
 				}
 
 				case set_null:
 				{
-					const auto dest_address = static_cast<size_t>(instr_arguments[0]);
+					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 					locals.get(dest_address) = value();
 					break;
 				}
 
 				case set_function:
+				{
+					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+					auto const function_index = static_cast<size_t>(instr_arguments[1]);
+					if (function_index >= m_program.functions().size())
+					{
+						throw std::runtime_error("Invalid function id");
+					}
+					auto const &function_ptr = m_program.functions()[function_index];
+					locals.get(dest_address) = value(function_ptr);
 					break;
+				}
 
 				case set_string:
 					break;
 
 				case copy:
 				{
-					const auto dest_address = static_cast<size_t>(instr_arguments[0]);
-					const auto source_address = static_cast<size_t>(instr_arguments[1]);
+					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+					auto const source_address = static_cast<size_t>(instr_arguments[1]);
 					locals.get(dest_address) = locals.get(source_address);
 					break;
 				}
 
 				case add:
+				{
+					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+					auto const source_address = static_cast<size_t>(instr_arguments[1]);
+					auto &dest = locals.get(dest_address);
+					auto &source = locals.get(source_address);
+					if ((dest.type == value_type::integer) &&
+						(source.type == value_type::integer))
+					{
+						dest.i += source.i;
+					}
 					break;
+				}
 
 				case sub:
 					break;
@@ -156,13 +178,34 @@ namespace p0
 					break;
 
 				case jump:
+				{
+					auto const destination = static_cast<size_t>(instr_arguments[0]);
+					if (destination > code.size())
+					{
+						throw std::runtime_error("Invalid jump destination");
+					}
+					current_instr = (code.begin() + destination);
+					--current_instr;
 					break;
+				}
 
 				case jump_if:
-					break;
-
 				case jump_if_not:
+				{
+					auto const destination = static_cast<size_t>(instr_arguments[0]);
+					if (destination > code.size())
+					{
+						throw std::runtime_error("Invalid jump destination");
+					}
+					auto const condition_address = static_cast<size_t>(instr_arguments[1]);
+					auto const &condition = locals.get(condition_address);
+					if (to_boolean(condition) == (operation == jump_if))
+					{
+						current_instr = (code.begin() + destination);
+						--current_instr;
+					}
 					break;
+				}
 
 				case new_table:
 					break;

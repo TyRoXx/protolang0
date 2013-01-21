@@ -8,6 +8,12 @@
 
 namespace p0
 {
+	namespace intermediate
+	{
+		struct function;
+	}
+
+
 	namespace run
 	{
 		typedef std::int64_t integer;
@@ -19,6 +25,9 @@ namespace p0
 			{
 				integer,
 				null,
+				function_ptr,
+
+				count_,
 			};
 		}
 
@@ -29,12 +38,17 @@ namespace p0
 			union
 			{
 				integer i;
+				intermediate::function const *function_ptr;
 			};
 
 
 			value();
 			explicit value(integer i);
+			explicit value(intermediate::function const &function_ptr);
 		};
+
+
+		bool to_boolean(value const &value);
 	}
 }
 
