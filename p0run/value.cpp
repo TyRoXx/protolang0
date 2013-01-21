@@ -25,6 +25,16 @@ namespace p0
 		}
 
 
+		bool operator == (value const &left, value const &right)
+		{
+			return compare(left, right) == comparison_result::equal;
+		}
+
+		bool operator < (value const &left, value const &right)
+		{
+			return compare(left, right) == comparison_result::less;
+		}
+
 		bool to_boolean(value const &value)
 		{
 			BOOST_STATIC_ASSERT(value_type::count_ == 3);
