@@ -53,13 +53,8 @@ namespace p0
 			void negate(
 				instruction_argument destination
 				);
-			void allocate(
-				instruction_argument size
-				);
-			void deallocate(
-				instruction_argument size
-				);
 			void call(
+				instruction_argument arguments_address,
 				instruction_argument argument_count
 				);
 			void jump(

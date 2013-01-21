@@ -125,32 +125,14 @@ namespace p0
 				));
 		}
 
-		void emitter::allocate(
-			instruction_argument size
-			)
-		{
-			push_instruction(instruction(
-				instruction_type::allocate,
-				size
-				));
-		}
-
-		void emitter::deallocate(
-			instruction_argument size
-			)
-		{
-			push_instruction(instruction(
-				instruction_type::deallocate,
-				size
-				));
-		}
-
 		void emitter::call(
+			instruction_argument arguments_address,
 			instruction_argument argument_count
 			)
 		{
 			push_instruction(instruction(
 				instruction_type::call,
+				arguments_address,
 				argument_count
 				));
 		}

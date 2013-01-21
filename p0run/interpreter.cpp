@@ -120,6 +120,11 @@ namespace p0
 				case mul:
 				case div:
 				case mod:
+				case and_:
+				case or_:
+				case xor_:
+				case shift_left:
+				case shift_right:
 				{
 					auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 					auto const source_address = static_cast<size_t>(instr_arguments[1]);
@@ -135,13 +140,18 @@ namespace p0
 								throw std::runtime_error("Division by zero");
 							}
 						};
-						static std::array<std::function<void ()>, 5> const cases =
+						static std::array<std::function<void ()>, 10> const cases =
 						{{
 							[&](){ dest.i += source.i; },
 							[&](){ dest.i -= source.i; },
 							[&](){ dest.i *= source.i; },
 							[&](){ check_divisor(source.i); dest.i /= source.i; },
 							[&](){ check_divisor(source.i); dest.i %= source.i; },
+							[&](){ dest.i &= source.i; },
+							[&](){ dest.i |= source.i; },
+							[&](){ dest.i ^= source.i; },
+							[&](){ dest.i <<= source.i; },
+							[&](){ dest.i >>= source.i; },
 						}};
 						cases[operation - add]();
 					}
@@ -178,21 +188,6 @@ namespace p0
 					break;
 				}
 
-				case and_:
-					break;
-
-				case or_:
-					break;
-
-				case xor_:
-					break;
-
-				case shift_left:
-					break;
-
-				case shift_right:
-					break;
-
 				case equal:
 				case not_equal:
 				case less:
@@ -221,7 +216,28 @@ namespace p0
 				}
 
 				case intermediate::instruction_type::call:
+				{
+					auto const function_address = static_cast<size_t>(instr_arguments[0]);
+					auto const argument_count = static_cast<size_t>(instr_arguments[1]);
+					auto const arguments_address = function_address + 1;
+					std::vector<value> arguments;
+					for (size_t i = 0; i < argument_count; ++i)
+					{
+						arguments.push_back(locals.get(arguments_address + i));
+					}
+					auto &result = locals.get(function_address);
+					auto const &function = locals.get(function_address);
+					switch (function.type)
+					{
+					case value_type::function_ptr:
+						result = this->call(*function.function_ptr, arguments);
+						break;
+
+					default:
+						throw std::runtime_error("Cannot call non-function value");
+					}
 					break;
+				}
 
 				case jump:
 				{

@@ -212,6 +212,7 @@ namespace p0
 			m_frame,
 			1
 			);
+		auto &result_variable = function_variable;
 
 		try
 		{
@@ -227,11 +228,6 @@ namespace p0
 		{
 			m_function_generator.handle_error(e);
 		}
-
-		temporary const result_variable(
-			m_frame,
-			1
-			);
 
 		auto const argument_count = expression.arguments().size();
 		temporary const argument_variables(
@@ -260,7 +256,8 @@ namespace p0
 		}
 
 		m_emitter.call(
-			expression.arguments().size()
+			result_variable.address().local_address(),
+			argument_count
 			);
 
 		if (m_destination.is_valid())
@@ -287,7 +284,7 @@ namespace p0
 		}
 	}
 
-	void rvalue_generator::visit(null_expression_tree const &expression)
+	void rvalue_generator::visit(null_expression_tree const & /*expression*/)
 	{
 		if (m_destination.is_valid())
 		{
