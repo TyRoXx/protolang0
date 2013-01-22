@@ -19,8 +19,6 @@ namespace p0
 			{
 				nothing,
 				return_,
-				allocate,
-				deallocate,
 				set_from_constant,
 				set_null,
 				set_function,

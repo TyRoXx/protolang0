@@ -58,7 +58,7 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 35);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 33);
 
 				switch (operation)
 				{
@@ -70,12 +70,6 @@ namespace p0
 					auto const result_address = static_cast<size_t>(instr_arguments[0]);
 					return locals.get(result_address);
 				}
-
-				case allocate:
-					break;
-
-				case deallocate:
-					break;
 
 				case set_from_constant:
 				{
