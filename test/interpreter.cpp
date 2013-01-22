@@ -2,6 +2,7 @@
 #include "p0i/function.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
+#include <boost/foreach.hpp>
 using namespace p0::run;
 using namespace p0;
 
@@ -44,6 +45,32 @@ BOOST_AUTO_TEST_CASE(nothing_operation_test)
 			[](value const &result)
 		{
 			BOOST_CHECK(result == value());
+		});
+	}
+}
+
+BOOST_AUTO_TEST_CASE(set_from_constant_operation_test)
+{
+	static std::array<integer, 5> const test_numbers =
+	{{
+		0,
+		1,
+		-34,
+		std::numeric_limits<integer>::min(),
+		std::numeric_limits<integer>::max()
+	}};
+
+	BOOST_FOREACH (integer const number, test_numbers)
+	{
+		run_single_function(
+			[number](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+		{
+			emitter.set_from_constant(0, number);
+		},
+			std::vector<value>(),
+			[number](value const &result)
+		{
+			BOOST_CHECK(result == value(number));
 		});
 	}
 }

@@ -49,6 +49,9 @@ namespace p0
 		{
 			local_frame locals(arguments);
 
+			//place for the return value
+			locals.get(0) = value();
+
 			auto const &code = function.body();
 			auto current_instr = code.begin();
 			while (current_instr != code.end())
@@ -308,7 +311,7 @@ namespace p0
 				++current_instr;
 			}
 
-			return value();
+			return locals.get(0);
 		}
 
 
