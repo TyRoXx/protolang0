@@ -21,12 +21,7 @@ namespace p0
 			}
 		}
 
-		void table::set_element(value const &key, value const &value)
-		{
-			m_elements[key] = value;
-		}
-
-		value table::get_element(value const &key) const
+		boost::optional<value> table::get_element(value const &key) const
 		{
 			auto const e = m_elements.find(key);
 			if (e != m_elements.end())
@@ -34,6 +29,12 @@ namespace p0
 				return e->second;
 			}
 			return value();
+		}
+
+		bool table::set_element(value const &key, value const &value)
+		{
+			m_elements[key] = value;
+			return true;
 		}
 	}
 }

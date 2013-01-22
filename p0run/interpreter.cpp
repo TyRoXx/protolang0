@@ -63,7 +63,9 @@ namespace p0
 				switch (operation)
 				{
 				case nothing:
+				{
 					break;
+				}
 
 				case return_:
 				{
@@ -266,7 +268,7 @@ namespace p0
 
 				case new_table:
 				{
-					auto const table_address = static_cast<size_t>(instr_arguments[1]);
+					auto const table_address = static_cast<size_t>(instr_arguments[0]);
 					auto &destination = locals.get(table_address);
 					collect_garbage(); //TODO: do this less often
 					std::unique_ptr<object> created_table(new table);
@@ -277,7 +279,23 @@ namespace p0
 				}
 
 				case set_element:
+				{
+					auto const table_address = static_cast<size_t>(instr_arguments[0]);
+					auto const key_address = static_cast<size_t>(instr_arguments[1]);
+					auto const value_address = static_cast<size_t>(instr_arguments[2]);
+					auto const &table = locals.get(table_address);
+					auto const &key = locals.get(key_address);
+					auto const &value = locals.get(value_address);
+					if (table.type != value_type::object)
+					{
+						throw std::runtime_error("Cannot set element of non-object");
+					}
+					if (!table.obj->set_element(key, value))
+					{
+						throw std::runtime_error("Cannot set element of this object");
+					}
 					break;
+				}
 
 				case get_element:
 					break;

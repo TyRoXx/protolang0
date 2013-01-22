@@ -13,6 +13,16 @@ namespace
 		virtual void mark_recursively() override
 		{
 		}
+
+		virtual boost::optional<value> get_element(value const &key) const override
+		{
+			return boost::optional<value>();
+		}
+
+		virtual bool set_element(value const &key, value const &value) override
+		{
+			return false;
+		}
 	};
 
 	void check_equal_impl(value const &left, value const &right)

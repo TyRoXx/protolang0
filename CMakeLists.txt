@@ -2,8 +2,12 @@ cmake_minimum_required(VERSION 2.8)
 
 project(protolang0)
 
-if(CMAKE_COMPILER_IS_GNUCXX)
+if (CMAKE_COMPILER_IS_GNUCXX)
 	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall -Wconversion -Wextra")
+endif()
+
+if (MSVC)
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif()
 
 find_package(Boost REQUIRED unit_test_framework program_options)

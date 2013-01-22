@@ -15,8 +15,8 @@ namespace p0
 		struct table : object
 		{
 			virtual void mark_recursively() override;
-			void set_element(value const &key, value const &value);
-			value get_element(value const &key) const;
+			virtual boost::optional<value> get_element(value const &key) const override;
+			virtual bool set_element(value const &key, value const &value) override;
 
 		private:
 
