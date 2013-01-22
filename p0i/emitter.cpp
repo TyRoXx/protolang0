@@ -18,6 +18,13 @@ namespace p0
 			return m_destination.size();
 		}
 
+		void emitter::nothing()
+		{
+			push_instruction(instruction(
+				instruction_type::nothing
+				));
+		}
+
 		void emitter::return_()
 		{
 			push_instruction(instruction(

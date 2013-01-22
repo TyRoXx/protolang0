@@ -20,6 +20,7 @@ namespace p0
 				instruction_vector &destination
 				);
 			size_t get_current_jump_address() const;
+			void nothing();
 			void return_();
 			void set_from_constant(
 				instruction_argument destination,
