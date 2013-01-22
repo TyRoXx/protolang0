@@ -141,20 +141,20 @@ namespace p0
 								throw std::runtime_error("Division by zero");
 							}
 						};
-						static std::array<std::function<void ()>, 10> const cases =
-						{{
-							[&](){ dest.i += source.i; },
-							[&](){ dest.i -= source.i; },
-							[&](){ dest.i *= source.i; },
-							[&](){ check_divisor(source.i); dest.i /= source.i; },
-							[&](){ check_divisor(source.i); dest.i %= source.i; },
-							[&](){ dest.i &= source.i; },
-							[&](){ dest.i |= source.i; },
-							[&](){ dest.i ^= source.i; },
-							[&](){ dest.i <<= source.i; },
-							[&](){ dest.i >>= source.i; },
-						}};
-						cases[operation - add]();
+						switch (operation)
+						{
+						case add: dest.i += source.i; break;
+						case sub: dest.i -= source.i; break;
+						case mul: dest.i *= source.i; break;
+						case div: check_divisor(source.i); dest.i /= source.i; break;
+						case mod: check_divisor(source.i); dest.i %= source.i; break;
+						case and_: dest.i &= source.i; break;
+						case or_: dest.i |= source.i; break;
+						case xor_: dest.i ^= source.i; break;
+						case shift_left: dest.i <<= source.i; break;
+						case shift_right: dest.i >>= source.i; break;
+						default: assert(!"missing operation"); break;
+						}
 					}
 					break;
 				}

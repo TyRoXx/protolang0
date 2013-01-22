@@ -26,7 +26,7 @@ namespace p0
 	{
 		auto &error_out = std::cerr;
 		size_t error_counter = 0;
-		auto const handle_error = [&](p0::compiler_error const &error)
+		auto const handle_error = [&](p0::compiler_error const &error) -> bool
 		{
 			++error_counter;
 			pretty_print_error(

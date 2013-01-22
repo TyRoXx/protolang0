@@ -1,4 +1,3 @@
-
 file(GLOB files
 	"*.hpp"
 	"*.cpp")

@@ -11,7 +11,9 @@ find_package(Boost REQUIRED unit_test_framework program_options)
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(".")
 
-add_definitions("-DBOOST_TEST_DYN_LINK")
+if (UNIX)
+	add_definitions("-DBOOST_TEST_DYN_LINK")
+endif()
 
 add_subdirectory(p0i)
 add_subdirectory(p0compile)
