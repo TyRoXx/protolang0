@@ -53,3 +53,36 @@ BOOST_AUTO_TEST_CASE(unequal_value_test)
 	check_unequal(value(function_a), value());
 	check_unequal(value(function_a), value(123));
 }
+
+
+namespace
+{
+	void check_less(value const &left, value const &right)
+	{
+		BOOST_CHECK(left < right);
+		BOOST_CHECK(left != right);
+		BOOST_CHECK(compare(left, right) == comparison_result::less);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(less_value_test)
+{
+	check_less(value(), value(0));
+	check_less(value(0), value(1));
+	check_less(value(-1), value(1));
+	check_less(value(), value(-1));
+
+	p0::intermediate::function function_a, function_b;
+	check_less(value(), value(function_b));
+	check_less(value(function_a), value(0));
+	check_less(value(function_b), value(0));
+
+	if (&function_a < &function_b)
+	{
+		check_less(value(function_a), value(function_b));
+	}
+	else
+	{
+		check_less(value(function_b), value(function_a));
+	}
+}
