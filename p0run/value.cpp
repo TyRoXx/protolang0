@@ -1,4 +1,5 @@
 #include "value.hpp"
+#include "p0i/function.hpp"
 #include <cassert>
 #include <boost/static_assert.hpp>
 
@@ -55,39 +56,77 @@ namespace p0
 			}
 		}
 
+
 		namespace
 		{
-			integer to_comparable_integer(value const &value)
+			comparison_result::Enum compare_impl(
+					integer left, value const &right)
 			{
-				switch (value.type)
+				switch (right.type)
 				{
 				case value_type::integer:
-					return value.i;
+					return compare(left, right.i);
 
 				case value_type::null:
-					return 0;
+					return comparison_result::greater;
 
 				case value_type::function_ptr:
-					return 1;
+					return comparison_result::greater;
 
 				default:
-					return 0;
+					assert(!"Invalid value type");
+					return comparison_result::equal;
+				}
+			}
+
+			comparison_result::Enum compare_impl(
+					intermediate::function const &left, value const &right)
+			{
+				switch (right.type)
+				{
+				case value_type::integer:
+					return comparison_result::less;
+
+				case value_type::null:
+					return comparison_result::greater;
+
+				case value_type::function_ptr:
+					return compare(&left, right.function_ptr);
+
+				default:
+					assert(!"Invalid value type");
+					return comparison_result::equal;
 				}
 			}
 		}
 
 		comparison_result::Enum compare(value const &left, value const &right)
 		{
-			auto const diff = (to_comparable_integer(left) - to_comparable_integer(right));
-			if (diff < 0)
+			switch (left.type)
 			{
-				return comparison_result::less;
+			case value_type::integer:
+				return compare_impl(left.i, right);
+
+			case value_type::null:
+				switch (right.type)
+				{
+				case value_type::integer:
+					return comparison_result::less;
+
+				case value_type::null:
+					return comparison_result::equal;
+
+				case value_type::function_ptr:
+					return comparison_result::less;
+				}
+
+			case value_type::function_ptr:
+				return compare_impl(*left.function_ptr, right);
+
+			default:
+				assert(!"Invalid value type");
+				return comparison_result::equal;
 			}
-			else if (diff > 0)
-			{
-				return comparison_result::greater;
-			}
-			return comparison_result::equal;
 		}
 	}
 }

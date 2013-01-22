@@ -27,9 +27,12 @@ namespace p0
 			{
 				integer,
 				null,
-				function_ptr,
+				function_ptr
+			};
 
-				count_,
+			enum
+			{
+				count_ = 3
 			};
 		}
 
@@ -64,6 +67,22 @@ namespace p0
 				greater,
 			};
 		}
+
+		template <class T>
+		comparison_result::Enum compare(T left, T right)
+		{
+			auto const diff = (left - right);
+			if (diff < 0)
+			{
+				return comparison_result::less;
+			}
+			else if (diff > 0)
+			{
+				return comparison_result::greater;
+			}
+			return comparison_result::equal;
+		}
+
 		comparison_result::Enum compare(value const &left, value const &right);
 	}
 }
