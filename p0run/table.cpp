@@ -5,6 +5,22 @@ namespace p0
 {
 	namespace run
 	{
+		void table::mark_recursively()
+		{
+			if (is_marked())
+			{
+				return;
+			}
+			for (auto i = m_elements.begin(); i != m_elements.end(); ++i)
+			{
+				auto const &value = i->second;
+				if (value.type == value_type::object)
+				{
+					value.obj->mark_recursively();
+				}
+			}
+		}
+
 		void table::set_element(value const &key, value const &value)
 		{
 			m_elements[key] = value;

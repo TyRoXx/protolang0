@@ -4,14 +4,17 @@
 
 
 #include "value.hpp"
+#include "object.hpp"
 #include <unordered_map>
+
 
 namespace p0
 {
 	namespace run
 	{
-		struct table
+		struct table : object
 		{
+			virtual void mark_recursively() override;
 			void set_element(value const &key, value const &value);
 			value get_element(value const &key) const;
 

@@ -5,6 +5,7 @@
 
 #include "p0i/unit.hpp"
 #include "value.hpp"
+#include "garbage_collector.hpp"
 
 
 namespace p0
@@ -22,6 +23,10 @@ namespace p0
 		private:
 
 			intermediate::unit const &m_program;
+			garbage_collector m_gc;
+
+
+			void collect_garbage();
 		};
 	}
 }

@@ -1,4 +1,5 @@
 #include "value.hpp"
+#include "object.hpp"
 #include "p0i/function.hpp"
 #include <cassert>
 #include <boost/static_assert.hpp>
@@ -25,6 +26,12 @@ namespace p0
 			this->function_ptr = &function_ptr;
 		}
 
+		value::value(object &obj)
+			: type(value_type::object)
+		{
+			this->obj = &obj;
+		}
+
 
 		bool operator == (value const &left, value const &right)
 		{
@@ -38,7 +45,7 @@ namespace p0
 
 		bool to_boolean(value const &value)
 		{
-			BOOST_STATIC_ASSERT(value_type::count_ == 3);
+			BOOST_STATIC_ASSERT(value_type::count_ == 4);
 			switch (value.type)
 			{
 			case value_type::integer:
@@ -50,10 +57,11 @@ namespace p0
 			case value_type::function_ptr:
 				return true;
 
-			default:
-				assert(!"Invalid value type");
-				return false;
+			case value_type::object:
+				return true;
 			}
+			assert(!"Invalid value type");
+			return false;
 		}
 
 
@@ -73,10 +81,11 @@ namespace p0
 				case value_type::function_ptr:
 					return comparison_result::greater;
 
-				default:
-					assert(!"Invalid value type");
-					return comparison_result::equal;
+				case value_type::object:
+					return comparison_result::greater;
 				}
+				assert(!"Invalid value type");
+				return comparison_result::equal;
 			}
 
 			comparison_result::Enum compare_impl(
@@ -93,10 +102,32 @@ namespace p0
 				case value_type::function_ptr:
 					return compare(&left, right.function_ptr);
 
-				default:
-					assert(!"Invalid value type");
-					return comparison_result::equal;
+				case value_type::object:
+					return comparison_result::less;
 				}
+				assert(!"Invalid value type");
+				return comparison_result::equal;
+			}
+
+			comparison_result::Enum compare_impl(
+					object const &left, value const &right)
+			{
+				switch (right.type)
+				{
+				case value_type::integer:
+					return comparison_result::less;
+
+				case value_type::null:
+					return comparison_result::greater;
+
+				case value_type::function_ptr:
+					return comparison_result::greater;
+
+				case value_type::object:
+					return compare<object const *>(&left, right.obj);
+				}
+				assert(!"Invalid value type");
+				return comparison_result::equal;
 			}
 		}
 
@@ -118,15 +149,20 @@ namespace p0
 
 				case value_type::function_ptr:
 					return comparison_result::less;
+
+				case value_type::object:
+					return comparison_result::less;
 				}
 
 			case value_type::function_ptr:
 				return compare_impl(*left.function_ptr, right);
 
-			default:
-				assert(!"Invalid value type");
-				return comparison_result::equal;
+			case value_type::object:
+				return compare_impl(*left.obj, right);
 			}
+
+			assert(!"Invalid value type");
+			return comparison_result::equal;
 		}
 	}
 }

@@ -1,4 +1,5 @@
 #include "interpreter.hpp"
+#include "table.hpp"
 #include <cassert>
 #include <functional>
 #include <boost/static_assert.hpp>
@@ -270,7 +271,16 @@ namespace p0
 				}
 
 				case new_table:
+				{
+					auto const table_address = static_cast<size_t>(instr_arguments[1]);
+					auto &destination = locals.get(table_address);
+					collect_garbage(); //TODO: do this less often
+					std::unique_ptr<object> created_table(new table);
+					value const created_table_ptr(static_cast<table &>(*created_table));
+					m_gc.add_object(std::move(created_table));
+					destination = created_table_ptr;
 					break;
+				}
 
 				case set_element:
 					break;
@@ -287,6 +297,14 @@ namespace p0
 			}
 
 			return value();
+		}
+
+
+		void interpreter::collect_garbage()
+		{
+			m_gc.mark();
+			//TODO: mark locals
+			//m_gc.sweep();
 		}
 	}
 }

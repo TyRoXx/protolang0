@@ -19,6 +19,7 @@ namespace p0
 	namespace run
 	{
 		typedef std::int64_t integer;
+		struct object;
 
 
 		namespace value_type
@@ -27,12 +28,13 @@ namespace p0
 			{
 				integer,
 				null,
-				function_ptr
+				function_ptr,
+				object
 			};
 
 			enum
 			{
-				count_ = 3
+				count_ = 4
 			};
 		}
 
@@ -44,12 +46,14 @@ namespace p0
 			{
 				integer i;
 				intermediate::function const *function_ptr;
+				object *obj;
 			};
 
 
 			value();
 			explicit value(integer i);
 			explicit value(intermediate::function const &function_ptr);
+			explicit value(object &obj);
 		};
 
 
