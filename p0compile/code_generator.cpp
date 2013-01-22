@@ -66,6 +66,10 @@ namespace p0
 		local_frame top_frame(
 			nullptr
 			);
+
+		//return value
+		top_frame.allocate(1);
+
 		for (auto p = begin(function.parameters()), e = end(function.parameters()); p != e; ++p)
 		{
 			try

@@ -74,3 +74,40 @@ BOOST_AUTO_TEST_CASE(set_from_constant_operation_test)
 		});
 	}
 }
+
+BOOST_AUTO_TEST_CASE(set_null_operation_test)
+{
+	run_single_function(
+		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+	{
+		emitter.set_from_constant(1, 123);
+
+		//overwrite the "123" with null
+		emitter.set_null(1);
+
+		//return the null
+		emitter.copy(0, 1);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_CHECK(result == value());
+	});
+}
+
+BOOST_AUTO_TEST_CASE(copy_operation_test)
+{
+	value const test_value(static_cast<integer>(6));
+
+	run_single_function(
+		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+	{
+		//return the first argument
+		emitter.copy(0, 1);
+	},
+		std::vector<value>(1, test_value),
+		[test_value](value const &result)
+	{
+		BOOST_CHECK(result == test_value);
+	});
+}

@@ -11,11 +11,6 @@ namespace p0
 	{
 		struct local_frame
 		{
-			explicit local_frame(const std::vector<value> &arguments)
-				: m_values(arguments)
-			{
-			}
-
 			value &get(std::size_t address)
 			{
 				if (address >= m_values.size())
@@ -47,10 +42,15 @@ namespace p0
 		value interpreter::call(intermediate::function const &function,
 							   const std::vector<value> &arguments)
 		{
-			local_frame locals(arguments);
+			local_frame locals;
 
 			//place for the return value
 			locals.get(0) = value();
+
+			for (size_t i = 0; i < arguments.size(); ++i)
+			{
+				locals.get(1 + i) = arguments[i];
+			}
 
 			auto const &code = function.body();
 			auto current_instr = code.begin();
