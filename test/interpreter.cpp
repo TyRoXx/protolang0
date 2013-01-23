@@ -35,7 +35,7 @@ BOOST_AUTO_TEST_CASE(nothing_operation_test)
 	for (size_t i = 0; i < 3; ++i)
 	{
 		run_single_function(
-			[i](intermediate::emitter &emitter, intermediate::unit::string_vector &strings)
+			[i](intermediate::emitter &emitter, intermediate::unit::string_vector &)
 		{
 			for (size_t j = 0; j < i; ++j)
 			{
