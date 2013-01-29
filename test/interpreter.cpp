@@ -44,7 +44,9 @@ BOOST_AUTO_TEST_CASE(nothing_operation_test)
 			std::vector<value>(),
 			[](value const &result)
 		{
-			BOOST_CHECK(result == value());
+			//the function pointer should still be there because we
+			//didn't overwrite it
+			BOOST_CHECK(result.type == value_type::function_ptr);
 		});
 	}
 }
@@ -230,4 +232,49 @@ BOOST_AUTO_TEST_CASE(xor_operation_test)
 	integer_arithmetic_test(xor_, -70,  60, -70 ^ 60);
 	integer_arithmetic_test(xor_,   1,  70,   1 ^ 70);
 	integer_arithmetic_test(xor_,  60,   1,  60 ^  1);
+}
+
+BOOST_AUTO_TEST_CASE(shift_left_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(shift_left,  60,   7,  60 << 7);
+	integer_arithmetic_test(shift_left,   0,   7,   0 << 7);
+	integer_arithmetic_test(shift_left,  60,   2,  60 << 2);
+	integer_arithmetic_test(shift_left,  70,   6,  70 << 6);
+	integer_arithmetic_test(shift_left,   1,   7,   1 << 7);
+	integer_arithmetic_test(shift_left,  60,   1,  60 << 1);
+}
+
+BOOST_AUTO_TEST_CASE(shift_right_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(shift_right,  60,   7,  60 >> 7);
+	integer_arithmetic_test(shift_right,   0,   7,   0 >> 7);
+	integer_arithmetic_test(shift_right,  60,   2,  60 >> 2);
+	integer_arithmetic_test(shift_right,  70,   6,  70 >> 6);
+	integer_arithmetic_test(shift_right,   1,   7,   1 >> 7);
+	integer_arithmetic_test(shift_right,  60,   1,  60 >> 1);
+}
+
+BOOST_AUTO_TEST_CASE(recursion_test)
+{
+	value const test_value(static_cast<integer>(6));
+
+	run_single_function(
+		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+	{
+		emitter.set_from_constant(2, 1);
+		emitter.less(2, 1);
+		emitter.jump_if(6, 2);
+		emitter.set_from_constant(2, 1);
+		emitter.sub(1, 2);
+		emitter.call(0, 1);
+		//6
+		emitter.copy(0, 1);
+	},
+		std::vector<value>(1, test_value),
+		[test_value](value const &result)
+	{
+		BOOST_CHECK(result == test_value);
+	});
 }

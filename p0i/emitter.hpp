@@ -45,6 +45,10 @@ namespace p0
 				instruction_argument destination,
 				instruction_argument summand
 				);
+			void sub(
+				instruction_argument destination,
+				instruction_argument source
+				);
 			void not_(
 				instruction_argument destination
 				);
@@ -54,6 +58,9 @@ namespace p0
 			void negate(
 				instruction_argument destination
 				);
+			void less(
+				instruction_argument left,
+				instruction_argument right);
 			void call(
 				instruction_argument arguments_address,
 				instruction_argument argument_count

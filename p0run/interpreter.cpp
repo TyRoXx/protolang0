@@ -45,7 +45,8 @@ namespace p0
 			local_frame locals;
 
 			//place for the return value
-			locals.get(0) = value();
+			//initial value is the currently called function
+			locals.get(0) = value(function);
 
 			for (size_t i = 0; i < arguments.size(); ++i)
 			{

@@ -102,6 +102,18 @@ namespace p0
 				));
 		}
 
+		void emitter::sub(
+			instruction_argument destination,
+			instruction_argument source
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::sub,
+				destination,
+				source
+				));
+		}
+
 		void emitter::not_(
 			instruction_argument destination
 			)
@@ -129,6 +141,17 @@ namespace p0
 			push_instruction(instruction(
 				instruction_type::negate,
 				destination
+				));
+		}
+
+		void emitter::less(
+			instruction_argument left,
+			instruction_argument right)
+		{
+			push_instruction(instruction(
+				instruction_type::less,
+				left,
+				right
 				));
 		}
 
