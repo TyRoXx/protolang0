@@ -304,7 +304,25 @@ namespace p0
 					}
 
 				case get_element:
-					break;
+					{
+						auto const table_address = static_cast<size_t>(instr_arguments[0]);
+						auto const key_address = static_cast<size_t>(instr_arguments[1]);
+						auto const value_address = static_cast<size_t>(instr_arguments[2]);
+						auto const table = get(local_frame, table_address);
+						auto const key = get(local_frame, key_address);
+						auto const value = get(local_frame, value_address);
+						if (table.type != value_type::object)
+						{
+							throw std::runtime_error("Cannot get element of non-object");
+						}
+						auto const result = table.obj->get_element(key);
+						if (!result)
+						{
+							throw std::runtime_error("Cannot get element of this object");
+						}
+						get(local_frame, value_address) = *result;
+						break;
+					}
 
 				default:
 					assert(!"invalid operation id");

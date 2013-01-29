@@ -356,3 +356,24 @@ BOOST_AUTO_TEST_CASE(string_literal_test)
 		BOOST_CHECK(dynamic_cast<string &>(*result.obj).content() == test_string);
 	});
 }
+
+BOOST_AUTO_TEST_CASE(string_get_element_test)
+{
+	std::string const test_string = "hello, world!";
+
+	run_single_function(
+		[&test_string](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &strings)
+	{
+		strings.push_back(test_string);
+		emitter.set_string(1, 0);
+		emitter.set_from_constant(2, 12);
+		emitter.get_element(1, 2, 0);
+	},
+		std::vector<value>(),
+		[&test_string](value const &result)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>('!')));
+	});
+}
