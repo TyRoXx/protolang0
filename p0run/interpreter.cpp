@@ -10,14 +10,6 @@ namespace p0
 {
 	namespace run
 	{
-		struct local_frame
-		{
-
-		private:
-
-			std::vector<value> m_values;
-		};
-
 		namespace
 		{
 			unsigned flag(unsigned index)
