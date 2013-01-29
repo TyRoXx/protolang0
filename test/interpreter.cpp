@@ -188,6 +188,10 @@ BOOST_AUTO_TEST_CASE(div_operation_test)
 	integer_arithmetic_test(instruction_type::div, -70, -60,   1);
 	integer_arithmetic_test(instruction_type::div,   1,  70,   0);
 	integer_arithmetic_test(instruction_type::div,  60,   1,  60);
+
+	BOOST_CHECK_EXCEPTION(integer_arithmetic_test(instruction_type::div, 1, 0, -1),
+		std::runtime_error,
+		[](std::runtime_error const &) { return true; });
 }
 
 BOOST_AUTO_TEST_CASE(mod_operation_test)
@@ -199,6 +203,10 @@ BOOST_AUTO_TEST_CASE(mod_operation_test)
 	integer_arithmetic_test(mod, -70,  60, -10);
 	integer_arithmetic_test(mod,   1,  70,   1);
 	integer_arithmetic_test(mod,  60,   1,   0);
+
+	BOOST_CHECK_EXCEPTION(integer_arithmetic_test(mod, 1, 0, -1),
+		std::runtime_error,
+		[](std::runtime_error const &) { return true; });
 }
 
 BOOST_AUTO_TEST_CASE(and_operation_test)
