@@ -162,3 +162,28 @@ BOOST_AUTO_TEST_CASE(sub_operation_test)
 	integer_arithmetic_test(sub, -60,  70, -130);
 	integer_arithmetic_test(sub, -60, -70,   10);
 }
+
+BOOST_AUTO_TEST_CASE(mul_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(mul,  60,  70,  4200);
+	integer_arithmetic_test(mul,   0,  70,     0);
+	integer_arithmetic_test(mul,  60,   0,     0);
+	integer_arithmetic_test(mul, -60,  70, -4200);
+	integer_arithmetic_test(mul, -60, -70,  4200);
+	integer_arithmetic_test(mul,   1,  70,    70);
+	integer_arithmetic_test(mul,  60,   1,    60);
+}
+
+BOOST_AUTO_TEST_CASE(div_operation_test)
+{
+	using namespace intermediate;
+	//VC++ says 'div' is ambiguous
+	integer_arithmetic_test(instruction_type::div,  60,  70,   0);
+	integer_arithmetic_test(instruction_type::div,   0,  70,   0);
+	integer_arithmetic_test(instruction_type::div,  60,   2,  30);
+	integer_arithmetic_test(instruction_type::div, -70,  60,  -1);
+	integer_arithmetic_test(instruction_type::div, -70, -60,   1);
+	integer_arithmetic_test(instruction_type::div,   1,  70,   0);
+	integer_arithmetic_test(instruction_type::div,  60,   1,  60);
+}
