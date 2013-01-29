@@ -258,23 +258,33 @@ BOOST_AUTO_TEST_CASE(shift_right_operation_test)
 
 BOOST_AUTO_TEST_CASE(recursion_test)
 {
-	value const test_value(static_cast<integer>(6));
+	std::vector<value> arguments;
+	arguments.push_back(value(static_cast<integer>(6)));
+	arguments.push_back(value(static_cast<integer>(0)));
 
 	run_single_function(
 		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(2, 1);
-		emitter.less(2, 1);
-		emitter.jump_if(6, 2);
-		emitter.set_from_constant(2, 1);
-		emitter.sub(1, 2);
-		emitter.call(0, 1);
-		//6
-		emitter.copy(0, 1);
+		//0
+		emitter.set_from_constant(3, 0);
+		emitter.less(3, 1);
+		emitter.jump_if_not(12, 3);
+		emitter.copy(3, 0);
+		emitter.copy(4, 1);
+		//5
+		emitter.set_from_constant(6, 1);
+		emitter.sub(4, 6);
+		emitter.copy(5, 2);
+		emitter.set_from_constant(6, 3);
+		emitter.add(5, 6);
+		//10
+		emitter.call(3, 2);
+		emitter.copy(2, 3);
+		emitter.copy(0, 2);
 	},
-		std::vector<value>(1, test_value),
-		[test_value](value const &result)
+		arguments,
+		[](value const &result)
 	{
-		BOOST_CHECK(result == test_value);
+		BOOST_CHECK(result == value(static_cast<integer>(6 * 3)));
 	});
 }

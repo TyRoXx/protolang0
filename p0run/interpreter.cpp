@@ -114,7 +114,9 @@ namespace p0
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 						auto const source_address = static_cast<size_t>(instr_arguments[1]);
-						get(local_frame, dest_address) = get(local_frame, source_address);
+						auto const value = get(local_frame, source_address);
+						//make copy because get(..) may reallocate
+						get(local_frame, dest_address) = value;
 						break;
 					}
 
@@ -131,8 +133,8 @@ namespace p0
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 						auto const source_address = static_cast<size_t>(instr_arguments[1]);
+						auto const source = get(local_frame, source_address);
 						auto &dest = get(local_frame, dest_address);
-						auto const &source = get(local_frame, source_address);
 						if ((dest.type == value_type::integer) &&
 							(source.type == value_type::integer))
 						{
@@ -200,8 +202,8 @@ namespace p0
 					{
 						auto const left_address = static_cast<size_t>(instr_arguments[0]);
 						auto const right_address = static_cast<size_t>(instr_arguments[1]);
+						auto const right = get(local_frame, right_address);
 						auto &left = get(local_frame, left_address);
-						auto const &right = get(local_frame, right_address);
 						int const status = compare(left, right);
 						namespace co = comparison_result;
 						static std::array<unsigned, 6> const expected_status =
@@ -222,7 +224,7 @@ namespace p0
 					{
 						auto const arguments_address = static_cast<size_t>(instr_arguments[0]);
 						auto const argument_count = static_cast<size_t>(instr_arguments[1]);
-						native_call(arguments_address, argument_count);
+						native_call(local_frame + arguments_address, argument_count);
 						break;
 					}
 
@@ -273,9 +275,9 @@ namespace p0
 						auto const table_address = static_cast<size_t>(instr_arguments[0]);
 						auto const key_address = static_cast<size_t>(instr_arguments[1]);
 						auto const value_address = static_cast<size_t>(instr_arguments[2]);
-						auto const &table = get(local_frame, table_address);
-						auto const &key = get(local_frame, key_address);
-						auto const &value = get(local_frame, value_address);
+						auto const table = get(local_frame, table_address);
+						auto const key = get(local_frame, key_address);
+						auto const value = get(local_frame, value_address);
 						if (table.type != value_type::object)
 						{
 							throw std::runtime_error("Cannot set element of non-object");
