@@ -112,27 +112,53 @@ BOOST_AUTO_TEST_CASE(copy_operation_test)
 	});
 }
 
+namespace
+{
+	void integer_arithmetic_test(
+		intermediate::instruction_type::Enum op,
+		integer left,
+		integer right,
+		integer expected_result
+		)
+	{
+		std::vector<value> arguments;
+		arguments.push_back(value(left));
+		arguments.push_back(value(right));
+
+		run_single_function(
+			[op](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+		{
+			//[1] += [2]
+			emitter.push_instruction(intermediate::instruction(op, 1, 2));
+			//[0] = [1]
+			emitter.copy(0, 1);
+			//return [0]
+			emitter.return_();
+		},
+			arguments,
+			[expected_result](value const &result)
+		{
+			BOOST_CHECK(result == value(expected_result));
+		});
+	}
+}
+
 BOOST_AUTO_TEST_CASE(add_operation_test)
 {
-	value const first(static_cast<integer>(60));
-	value const second(static_cast<integer>(70));
-	std::vector<value> arguments;
-	arguments.push_back(first);
-	arguments.push_back(second);
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(add,  60,  70,  130);
+	integer_arithmetic_test(add,   0,  70,   70);
+	integer_arithmetic_test(add,  60,   0,   60);
+	integer_arithmetic_test(add, -60,  70,   10);
+	integer_arithmetic_test(add, -60, -70, -130);
+}
 
-	run_single_function(
-		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
-	{
-		//[1] += [2]
-		emitter.add(1, 2);
-		//[0] = [1]
-		emitter.copy(0, 1);
-		//return [0]
-		emitter.return_();
-	},
-		arguments,
-		[](value const &result)
-	{
-		BOOST_CHECK(result == value(static_cast<integer>(130)));
-	});
+BOOST_AUTO_TEST_CASE(sub_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(sub,  60,  70,  -10);
+	integer_arithmetic_test(sub,   0,  70,  -70);
+	integer_arithmetic_test(sub,  60,   0,   60);
+	integer_arithmetic_test(sub, -60,  70, -130);
+	integer_arithmetic_test(sub, -60, -70,   10);
 }

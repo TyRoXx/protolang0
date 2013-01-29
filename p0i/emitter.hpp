@@ -90,15 +90,13 @@ namespace p0
 				instruction_type::Enum operation,
 				instruction_argument destination,
 				instruction_argument source);
+			void push_instruction(
+				instruction const &instruction
+				);
 
 		private:
 
 			instruction_vector &m_destination;
-
-
-			void push_instruction(
-				instruction const &instruction
-				);
 		};
 	}
 }
