@@ -1,4 +1,5 @@
 #include "p0run/interpreter.hpp"
+#include "p0run/string.hpp"
 #include "p0i/function.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
@@ -332,5 +333,25 @@ BOOST_AUTO_TEST_CASE(call_non_function_test)
 	test_call_non_function([](intermediate::emitter &emitter)
 	{
 		emitter.new_table(1);
+	});
+}
+
+BOOST_AUTO_TEST_CASE(string_literal_test)
+{
+	std::string const test_string = "hello, world!";
+
+	run_single_function(
+		[&test_string](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &strings)
+	{
+		strings.push_back(test_string);
+		emitter.set_string(0, 0);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_REQUIRE(result.type == value_type::object);
+		BOOST_CHECK(dynamic_cast<string *>(result.obj));
 	});
 }

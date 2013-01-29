@@ -14,6 +14,16 @@ namespace p0
 		{
 		}
 
+		void object::mark()
+		{
+			if (m_is_marked)
+			{
+				return;
+			}
+			m_is_marked = true;
+			mark_recursively();
+		}
+
 		void object::unmark()
 		{
 			m_is_marked = false;

@@ -16,7 +16,7 @@ namespace p0
 				auto const &value = i->second;
 				if (value.type == value_type::object)
 				{
-					value.obj->mark_recursively();
+					value.obj->mark();
 				}
 			}
 		}

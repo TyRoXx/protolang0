@@ -21,7 +21,7 @@ namespace p0
 
 			for (auto i = m_objects.begin(); i != m_objects.end(); ++i)
 			{
-				(*i)->mark_recursively();
+				(*i)->mark();
 			}
 		}
 

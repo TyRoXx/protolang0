@@ -1,5 +1,6 @@
 #include "interpreter.hpp"
 #include "table.hpp"
+#include "string.hpp"
 #include <cassert>
 #include <functional>
 #include <boost/static_assert.hpp>
@@ -108,7 +109,20 @@ namespace p0
 					}
 
 				case set_string:
-					break;
+					{
+						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+						auto const string_id = static_cast<size_t>(instr_arguments[1]);
+						if (string_id >= m_program.strings().size())
+						{
+							throw std::runtime_error("Invalid string id");
+						}
+						auto const &content = m_program.strings()[string_id];
+						std::unique_ptr<object> new_string(new string(content));
+						value const new_string_ptr(*new_string);
+						m_gc.add_object(std::move(new_string));
+						get(local_frame, dest_address) = new_string_ptr;
+						break;
+					}
 
 				case copy:
 					{
@@ -264,7 +278,7 @@ namespace p0
 						auto &destination = get(local_frame, table_address);
 						collect_garbage(); //TODO: do this less often
 						std::unique_ptr<object> created_table(new table);
-						value const created_table_ptr(static_cast<table &>(*created_table));
+						value const created_table_ptr(*created_table);
 						m_gc.add_object(std::move(created_table));
 						destination = created_table_ptr;
 						break;
