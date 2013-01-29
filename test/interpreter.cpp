@@ -111,3 +111,28 @@ BOOST_AUTO_TEST_CASE(copy_operation_test)
 		BOOST_CHECK(result == test_value);
 	});
 }
+
+BOOST_AUTO_TEST_CASE(add_operation_test)
+{
+	value const first(static_cast<integer>(60));
+	value const second(static_cast<integer>(70));
+	std::vector<value> arguments;
+	arguments.push_back(first);
+	arguments.push_back(second);
+
+	run_single_function(
+		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+	{
+		//[1] += [2]
+		emitter.add(1, 2);
+		//[0] = [1]
+		emitter.copy(0, 1);
+		//return [0]
+		emitter.return_();
+	},
+		arguments,
+		[](value const &result)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(130)));
+	});
+}
