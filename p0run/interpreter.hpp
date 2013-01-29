@@ -24,9 +24,12 @@ namespace p0
 
 			intermediate::unit const &m_program;
 			garbage_collector m_gc;
+			std::vector<value> m_locals;
 
 
+			void native_call(size_t argument_count);
 			void collect_garbage();
+			value &get(std::size_t local_frame, std::size_t address);
 		};
 	}
 }
