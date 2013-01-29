@@ -27,7 +27,7 @@ namespace p0
 			std::vector<value> m_locals;
 
 
-			void native_call(size_t argument_count);
+			void native_call(std::size_t arguments_address, std::size_t argument_count);
 			void collect_garbage();
 			value &get(std::size_t local_frame, std::size_t address);
 		};

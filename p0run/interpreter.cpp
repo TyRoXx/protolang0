@@ -38,16 +38,17 @@ namespace p0
 			m_locals.clear();
 			m_locals.push_back(value(function));
 			m_locals.insert(m_locals.end(), arguments.begin(), arguments.end());
-			native_call(arguments.size());
+			native_call(0, arguments.size());
 			assert(!m_locals.empty());
 			return m_locals.front();
 		}
 
 
-		void interpreter::native_call(size_t argument_count)
+		void interpreter::native_call(
+			std::size_t arguments_address,
+			std::size_t argument_count)
 		{
-			assert(argument_count + 1 >= m_locals.size());
-			size_t const local_frame = m_locals.size() - 1 - argument_count;
+			size_t const local_frame = arguments_address;
 			
 			auto const function_var = get(local_frame, 0);
 			if (function_var.type != value_type::function_ptr)
@@ -219,25 +220,9 @@ namespace p0
 
 				case intermediate::instruction_type::call:
 					{
-						auto const function_address = static_cast<size_t>(instr_arguments[0]);
+						auto const arguments_address = static_cast<size_t>(instr_arguments[0]);
 						auto const argument_count = static_cast<size_t>(instr_arguments[1]);
-						auto const arguments_address = function_address + 1;
-						std::vector<value> arguments;
-						for (size_t i = 0; i < argument_count; ++i)
-						{
-							arguments.push_back(get(local_frame, arguments_address + i));
-						}
-						auto &result = get(local_frame, function_address);
-						auto const &function = get(local_frame, function_address);
-						switch (function.type)
-						{
-						case value_type::function_ptr:
-							result = this->call(*function.function_ptr, arguments);
-							break;
-
-						default:
-							throw std::runtime_error("Cannot call non-function value");
-						}
+						native_call(arguments_address, argument_count);
 						break;
 					}
 
