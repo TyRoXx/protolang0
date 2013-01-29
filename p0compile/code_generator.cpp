@@ -47,8 +47,7 @@ namespace p0
 
 		return intermediate::unit(
 			std::move(m_functions),
-			std::move(strings),
-			m_integer_width
+			std::move(strings)
 			);
 	}
 

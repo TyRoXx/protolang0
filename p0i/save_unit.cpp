@@ -103,9 +103,6 @@ namespace p0
 			unit const &unit
 			)
 		{
-			file << "integer-width: " << unit.integer_width() << '\n';
-			file << '\n';
-
 			auto const &functions = unit.functions();
 			for (size_t i = 0; i < functions.size(); ++i)
 			{

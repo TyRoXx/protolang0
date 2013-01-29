@@ -20,18 +20,15 @@ namespace p0
 
 			explicit unit(
 				function_vector functions,
-				string_vector strings,
-				size_t integer_width
+				string_vector strings
 				);
 			function_vector const &functions() const;
 			string_vector const &strings() const;
-			size_t integer_width() const;
 
 		private:
 
 			function_vector m_functions;
 			string_vector m_strings;
-			size_t m_integer_width;
 		};
 	}
 }

@@ -22,7 +22,7 @@ namespace
 		intermediate::unit::string_vector strings;
 		create(emitter, strings);
 		functions.push_back(intermediate::function(instructions, arguments.size()));
-		intermediate::unit program(functions, strings, 64);
+		intermediate::unit program(functions, strings);
 		interpreter interpreter(program);
 		auto const result = interpreter.call(program.functions()[0], arguments);
 		handle_result(result);
