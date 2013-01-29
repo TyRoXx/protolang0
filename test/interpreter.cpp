@@ -296,3 +296,41 @@ BOOST_AUTO_TEST_CASE(recursion_test)
 		BOOST_CHECK(result == value(static_cast<integer>(6 * 3)));
 	});
 }
+
+namespace
+{
+	template <class NonFunctionEmitter>
+	void test_call_non_function(NonFunctionEmitter const &nonFunctionEmitter)
+	{
+		BOOST_CHECK_EXCEPTION((
+			run_single_function(
+			[nonFunctionEmitter](intermediate::emitter &emitter, intermediate::unit::string_vector &)
+		{
+			nonFunctionEmitter(emitter);
+			emitter.call(1, 0);
+		},
+			std::vector<value>(),
+			[](value const &result)
+		{
+			throw std::runtime_error("The function is not expected to return anything");
+		})),
+			std::runtime_error,
+			[](std::runtime_error const &) { return true; });
+	}
+}
+
+BOOST_AUTO_TEST_CASE(call_non_function_test)
+{
+	test_call_non_function([](intermediate::emitter &emitter)
+	{
+		emitter.set_from_constant(1, 123);
+	});
+	test_call_non_function([](intermediate::emitter &emitter)
+	{
+		emitter.set_null(1);
+	});
+	test_call_non_function([](intermediate::emitter &emitter)
+	{
+		emitter.new_table(1);
+	});
+}
