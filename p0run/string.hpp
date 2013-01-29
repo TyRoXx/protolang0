@@ -13,6 +13,7 @@ namespace p0
 		struct string : object
 		{
 			explicit string(std::string content);
+			std::string const &content() const;
 			virtual boost::optional<value> get_element(value const &key) const override;
 			virtual bool set_element(value const &key, value const &value) override;
 

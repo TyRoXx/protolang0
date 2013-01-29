@@ -349,9 +349,10 @@ BOOST_AUTO_TEST_CASE(string_literal_test)
 		emitter.set_string(0, 0);
 	},
 		std::vector<value>(),
-		[](value const &result)
+		[&test_string](value const &result)
 	{
 		BOOST_REQUIRE(result.type == value_type::object);
-		BOOST_CHECK(dynamic_cast<string *>(result.obj));
+		BOOST_REQUIRE(dynamic_cast<string *>(result.obj));
+		BOOST_CHECK(dynamic_cast<string &>(*result.obj).content() == test_string);
 	});
 }

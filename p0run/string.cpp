@@ -10,12 +10,24 @@ namespace p0
 		{
 		}
 
+		std::string const &string::content() const
+		{
+			return m_content;
+		}
+
 		void string::mark_recursively()
 		{
 		}
 
 		boost::optional<value> string::get_element(value const &key) const
 		{
+			if (key.type == value_type::integer &&
+				key.i >= 0 &&
+				static_cast<integer>(m_content.size()) > key.i)
+			{
+				return value(static_cast<integer>(
+					m_content[static_cast<size_t>(key.i)]));
+			}
 			return boost::optional<value>();
 		}
 
