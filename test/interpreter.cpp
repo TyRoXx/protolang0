@@ -187,3 +187,47 @@ BOOST_AUTO_TEST_CASE(div_operation_test)
 	integer_arithmetic_test(instruction_type::div,   1,  70,   0);
 	integer_arithmetic_test(instruction_type::div,  60,   1,  60);
 }
+
+BOOST_AUTO_TEST_CASE(mod_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(mod,  60,  70,  60);
+	integer_arithmetic_test(mod,   0,  70,   0);
+	integer_arithmetic_test(mod,  60,   2,   0);
+	integer_arithmetic_test(mod, -70,  60, -10);
+	integer_arithmetic_test(mod,   1,  70,   1);
+	integer_arithmetic_test(mod,  60,   1,   0);
+}
+
+BOOST_AUTO_TEST_CASE(and_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(and_,  60,  70,  60 & 70);
+	integer_arithmetic_test(and_,   0,  70,   0 & 70);
+	integer_arithmetic_test(and_,  60,   2,  60 &  2);
+	integer_arithmetic_test(and_, -70,  60, -70 & 60);
+	integer_arithmetic_test(and_,   1,  70,   1 & 70);
+	integer_arithmetic_test(and_,  60,   1,  60 &  1);
+}
+
+BOOST_AUTO_TEST_CASE(or_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(or_,  60,  70,  60 | 70);
+	integer_arithmetic_test(or_,   0,  70,   0 | 70);
+	integer_arithmetic_test(or_,  60,   2,  60 |  2);
+	integer_arithmetic_test(or_, -70,  60, -70 | 60);
+	integer_arithmetic_test(or_,   1,  70,   1 | 70);
+	integer_arithmetic_test(or_,  60,   1,  60 |  1);
+}
+
+BOOST_AUTO_TEST_CASE(xor_operation_test)
+{
+	using namespace intermediate::instruction_type;
+	integer_arithmetic_test(xor_,  60,  70,  60 ^ 70);
+	integer_arithmetic_test(xor_,   0,  70,   0 ^ 70);
+	integer_arithmetic_test(xor_,  60,   2,  60 ^  2);
+	integer_arithmetic_test(xor_, -70,  60, -70 ^ 60);
+	integer_arithmetic_test(xor_,   1,  70,   1 ^ 70);
+	integer_arithmetic_test(xor_,  60,   1,  60 ^  1);
+}
