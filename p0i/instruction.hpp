@@ -18,7 +18,6 @@ namespace p0
 			enum Enum
 			{
 				nothing,
-				return_,
 				set_from_constant,
 				set_null,
 				set_function,

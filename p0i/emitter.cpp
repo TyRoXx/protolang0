@@ -25,13 +25,6 @@ namespace p0
 				));
 		}
 
-		void emitter::return_()
-		{
-			push_instruction(instruction(
-				instruction_type::return_
-				));
-		}
-
 		void emitter::set_from_constant(
 			instruction_argument destination,
 			instruction_argument constant

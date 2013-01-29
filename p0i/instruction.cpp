@@ -8,12 +8,11 @@ namespace p0
 	{
 		instruction_info const &get_instruction_info(instruction_type::Enum instruction)
 		{
-			static_assert(instruction_type::count_ == 33, "Update the 'infos' array");
+			static_assert(instruction_type::count_ == 32, "Update the 'infos' array");
 
 			static std::array<instruction_info, instruction_type::count_> const infos =
 			{{
 				{"nothing", 0},
-				{"return", 0},
 				{"set_from_constant", 2},
 				{"set_null", 1},
 				{"set_function", 2},

@@ -58,18 +58,13 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 33);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 32);
 
 				switch (operation)
 				{
 				case nothing:
 					{
 						break;
-					}
-
-				case return_:
-					{
-						return;
 					}
 
 				case set_from_constant:
@@ -215,11 +210,11 @@ namespace p0
 						static std::array<unsigned, 6> const expected_status =
 						{{
 							flag(co::equal),
-								flag(co::less) | flag(co::greater),
-								flag(co::less),
-								flag(co::less) | flag(co::equal),
-								flag(co::greater),
-								flag(co::greater) | flag(co::equal),
+							flag(co::less) | flag(co::greater),
+							flag(co::less),
+							flag(co::less) | flag(co::equal),
+							flag(co::greater),
+							flag(co::greater) | flag(co::equal),
 						}};
 						bool const result = ((flag(status) & expected_status[operation - equal]) != 0);
 						left = value(static_cast<integer>(result ? 1 : 0));
@@ -268,7 +263,6 @@ namespace p0
 					{
 						auto const table_address = static_cast<size_t>(instr_arguments[0]);
 						auto &destination = get(local_frame, table_address);
-						collect_garbage(); //TODO: do this less often
 						std::unique_ptr<object> created_table(new table);
 						value const created_table_ptr(*created_table);
 						m_gc.add_object(std::move(created_table));
@@ -323,13 +317,23 @@ namespace p0
 
 				++current_instr;
 			}
+
+			//pop everything but the return value from the stack
+			m_locals.resize(local_frame + 1);
 		}
 
 		void interpreter::collect_garbage()
 		{
 			m_gc.mark();
-			//TODO: mark locals
-			//m_gc.sweep();
+			std::for_each(m_locals.begin(), m_locals.end(),
+				[](value const &variable)
+			{
+				if (variable.type == value_type::object)
+				{
+					variable.obj->mark();
+				}
+			});
+			m_gc.sweep();
 		}
 
 		value &interpreter::get(std::size_t local_frame, std::size_t address)

@@ -135,8 +135,6 @@ namespace
 			emitter.push_instruction(intermediate::instruction(op, 1, 2));
 			//[0] = [1]
 			emitter.copy(0, 1);
-			//return [0]
-			emitter.return_();
 		},
 			arguments,
 			[expected_result](value const &result)

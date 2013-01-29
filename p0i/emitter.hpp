@@ -21,7 +21,6 @@ namespace p0
 				);
 			size_t get_current_jump_address() const;
 			void nothing();
-			void return_();
 			void set_from_constant(
 				instruction_argument destination,
 				instruction_argument constant

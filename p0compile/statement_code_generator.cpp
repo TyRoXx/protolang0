@@ -50,7 +50,8 @@ namespace p0
 			statement.value().accept(return_value_generator);
 		}
 
-		m_emitter.return_();
+		//TODO: jump to the end of the function
+		m_emitter.jump(-1);
 	}
 
 	void statement_code_generator::visit(block_tree const &statement)
