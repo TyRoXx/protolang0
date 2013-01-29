@@ -110,7 +110,12 @@ namespace std
 				return std::hash<p0::run::integer>()(value.i);
 
 			case function_ptr:
-				return std::hash<p0::intermediate::function const *>()(value.function_ptr);
+				return std::hash<p0::intermediate::function const *>()
+					(value.function_ptr);
+
+			case object:
+				return std::hash<p0::run::object const *>()
+					(value.obj);
 
 			default:
 				assert(!"Invalid type");
