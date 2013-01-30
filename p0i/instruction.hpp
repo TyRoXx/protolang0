@@ -53,7 +53,7 @@ namespace p0
 				count_,
 				invalid_ = count_,
 			};
-		};
+		}
 
 		typedef std::uint64_t instruction_argument;
 

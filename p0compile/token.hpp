@@ -55,7 +55,7 @@ namespace p0
 			caret,
 			end_of_file,
 		};
-	};
+	}
 
 
 	struct token
