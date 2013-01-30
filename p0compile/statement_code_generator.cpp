@@ -35,17 +35,13 @@ namespace p0
 
 	void statement_code_generator::visit(return_tree const &statement)
 	{
-		//TODO: calling convention
-		temporary const return_value(
-			m_frame,
-			1);
-
 		{
+			reference const result_address(0);
 			rvalue_generator return_value_generator(
 				m_function_generator,
 				m_emitter,
 				m_frame,
-				return_value.address()
+				result_address
 				);
 			statement.value().accept(return_value_generator);
 		}
