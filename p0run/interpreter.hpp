@@ -19,6 +19,7 @@ namespace p0
 			value call(
 					intermediate::function const &function,
 					const std::vector<value> &arguments);
+			void collect_garbage();
 
 		private:
 
@@ -28,7 +29,6 @@ namespace p0
 
 
 			void native_call(std::size_t arguments_address, std::size_t argument_count);
-			void collect_garbage();
 			value &get(std::size_t local_frame, std::size_t address);
 		};
 	}

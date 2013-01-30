@@ -36,6 +36,20 @@ namespace p0
 			return m_locals.front();
 		}
 
+		void interpreter::collect_garbage()
+		{
+			m_gc.mark();
+			std::for_each(m_locals.begin(), m_locals.end(),
+				[](value const &variable)
+			{
+				if (variable.type == value_type::object)
+				{
+					variable.obj->mark();
+				}
+			});
+			m_gc.sweep();
+		}
+
 
 		void interpreter::native_call(
 			std::size_t arguments_address,
@@ -320,20 +334,6 @@ namespace p0
 
 			//pop everything but the return value from the stack
 			m_locals.resize(local_frame + 1);
-		}
-
-		void interpreter::collect_garbage()
-		{
-			m_gc.mark();
-			std::for_each(m_locals.begin(), m_locals.end(),
-				[](value const &variable)
-			{
-				if (variable.type == value_type::object)
-				{
-					variable.obj->mark();
-				}
-			});
-			m_gc.sweep();
 		}
 
 		value &interpreter::get(std::size_t local_frame, std::size_t address)
