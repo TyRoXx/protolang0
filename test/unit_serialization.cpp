@@ -73,7 +73,6 @@ BOOST_AUTO_TEST_CASE(load_save_test)
 		2));
 
 	unit::string_vector strings;
-	size_t const integer_width = 64;
 
 	unit const original_unit(functions, strings);
 

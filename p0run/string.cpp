@@ -31,7 +31,7 @@ namespace p0
 			return boost::optional<value>();
 		}
 
-		bool string::set_element(value const &key, value const &value)
+		bool string::set_element(value const & /*key*/, value const & /*value*/)
 		{
 			return false;
 		}

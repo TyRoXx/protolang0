@@ -309,7 +309,7 @@ namespace
 			emitter.call(1, 0);
 		},
 			std::vector<value>(),
-			[](value const &result)
+			[](value const & /*result*/)
 		{
 			throw std::runtime_error("The function is not expected to return anything");
 		})),
