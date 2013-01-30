@@ -56,7 +56,7 @@ namespace p0
 			std::size_t argument_count)
 		{
 			size_t const local_frame = arguments_address;
-			
+
 			auto const function_var = get(local_frame, 0);
 			if (function_var.type != value_type::function_ptr)
 			{
@@ -310,7 +310,6 @@ namespace p0
 						auto const value_address = static_cast<size_t>(instr_arguments[2]);
 						auto const table = get(local_frame, table_address);
 						auto const key = get(local_frame, key_address);
-						auto const value = get(local_frame, value_address);
 						if (table.type != value_type::object)
 						{
 							throw std::runtime_error("Cannot get element of non-object");

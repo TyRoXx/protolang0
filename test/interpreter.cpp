@@ -95,7 +95,7 @@ BOOST_AUTO_TEST_CASE(set_null_operation_test)
 		std::vector<value>(),
 		[](value const &result)
 	{
-		BOOST_CHECK(result == value());
+		BOOST_CHECK(is_null(result));
 	});
 }
 
@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE(table_get_element_operation_test)
 		std::vector<value>(),
 		[](value const &result)
 	{
-		BOOST_CHECK(result == value());
+		BOOST_CHECK(is_null(result));
 	});
 }
 

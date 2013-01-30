@@ -64,6 +64,11 @@ namespace p0
 			return false;
 		}
 
+		bool is_null(value const &value)
+		{
+			return (value.type == value_type::null);
+		}
+
 
 		namespace
 		{

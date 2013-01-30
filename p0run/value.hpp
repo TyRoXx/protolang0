@@ -60,6 +60,7 @@ namespace p0
 		bool operator == (value const &left, value const &right);
 		bool operator < (value const &left, value const &right);
 		bool to_boolean(value const &value);
+		bool is_null(value const &value);
 
 
 		namespace comparison_result

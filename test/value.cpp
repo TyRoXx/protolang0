@@ -139,3 +139,14 @@ BOOST_AUTO_TEST_CASE(less_value_test)
 		check_less(value(object_b), value(object_a));
 	}
 }
+
+BOOST_AUTO_TEST_CASE(value_is_null_test)
+{
+	p0::intermediate::function function;
+	dummy_object object;
+
+	BOOST_CHECK(is_null(value()));
+	BOOST_CHECK(!is_null(value(static_cast<integer>(123))));
+	BOOST_CHECK(!is_null(value(function)));
+	BOOST_CHECK(!is_null(value(object)));
+}
