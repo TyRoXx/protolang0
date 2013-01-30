@@ -12,6 +12,9 @@ namespace p0
 {
 	namespace run
 	{
+		struct interpreter_listener;
+
+
 		struct interpreter
 		{
 			explicit interpreter(
@@ -20,12 +23,14 @@ namespace p0
 					intermediate::function const &function,
 					const std::vector<value> &arguments);
 			void collect_garbage();
+			void set_listener(interpreter_listener *listener);
 
 		private:
 
 			intermediate::unit const &m_program;
 			garbage_collector m_gc;
 			std::vector<value> m_locals;
+			interpreter_listener *m_listener;
 
 
 			void native_call(std::size_t arguments_address, std::size_t argument_count);

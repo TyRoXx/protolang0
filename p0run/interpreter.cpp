@@ -1,6 +1,7 @@
 #include "interpreter.hpp"
 #include "table.hpp"
 #include "string.hpp"
+#include "interpreter_listener.hpp"
 #include <cassert>
 #include <functional>
 #include <boost/static_assert.hpp>
@@ -21,6 +22,7 @@ namespace p0
 
 		interpreter::interpreter(intermediate::unit const &program)
 			: m_program(program)
+			, m_listener(nullptr)
 		{
 		}
 
@@ -50,11 +52,21 @@ namespace p0
 			m_gc.sweep();
 		}
 
+		void interpreter::set_listener(interpreter_listener *listener)
+		{
+			m_listener = listener;
+		}
+
 
 		void interpreter::native_call(
 			std::size_t arguments_address,
 			std::size_t argument_count)
 		{
+			if (m_listener)
+			{
+				m_listener->enter_function(arguments_address, argument_count);
+			}
+
 			size_t const local_frame = arguments_address;
 
 			auto const function_var = get(local_frame, 0);
@@ -75,6 +87,11 @@ namespace p0
 			while (current_instr != code.end())
 			{
 				auto const operation = current_instr->type();
+				if (m_listener)
+				{
+					m_listener->before_step(*current_instr);
+				}
+
 				auto const &instr_arguments = current_instr->arguments();
 
 				using namespace intermediate::instruction_type;
@@ -336,6 +353,11 @@ namespace p0
 				}
 
 				++current_instr;
+			}
+
+			if (m_listener)
+			{
+				m_listener->leave_function();
 			}
 
 			//pop everything but the return value from the stack
