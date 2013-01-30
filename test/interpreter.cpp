@@ -438,3 +438,26 @@ BOOST_AUTO_TEST_CASE(table_set_element_operation_test)
 		BOOST_CHECK(result == value(static_cast<integer>(456)));
 	});
 }
+
+BOOST_AUTO_TEST_CASE(missing_argument_test)
+{
+	run_single_function(
+		[](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
+	{
+		emitter.set_from_constant(2, 44);
+		emitter.equal(1, 2);
+		emitter.jump_if_not(6, 1);
+		emitter.copy(3, 0);
+		emitter.copy(4, 2);
+		//5
+		emitter.call(3, 0);
+		emitter.set_null(0);
+	},
+		std::vector<value>(1, value(static_cast<integer>(44))),
+		[](value const &result)
+	{
+		BOOST_CHECK(is_null(result));
+	});
+}

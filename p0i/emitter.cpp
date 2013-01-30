@@ -137,6 +137,28 @@ namespace p0
 				));
 		}
 
+		void emitter::equal(
+			instruction_argument left,
+			instruction_argument right)
+		{
+			push_instruction(instruction(
+				instruction_type::equal,
+				left,
+				right
+				));
+		}
+
+		void emitter::not_equal(
+			instruction_argument left,
+			instruction_argument right)
+		{
+			push_instruction(instruction(
+				instruction_type::not_equal,
+				left,
+				right
+				));
+		}
+
 		void emitter::less(
 			instruction_argument left,
 			instruction_argument right)

@@ -63,6 +63,13 @@ namespace p0
 				throw std::runtime_error("Cannot call non-function-ptr value");
 			}
 			auto const &function = *function_var.function_ptr;
+
+			//set missing arguments to null
+			for (size_t i = argument_count; i < function.parameters(); ++i)
+			{
+				get(local_frame, 1 + i) = value();
+			}
+
 			auto const &code = function.body();
 			auto current_instr = code.begin();
 			while (current_instr != code.end())

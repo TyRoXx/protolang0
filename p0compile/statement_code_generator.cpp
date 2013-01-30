@@ -93,7 +93,7 @@ namespace p0
 		statement.destination().accept(destination);
 
 		assert(destination.address().is_valid());
-		
+
 		rvalue_generator source(
 			m_function_generator,
 			m_emitter,
@@ -213,10 +213,12 @@ namespace p0
 
 	void statement_code_generator::visit(break_tree const &statement)
 	{
+		//TODO
 	}
 
 	void statement_code_generator::visit(continue_tree const &statement)
 	{
+		//TODO
 	}
 
 

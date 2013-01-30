@@ -57,6 +57,12 @@ namespace p0
 			void negate(
 				instruction_argument destination
 				);
+			void equal(
+				instruction_argument left,
+				instruction_argument right);
+			void not_equal(
+				instruction_argument left,
+				instruction_argument right);
 			void less(
 				instruction_argument left,
 				instruction_argument right);
