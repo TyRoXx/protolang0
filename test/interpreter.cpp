@@ -1,5 +1,6 @@
 #include "p0run/interpreter.hpp"
 #include "p0run/string.hpp"
+#include "p0run/table.hpp"
 #include "p0i/function.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
@@ -355,7 +356,7 @@ BOOST_AUTO_TEST_CASE(string_literal_test)
 	});
 }
 
-BOOST_AUTO_TEST_CASE(string_get_element_test)
+BOOST_AUTO_TEST_CASE(string_get_element_operation_test)
 {
 	std::string const test_string = "hello, world!";
 
@@ -373,5 +374,67 @@ BOOST_AUTO_TEST_CASE(string_get_element_test)
 		[&test_string](value const &result)
 	{
 		BOOST_CHECK(result == value(static_cast<integer>('!')));
+	});
+}
+
+BOOST_AUTO_TEST_CASE(new_table_operation_test)
+{
+	run_single_function(
+		[](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
+	{
+		emitter.new_table(0);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_REQUIRE(result.type == value_type::object);
+		BOOST_REQUIRE(dynamic_cast<table *>(result.obj));
+	});
+}
+
+BOOST_AUTO_TEST_CASE(table_get_element_operation_test)
+{
+	run_single_function(
+		[](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
+	{
+		emitter.new_table(1);
+		emitter.set_from_constant(2, 123);
+		emitter.get_element(1, 2, 0);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_CHECK(result == value());
+	});
+}
+
+BOOST_AUTO_TEST_CASE(table_set_element_operation_test)
+{
+	run_single_function(
+		[](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
+	{
+		emitter.new_table(1);
+
+		emitter.set_from_constant(2, 123);
+		emitter.set_from_constant(3, 456);
+		emitter.set_element(1, 2, 3);
+
+		emitter.set_from_constant(2, 124);
+		emitter.set_from_constant(3, -7);
+		emitter.set_element(1, 2, 3);
+
+		emitter.set_from_constant(2, 123);
+		emitter.get_element(1, 2, 0);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(456)));
 	});
 }
