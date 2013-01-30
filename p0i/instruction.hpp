@@ -55,7 +55,7 @@ namespace p0
 			};
 		}
 
-		typedef std::uint64_t instruction_argument;
+		typedef std::int64_t instruction_argument;
 
 
 		struct instruction_info
