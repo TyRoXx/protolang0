@@ -21,9 +21,15 @@ namespace p0
 
 	std::unique_ptr<function_tree> parser::parse_unit()
 	{
-		auto main_function = parse_function(
-			m_scanner.rest().begin()
-			);
+		auto const before_function = m_scanner.rest().begin();
+		auto body = parse_block(true);
+		auto const after_function = m_scanner.rest().begin();
+		std::unique_ptr<function_tree> main_function(new function_tree(
+			std::move(body),
+			std::vector<source_range>(),
+			source_range(before_function, after_function)
+			));
+
 		skip_token(
 			token_type::end_of_file,
 			"End of file after main function expected"
@@ -71,7 +77,7 @@ namespace p0
 		case token_type::brace_left:
 			{
 				pop_token();
-				auto body = parse_block();
+				auto body = parse_block(false);
 				return std::move(body);
 			}
 
@@ -84,7 +90,7 @@ namespace p0
 					token_type::brace_left,
 					"The 'if' block cannot be a single statement. '{' expected"
 					);
-				auto on_true = parse_block();
+				auto on_true = parse_block(false);
 
 				std::unique_ptr<statement_tree> on_false;
 				if (try_skip_token(
@@ -95,7 +101,7 @@ namespace p0
 						token_type::brace_left,
 						"The 'else' block cannot be a single statement. '{' expected"
 						);
-					on_false = parse_block();
+					on_false = parse_block(false);
 				}
 
 				return std::unique_ptr<statement_tree>(new if_tree(
@@ -114,7 +120,7 @@ namespace p0
 					token_type::brace_left,
 					"The 'while' block cannot be a single statement. '{' expected"
 					);
-				auto body = parse_block();
+				auto body = parse_block(false);
 
 				return std::unique_ptr<statement_tree>(new while_tree(
 					std::move(condition),
@@ -170,7 +176,7 @@ namespace p0
 		}
 	};
 
-	std::unique_ptr<statement_tree> parser::parse_block()
+	std::unique_ptr<statement_tree> parser::parse_block(bool is_global)
 	{
 		block_tree::statement_vector body;
 
@@ -180,6 +186,11 @@ namespace p0
 			{
 				if (peek_token().type == token_type::end_of_file)
 				{
+					if (is_global)
+					{
+						break;
+					}
+
 					throw end_of_file_error(
 						"Unexpected end of file in block",
 						m_scanner.next_token().content
@@ -683,7 +694,7 @@ namespace p0
 			"Opening brace '{' of function body expected"
 			);
 
-		auto body = parse_block();
+		auto body = parse_block(false);
 		return std::unique_ptr<function_tree>(new function_tree(
 			std::move(body),
 			std::move(parameters),

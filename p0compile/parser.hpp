@@ -39,7 +39,7 @@ namespace p0
 
 
 		std::unique_ptr<statement_tree> parse_statement();
-		std::unique_ptr<statement_tree> parse_block();
+		std::unique_ptr<statement_tree> parse_block(bool is_global);
 		std::unique_ptr<expression_tree> parse_expression();
 		std::unique_ptr<expression_tree> parse_infix_expression(infix_precedence weakest_acceptable_precedence);
 		std::unique_ptr<expression_tree> parse_extended_primary_expression();
