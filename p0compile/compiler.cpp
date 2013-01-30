@@ -1,8 +1,7 @@
 #include "compiler.hpp"
 #include "scanner.hpp"
 #include "parser.hpp"
-#include "code_generator.hpp"
-
+#include "unit_generator.hpp"
 #include "expression_tree.hpp"
 
 
@@ -10,11 +9,9 @@ namespace p0
 {
 	compiler::compiler(
 		source_range source,
-		size_t integer_width,
 		compiler_error_handler error_handler
 		)
 		: m_source(source)
-		, m_integer_width(integer_width)
 		, m_error_handler(std::move(error_handler))
 	{
 	}
@@ -32,9 +29,8 @@ namespace p0
 
 		auto const tree = parser.parse_unit();
 
-		code_generator generator(
+		unit_generator generator(
 			*tree,
-			m_integer_width,
 			m_error_handler
 			);
 

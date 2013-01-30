@@ -10,16 +10,9 @@
 
 namespace p0
 {
-	struct statement_tree;
-	struct expression_tree;
-	struct function_tree;
-	struct local_frame;
+	struct unit_generator;
 	struct compiler_error;
-
-	namespace intermediate
-	{
-		struct emitter;
-	}
+	struct function_tree;
 
 
 	struct code_generator
@@ -28,32 +21,21 @@ namespace p0
 
 
 		explicit code_generator(
-			function_tree const &tree,
-			size_t integer_width,
-			compiler_error_handler error_handler
+			unit_generator &unit
 			);
-		size_t integer_width() const;
-		intermediate::unit generate_unit();
+		unit_generator &unit() const;
 		size_t generate_function(
 			function_tree const &function
 			);
 		void handle_error(
 			compiler_error const &error
 			);
-		size_t get_string_id(
-			std::string value
-			);
+		void add_return(std::size_t jump_address);
 
 	private:
 
-		typedef std::unordered_map<std::string, size_t> string_id_table;
-
-
-		function_tree const &m_tree;
-		size_t const m_integer_width;
-		compiler_error_handler const m_error_handler;
-		intermediate::unit::function_vector m_functions;
-		string_id_table m_string_ids;
+		unit_generator &m_unit;
+		std::vector<std::size_t> m_return_instructions;
 	};
 }
 

@@ -20,7 +20,6 @@ namespace p0
 
 		explicit compiler(
 			source_range source,
-			size_t integer_width,
 			compiler_error_handler error_handler
 			);
 		intermediate::unit compile();
@@ -28,7 +27,6 @@ namespace p0
 	private:
 
 		source_range const m_source;
-		size_t const m_integer_width;
 		compiler_error_handler const m_error_handler;
 	};
 }

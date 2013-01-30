@@ -50,7 +50,7 @@ namespace p0
 			statement.value().accept(return_value_generator);
 		}
 
-		//TODO: jump to the end of the function
+		m_function_generator.add_return(m_emitter.get_current_jump_address());
 		m_emitter.jump(-1);
 	}
 

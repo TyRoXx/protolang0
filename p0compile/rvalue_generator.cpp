@@ -2,6 +2,7 @@
 #include "local_frame.hpp"
 #include "compiler_error.hpp"
 #include "code_generator.hpp"
+#include "unit_generator.hpp"
 #include "temporary.hpp"
 #include <sstream>
 #include <cctype>
@@ -48,8 +49,7 @@ namespace p0
 		typedef intermediate::instruction_argument integer;
 
 		integer value = 0, previous_value = 0;
-		auto const integer_width = m_function_generator.integer_width();
-		integer const integer_mask = (integer(1) << integer_width) - 1;
+		integer const integer_mask = std::numeric_limits<integer>::max();
 
 		auto const value_string = expression.value();
 		for (auto i = value_string.begin(); i != value_string.end(); ++i)
@@ -63,7 +63,7 @@ namespace p0
 				std::ostringstream message;
 				message
 					<< "The integer literal is too large (maximum: 2^"
-					<< integer_width
+					<< 64
 					<< "-1 = "
 					<< integer_mask
 					<< ")";
@@ -195,7 +195,7 @@ namespace p0
 
 		if (m_destination.is_valid())
 		{
-			auto const string_id = m_function_generator.get_string_id(
+			auto const string_id = m_function_generator.unit().get_string_id(
 				std::move(value)
 				);
 
@@ -271,7 +271,10 @@ namespace p0
 
 	void rvalue_generator::visit(function_tree const &expression)
 	{
-		auto const function_id = m_function_generator.generate_function(
+		code_generator function_generator(
+			m_function_generator.unit()
+			);
+		auto const function_id = function_generator.generate_function(
 			expression
 			);
 
@@ -322,7 +325,7 @@ namespace p0
 						);
 
 					{
-						auto const key_string_id = m_function_generator.get_string_id(
+						auto const key_string_id = m_function_generator.unit().get_string_id(
 							source_range_to_string(key)
 							);
 
@@ -579,7 +582,7 @@ namespace p0
 			[&function_generator, &emitter, element_name](reference &key_destination)
 		{
 			auto key = source_range_to_string(element_name);
-			auto const key_string_id = function_generator.get_string_id(
+			auto const key_string_id = function_generator.unit().get_string_id(
 				std::move(key)
 				);
 

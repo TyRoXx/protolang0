@@ -290,7 +290,7 @@ function 9
 0: set_from_constant          1         0
 1: copy                       1         1
 2: set_from_constant          2       123
-3: return            
+3: jump                       4
 end
 
 function 10
@@ -301,7 +301,7 @@ function 10
 4: copy                       8         2
 5: call                       6
 6: copy                       5         6
-7: return            
+7: jump                       8
 end
 
 function 11

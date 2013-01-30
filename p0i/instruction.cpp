@@ -56,6 +56,21 @@ namespace p0
 				(instruction <= instruction_type::greater_equal);
 		}
 
+		bool is_any_jump(instruction_type::Enum instruction)
+		{
+			using namespace instruction_type;
+			switch (instruction)
+			{
+			case jump:
+			case jump_if:
+			case jump_if_not:
+				return true;
+
+			default:
+				return false;
+			}
+		}
+
 		instruction_type::Enum find_instruction_by_name(std::string const &name)
 		{
 			int i = 0;

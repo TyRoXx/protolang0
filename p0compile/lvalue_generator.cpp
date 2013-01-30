@@ -4,6 +4,7 @@
 #include "temporary.hpp"
 #include "rvalue_generator.hpp"
 #include "code_generator.hpp"
+#include "unit_generator.hpp"
 
 
 namespace p0
@@ -177,7 +178,7 @@ namespace p0
 			[element_name, &function_generator, &emitter](reference &key_destination)
 		{
 			auto key = source_range_to_string(element_name);
-			auto const key_string_id = function_generator.get_string_id(
+			auto const key_string_id = function_generator.unit().get_string_id(
 				std::move(key)
 				);
 

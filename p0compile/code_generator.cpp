@@ -1,63 +1,35 @@
 #include "code_generator.hpp"
-#include "expression_tree.hpp"
-#include "statement_tree.hpp"
+#include "unit_generator.hpp"
 #include "local_frame.hpp"
+#include "expression_tree.hpp"
 #include "compiler_error.hpp"
 #include "statement_code_generator.hpp"
 #include "p0i/emitter.hpp"
+#include <cassert>
 
 
 namespace p0
 {
 	code_generator::code_generator(
-		function_tree const &tree,
-		size_t integer_width,
-		compiler_error_handler error_handler
+		unit_generator &unit
 		)
-		: m_tree(tree)
-		, m_integer_width(integer_width)
-		, m_error_handler(std::move(error_handler))
+		: m_unit(unit)
 	{
-		assert(integer_width >= 1);
-		assert(integer_width <= static_cast<size_t>(std::numeric_limits<intermediate::instruction_argument>::digits));
 	}
 
-	size_t code_generator::integer_width() const
+	unit_generator &code_generator::unit() const
 	{
-		return m_integer_width;
+		return m_unit;
 	}
-
-	intermediate::unit code_generator::generate_unit()
-	{
-		generate_function(
-			m_tree
-			);
-
-		intermediate::unit::string_vector strings(
-			m_string_ids.size()
-			);
-
-		for (auto s = m_string_ids.begin(); s != m_string_ids.end(); ++s)
-		{
-			auto const id = s->second;
-			auto value = s->first;
-
-			strings[id] = std::move(value);
-		}
-
-		return intermediate::unit(
-			std::move(m_functions),
-			std::move(strings)
-			);
-	}
-
+	
 	size_t code_generator::generate_function(
 		function_tree const &function
 		)
 	{
+		assert(m_return_instructions.empty());
+
 		//reserve a function index for later insertion
-		auto const function_index = m_functions.size();
-		m_functions.resize(function_index + 1);
+		auto const function_index = m_unit.allocate_function();
 
 		intermediate::function::instruction_vector instructions;
 		intermediate::emitter emitter(instructions);
@@ -77,7 +49,7 @@ namespace p0
 			}
 			catch (compiler_error const &e)
 			{
-				m_error_handler(e);
+				handle_error(e);
 			}
 		}
 
@@ -88,10 +60,18 @@ namespace p0
 			top_frame
 			);
 
-		m_functions[function_index] = intermediate::function(
+		for (auto i = m_return_instructions.begin();
+			i != m_return_instructions.end(); ++i)
+		{
+			auto &return_instruction = instructions[*i];
+			assert(intermediate::is_any_jump(return_instruction.type()));
+			return_instruction.arguments()[0] = instructions.size();
+		}
+
+		m_unit.define_function(function_index, intermediate::function(
 			std::move(instructions),
 			function.parameters().size()
-			);
+			));
 
 		return function_index;
 	}
@@ -100,24 +80,11 @@ namespace p0
 		compiler_error const &error
 		)
 	{
-		m_error_handler(error);
+		m_unit.handle_error(error);
 	}
-
-	size_t code_generator::get_string_id(
-		std::string value
-		)
+	
+	void code_generator::add_return(std::size_t jump_address)
 	{
-		auto const pos = m_string_ids.find(value);
-		if (pos == m_string_ids.end())
-		{
-			auto const id = m_string_ids.size();
-			m_string_ids.insert(std::make_pair(
-				std::move(value),
-				id
-				));
-			return id;
-		}
-
-		return pos->second;
+		m_return_instructions.push_back(jump_address);
 	}
 }
