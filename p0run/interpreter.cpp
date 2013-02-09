@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include "interpreter_listener.hpp"
 #include <cassert>
+#include <climits>
 #include <functional>
 #include <boost/static_assert.hpp>
 
@@ -177,25 +178,71 @@ namespace p0
 						if ((dest.type == value_type::integer) &&
 							(source.type == value_type::integer))
 						{
-							static auto const check_divisor = [](integer divisor)
+							static auto const check_divisor =
+								[](integer dividend, integer divisor)
 							{
 								if (divisor == 0)
 								{
 									throw std::runtime_error("Division by zero");
 								}
+								if (dividend == std::numeric_limits<integer>::min() &&
+									divisor == -1)
+								{
+									throw std::runtime_error("Quotient out of range");
+								}
 							};
+							static auto const check_shift_amount = [](integer shift)
+							{
+								integer const integer_size_bits = sizeof(integer) * CHAR_BIT;
+								if (shift < 0)
+								{
+									throw std::runtime_error("Shift by negative amount");
+								}
+								if (shift >= integer_size_bits)
+								{
+									throw std::runtime_error("Shift beyond bounds");
+								}
+							};
+							integer &left = dest.i;
+							integer const right = source.i;
 							switch (operation)
 							{
-							case add: dest.i += source.i; break;
-							case sub: dest.i -= source.i; break;
-							case mul: dest.i *= source.i; break;
-							case div: check_divisor(source.i); dest.i /= source.i; break;
-							case mod: check_divisor(source.i); dest.i %= source.i; break;
-							case and_: dest.i &= source.i; break;
-							case or_: dest.i |= source.i; break;
-							case xor_: dest.i ^= source.i; break;
-							case shift_left: dest.i <<= source.i; break;
-							case shift_right: dest.i >>= source.i; break;
+							case add:
+								left += right;
+								break;
+
+							case sub:
+								left -= right;
+								break;
+
+							case mul:
+								left *= right;
+								break;
+
+							case div:
+								check_divisor(left, right);
+								left /= right;
+								break;
+
+							case mod:
+								check_divisor(left, right);
+								left %= right;
+								break;
+
+							case and_: left &= right; break;
+							case or_: left |= right; break;
+							case xor_: left ^= right; break;
+
+							case shift_left:
+								check_shift_amount(right);
+								left <<= right;
+								break;
+
+							case shift_right:
+								check_shift_amount(right);
+								left >>= right;
+								break;
+
 							default: assert(!"missing operation"); break;
 							}
 						}
