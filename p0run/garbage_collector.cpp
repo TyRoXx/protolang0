@@ -12,16 +12,11 @@ namespace p0
 			m_objects.push_back(std::move(object));
 		}
 
-		void garbage_collector::mark()
+		void garbage_collector::unmark()
 		{
 			for (auto i = m_objects.begin(); i != m_objects.end(); ++i)
 			{
 				(*i)->unmark();
-			}
-
-			for (auto i = m_objects.begin(); i != m_objects.end(); ++i)
-			{
-				(*i)->mark();
 			}
 		}
 

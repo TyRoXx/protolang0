@@ -15,7 +15,7 @@ namespace p0
 		struct garbage_collector
 		{
 			void add_object(std::unique_ptr<object> object);
-			void mark();
+			void unmark();
 			void sweep();
 
 		private:

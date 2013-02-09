@@ -41,7 +41,7 @@ namespace p0
 
 		void interpreter::collect_garbage()
 		{
-			m_gc.mark();
+			m_gc.unmark();
 			std::for_each(m_locals.begin(), m_locals.end(),
 				[](value const &variable)
 			{
