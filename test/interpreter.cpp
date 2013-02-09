@@ -615,3 +615,14 @@ BOOST_AUTO_TEST_CASE(sub_overflow_test)
 	test_add_overflow(min_int + 66, 1 + 66, sub);
 	test_add_overflow(min_int / 2, - (min_int / 2) + 1, sub);
 }
+
+BOOST_AUTO_TEST_CASE(negation_overflow_test)
+{
+	expect_arithmetic_error([](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
+	{
+		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
+		emitter.negate(1);
+	});
+}
