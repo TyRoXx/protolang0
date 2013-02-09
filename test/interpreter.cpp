@@ -461,3 +461,27 @@ BOOST_AUTO_TEST_CASE(missing_argument_test)
 		BOOST_CHECK(is_null(result));
 	});
 }
+
+BOOST_AUTO_TEST_CASE(divide_by_zero_test)
+{
+	BOOST_CHECK_EXCEPTION((
+	run_single_function(
+		[](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
+	{
+		emitter.set_from_constant(1, 42);
+		emitter.set_from_constant(2, 0);
+		emitter.div(1, 2);
+	},
+		std::vector<value>(),
+		[](value const &)
+	{
+		BOOST_CHECK(!"No result expected");
+	})),
+		std::runtime_error,
+		[](std::runtime_error const &)
+	{
+		return true;
+	});
+}

@@ -107,6 +107,42 @@ namespace p0
 				));
 		}
 
+		void emitter::mul(
+			instruction_argument destination,
+			instruction_argument source
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::mul,
+				destination,
+				source
+				));
+		}
+
+		void emitter::div(
+			instruction_argument destination,
+			instruction_argument source
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::div,
+				destination,
+				source
+				));
+		}
+
+		void emitter::mod(
+			instruction_argument destination,
+			instruction_argument source
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::mod,
+				destination,
+				source
+				));
+		}
+
 		void emitter::not_(
 			instruction_argument destination
 			)

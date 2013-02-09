@@ -48,6 +48,18 @@ namespace p0
 				instruction_argument destination,
 				instruction_argument source
 				);
+			void mul(
+				instruction_argument destination,
+				instruction_argument source
+				);
+			void div(
+				instruction_argument destination,
+				instruction_argument source
+				);
+			void mod(
+				instruction_argument destination,
+				instruction_argument source
+				);
 			void not_(
 				instruction_argument destination
 				);
