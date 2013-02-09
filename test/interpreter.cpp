@@ -526,3 +526,53 @@ BOOST_AUTO_TEST_CASE(division_overflow_test)
 		emitter.mod(1, 2);
 	});
 }
+
+namespace
+{
+	void test_invalid_shift_amount(integer amount,
+								   intermediate::instruction_type::Enum shift)
+	{
+		expect_arithmetic_error([amount, shift](
+			intermediate::emitter &emitter,
+			intermediate::unit::string_vector &)
+		{
+			emitter.set_from_constant(1, 123);
+			emitter.set_from_constant(2, amount);
+			emitter.push_instruction(intermediate::instruction(shift, 1, 2));
+		});
+	}
+}
+
+BOOST_AUTO_TEST_CASE(negative_shift_amount_test)
+{
+	using intermediate::instruction_type::shift_left;
+	using intermediate::instruction_type::shift_right;
+
+	test_invalid_shift_amount(-1, shift_left);
+	test_invalid_shift_amount(-2, shift_left);
+	test_invalid_shift_amount(-64, shift_left);
+	test_invalid_shift_amount(std::numeric_limits<integer>::min(), shift_left);
+
+	test_invalid_shift_amount(-1, shift_right);
+	test_invalid_shift_amount(-2, shift_right);
+	test_invalid_shift_amount(-64, shift_right);
+	test_invalid_shift_amount(std::numeric_limits<integer>::min(), shift_right);
+}
+
+BOOST_AUTO_TEST_CASE(big_shift_amount_test)
+{
+	using intermediate::instruction_type::shift_left;
+	using intermediate::instruction_type::shift_right;
+
+	integer const max_shift = sizeof(integer) * CHAR_BIT - 1;
+
+	test_invalid_shift_amount(max_shift + 1, shift_left);
+	test_invalid_shift_amount(max_shift * 2, shift_left);
+	test_invalid_shift_amount(max_shift + 64, shift_left);
+	test_invalid_shift_amount(std::numeric_limits<integer>::max(), shift_left);
+
+	test_invalid_shift_amount(max_shift + 1, shift_right);
+	test_invalid_shift_amount(max_shift * 2, shift_right);
+	test_invalid_shift_amount(max_shift + 64, shift_right);
+	test_invalid_shift_amount(std::numeric_limits<integer>::max(), shift_right);
+}
