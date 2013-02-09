@@ -33,5 +33,15 @@ namespace p0
 		{
 			return m_is_marked;
 		}
+
+		integer object::get_hash_code() const
+		{
+			return static_cast<integer>(std::hash<object const *>()(this));
+		}
+
+		bool object::equals(object const &other) const
+		{
+			return (this == &other);
+		}
 	}
 }

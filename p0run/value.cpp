@@ -129,7 +129,10 @@ namespace p0
 					return comparison_result::greater;
 
 				case value_type::object:
-					return compare<object const *>(&left, right.obj);
+					assert(right.obj);
+					return (left.equals(*right.obj)) ?
+						comparison_result::equal :
+						compare<object const *>(&left, right.obj);
 				}
 				assert(!"Invalid value type");
 				return comparison_result::equal;
@@ -169,5 +172,29 @@ namespace p0
 			assert(!"Invalid value type");
 			return comparison_result::equal;
 		}
+	}
+}
+
+std::size_t std::hash<p0::run::value>::operator()(const p0::run::value &value) const
+{
+	using namespace p0::run::value_type;
+	switch (value.type)
+	{
+	case null:
+		return -1;
+
+	case integer:
+		return std::hash<p0::run::integer>()(value.i);
+
+	case function_ptr:
+		return std::hash<p0::intermediate::function const *>()
+			(value.function_ptr);
+
+	case object:
+		return static_cast<std::size_t>(value.obj->get_hash_code());
+
+	default:
+		assert(!"Invalid type");
+		return 0;
 	}
 }

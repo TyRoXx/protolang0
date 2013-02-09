@@ -35,5 +35,19 @@ namespace p0
 		{
 			return false;
 		}
+
+		integer string::get_hash_code() const
+		{
+			return static_cast<integer>(std::hash<std::string>()(m_content));
+		}
+
+		bool string::equals(object const &other) const
+		{
+			if (string const * const other_string = dynamic_cast<string const *>(&other))
+			{
+				return (other_string->m_content == m_content);
+			}
+			return false;
+		}
 	}
 }

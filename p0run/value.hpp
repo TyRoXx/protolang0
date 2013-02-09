@@ -99,30 +99,7 @@ namespace std
 	{
 	public:
 
-		inline std::size_t operator()(const p0::run::value &value) const
-		{
-			using namespace p0::run::value_type;
-			switch (value.type)
-			{
-			case null:
-				return -1;
-
-			case integer:
-				return std::hash<p0::run::integer>()(value.i);
-
-			case function_ptr:
-				return std::hash<p0::intermediate::function const *>()
-					(value.function_ptr);
-
-			case object:
-				return std::hash<p0::run::object const *>()
-					(value.obj);
-
-			default:
-				assert(!"Invalid type");
-				return 0;
-			}
-		}
+		std::size_t operator()(const p0::run::value &value) const;
 	};
 }
 

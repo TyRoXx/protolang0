@@ -16,6 +16,8 @@ namespace p0
 			std::string const &content() const;
 			virtual boost::optional<value> get_element(value const &key) const override;
 			virtual bool set_element(value const &key, value const &value) override;
+			virtual integer get_hash_code() const override;
+			virtual bool equals(object const &other) const override;
 
 		private:
 
