@@ -240,6 +240,7 @@ namespace p0
 
 							case shift_right:
 								check_shift_amount(right);
+								//TODO: result is unspecified in C++ if left is negative
 								left >>= right;
 								break;
 
