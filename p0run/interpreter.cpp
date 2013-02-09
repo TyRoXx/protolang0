@@ -203,19 +203,34 @@ namespace p0
 									throw std::runtime_error("Shift beyond bounds");
 								}
 							};
+							static auto const checked_add = [](integer &left, integer right)
+							{
+								if (left > 0 &&
+									std::numeric_limits<integer>::max() - left < right)
+								{
+									throw std::runtime_error("Add overflow");
+								}
+								if (left < 0 &&
+									std::numeric_limits<integer>::min() - left > right)
+								{
+									throw std::runtime_error("Add overflow");
+								}
+								left += right;
+							};
 							integer &left = dest.i;
 							integer const right = source.i;
 							switch (operation)
 							{
 							case add:
-								left += right;
+								checked_add(left, right);
 								break;
 
 							case sub:
-								left -= right;
+								checked_add(left, -right);
 								break;
 
 							case mul:
+								//TODO: check overflow?
 								left *= right;
 								break;
 
@@ -275,6 +290,10 @@ namespace p0
 						auto &operand = get(local_frame, operand_address);
 						if (operand.type == value_type::integer)
 						{
+							if (operand.i == std::numeric_limits<integer>::min())
+							{
+								throw std::runtime_error("Negation overflow");
+							}
 							operand.i = -operand.i;
 						}
 						break;

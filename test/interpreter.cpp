@@ -576,3 +576,42 @@ BOOST_AUTO_TEST_CASE(big_shift_amount_test)
 	test_invalid_shift_amount(max_shift + 64, shift_right);
 	test_invalid_shift_amount(std::numeric_limits<integer>::max(), shift_right);
 }
+
+namespace
+{
+	void test_add_overflow(integer left,
+						   integer right,
+						   intermediate::instruction_type::Enum add)
+	{
+		expect_arithmetic_error([left, right, add](
+			intermediate::emitter &emitter,
+			intermediate::unit::string_vector &)
+		{
+			emitter.set_from_constant(1, left);
+			emitter.set_from_constant(2, right);
+			emitter.push_instruction(intermediate::instruction(add, 1, 2));
+		});
+	}
+}
+
+BOOST_AUTO_TEST_CASE(add_overflow_test)
+{
+	using intermediate::instruction_type::add;
+
+	auto const max_int = std::numeric_limits<integer>::max();
+
+	test_add_overflow(max_int, 1, add);
+	test_add_overflow(max_int - 66, 1 + 66, add);
+	test_add_overflow(max_int / 2 + 1, max_int / 2 + 1, add);
+}
+
+BOOST_AUTO_TEST_CASE(sub_overflow_test)
+{
+	using intermediate::instruction_type::sub;
+
+	auto const min_int = std::numeric_limits<integer>::min();
+
+	test_add_overflow(min_int, 1, sub);
+	test_add_overflow(min_int + 66, 1 + 66, sub);
+	test_add_overflow(min_int / 2, - (min_int / 2) + 1, sub);
+}
