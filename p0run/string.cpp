@@ -49,5 +49,23 @@ namespace p0
 			}
 			return false;
 		}
+
+		comparison_result::Enum string::compare(object const &right) const
+		{
+			if (string const * const right_string = dynamic_cast<string const *>(&right))
+			{
+				int const result = m_content.compare(right_string->m_content);
+				if (result < 0)
+				{
+					return comparison_result::less;
+				}
+				if (result > 0)
+				{
+					return comparison_result::greater;
+				}
+				return comparison_result::equal;
+			}
+			return object::compare(right);
+		}
 	}
 }

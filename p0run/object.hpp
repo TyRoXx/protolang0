@@ -22,6 +22,7 @@ namespace p0
 			virtual bool set_element(value const &key, value const &value) = 0;
 			virtual integer get_hash_code() const;
 			virtual bool equals(object const &other) const;
+			virtual comparison_result::Enum compare(object const &right) const;
 
 		private:
 

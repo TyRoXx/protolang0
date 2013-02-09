@@ -130,9 +130,7 @@ namespace p0
 
 				case value_type::object:
 					assert(right.obj);
-					return (left.equals(*right.obj)) ?
-						comparison_result::equal :
-						compare<object const *>(&left, right.obj);
+					return left.compare(*right.obj);
 				}
 				assert(!"Invalid value type");
 				return comparison_result::equal;

@@ -18,6 +18,7 @@ namespace p0
 			virtual bool set_element(value const &key, value const &value) override;
 			virtual integer get_hash_code() const override;
 			virtual bool equals(object const &other) const override;
+			virtual comparison_result::Enum compare(object const &right) const override;
 
 		private:
 

@@ -43,5 +43,18 @@ namespace p0
 		{
 			return (this == &other);
 		}
+
+		comparison_result::Enum object::compare(object const &right) const
+		{
+			if (this < &right)
+			{
+				return comparison_result::less;
+			}
+			if (this > &right)
+			{
+				return comparison_result::greater;
+			}
+			return comparison_result::equal;
+		}
 	}
 }
