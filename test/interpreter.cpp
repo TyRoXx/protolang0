@@ -462,50 +462,67 @@ BOOST_AUTO_TEST_CASE(missing_argument_test)
 	});
 }
 
+namespace
+{
+	template <class Emit>
+	void expect_arithmetic_error(Emit const &emit)
+	{
+		BOOST_CHECK_EXCEPTION((
+		run_single_function(
+			emit,
+			std::vector<value>(),
+			[](value const &)
+		{
+			BOOST_CHECK(!"No result expected");
+		})),
+			std::runtime_error,
+			[](std::runtime_error const &)
+		{
+			return true;
+		});
+	}
+}
+
 BOOST_AUTO_TEST_CASE(divide_by_zero_test)
 {
-	BOOST_CHECK_EXCEPTION((
-	run_single_function(
-		[](
+	expect_arithmetic_error([](
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
 		emitter.set_from_constant(1, 42);
 		emitter.set_from_constant(2, 0);
 		emitter.div(1, 2);
-	},
-		std::vector<value>(),
-		[](value const &)
+	});
+
+	//only difference: mod instead of div
+	expect_arithmetic_error([](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
 	{
-		BOOST_CHECK(!"No result expected");
-	})),
-		std::runtime_error,
-		[](std::runtime_error const &)
-	{
-		return true;
+		emitter.set_from_constant(1, 42);
+		emitter.set_from_constant(2, 0);
+		emitter.mod(1, 2);
 	});
 }
 
 BOOST_AUTO_TEST_CASE(division_overflow_test)
 {
-	BOOST_CHECK_EXCEPTION((
-	run_single_function(
-		[](
+	expect_arithmetic_error([](
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
 		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
 		emitter.set_from_constant(2, -1);
 		emitter.div(1, 2);
-	},
-		std::vector<value>(),
-		[](value const &)
+	});
+
+	//only difference: mod instead of div
+	expect_arithmetic_error([](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &)
 	{
-		BOOST_CHECK(!"No result expected");
-	})),
-		std::runtime_error,
-		[](std::runtime_error const &)
-	{
-		return true;
+		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_from_constant(2, -1);
+		emitter.mod(1, 2);
 	});
 }
