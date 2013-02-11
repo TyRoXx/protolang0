@@ -1,6 +1,7 @@
 #include "scanner.hpp"
 #include "compiler_error.hpp"
 #include <cctype>
+#include <cstring>
 
 
 namespace p0
@@ -131,11 +132,24 @@ namespace p0
 		case '*': return eat_single_char_token(token_type::star);
 		case '/': return eat_single_char_token(token_type::slash);
 		case '%': return eat_single_char_token(token_type::modulo);
-		case '&': return eat_single_or_double_token(token_type::ampersand, '&', token_type::ampersands);
-		case '|': return eat_single_or_double_token(token_type::pipe, '|', token_type::pipes);
-		case '<': return eat_single_or_triple_token(token_type::less, '<', token_type::shift_left, '=', token_type::less_equal);
-		case '>': return eat_single_or_triple_token(token_type::greater, '>', token_type::shift_right, '=', token_type::greater_equal);
-		case '!': return eat_single_or_double_token(token_type::exclamation_mark, '=', token_type::not_equal);
+		case '&': return eat_single_or_double_token(
+						token_type::ampersand,
+						'&', token_type::ampersands);
+		case '|': return eat_single_or_double_token(
+						token_type::pipe,
+						'|', token_type::pipes);
+		case '<': return eat_single_or_double_token(
+						token_type::less,
+						'<', token_type::shift_left,
+						'=', token_type::less_equal);
+		case '>': return eat_triple_token(
+						token_type::greater,
+						'>', token_type::shift_right,
+						'=', token_type::greater_equal,
+						">>", token_type::shift_signed);
+		case '!': return eat_single_or_double_token(
+						token_type::exclamation_mark,
+						'=', token_type::not_equal);
 		case '.': return eat_single_char_token(token_type::dot);
 		case '~': return eat_single_char_token(token_type::tilde);
 		case '^': return eat_single_char_token(token_type::caret);
@@ -339,7 +353,7 @@ namespace p0
 		return token(single_token, source_range(m_pos - 1, m_pos));
 	}
 
-	token scanner::eat_single_or_triple_token(
+	token scanner::eat_single_or_double_token(
 		token_type::Enum single_token,
 		char second_char_0,
 		token_type::Enum double_token_0,
@@ -347,10 +361,46 @@ namespace p0
 		token_type::Enum double_token_1
 		)
 	{
+		return eat_triple_token(single_token,
+								second_char_0, double_token_0,
+								second_char_1, double_token_1,
+								nullptr, token_type::end_of_file);
+	}
+
+	token scanner::eat_triple_token(
+		token_type::Enum single_token,
+		char second_char_0,
+		token_type::Enum double_token_0,
+		char second_char_1,
+		token_type::Enum double_token_1,
+		char const *tail,
+		token_type::Enum tail_token
+		)
+	{
 		++m_pos;
 
 		if (m_pos != m_end)
 		{
+			if (tail)
+			{
+				auto const tail_size = static_cast<ptrdiff_t>(std::strlen(tail));
+				if (tail_size <= std::distance(m_pos, m_end))
+				{
+					auto const tail_end = tail + tail_size;
+					auto const result = std::mismatch(
+						tail, tail_end,
+						m_pos);
+
+					//do we have a match?
+					if (result.first == tail_end)
+					{
+						auto const token_begin = m_pos;
+						m_pos = result.second;
+						return token(tail_token, source_range(token_begin, m_pos));
+					}
+				}
+			}
+
 			if (*m_pos == second_char_0)
 			{
 				++m_pos;

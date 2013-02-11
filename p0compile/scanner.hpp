@@ -32,12 +32,21 @@ namespace p0
 			char second_char,
 			token_type::Enum double_token
 			);
-		token eat_single_or_triple_token(
+		token eat_single_or_double_token(
 			token_type::Enum single_token,
 			char second_char_0,
 			token_type::Enum double_token_0,
 			char second_char_1,
 			token_type::Enum double_token_1
+			);
+		token eat_triple_token(
+			token_type::Enum single_token,
+			char second_char_0,
+			token_type::Enum double_token_0,
+			char second_char_1,
+			token_type::Enum double_token_1,
+			char const *tail,
+			token_type::Enum tail_token
 			);
 	};
 }

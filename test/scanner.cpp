@@ -79,6 +79,7 @@ BOOST_AUTO_TEST_CASE(operator_test)
 	BOOST_CHECK(scan_single_token("||", pipes));
 	BOOST_CHECK(scan_single_token("<<", shift_left));
 	BOOST_CHECK(scan_single_token(">>", shift_right));
+	BOOST_CHECK(scan_single_token(">>>", shift_signed));
 	BOOST_CHECK(scan_single_token("<", less));
 	BOOST_CHECK(scan_single_token("<=", less_equal));
 	BOOST_CHECK(scan_single_token(">", greater));

@@ -43,6 +43,7 @@ namespace p0
 			pipes,
 			shift_left,
 			shift_right,
+			shift_signed,
 			less,
 			less_equal,
 			greater,
