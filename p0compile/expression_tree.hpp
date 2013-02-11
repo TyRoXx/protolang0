@@ -188,7 +188,7 @@ namespace p0
 			inverse,
 			negative,
 		};
-	};
+	}
 
 	struct unary_expression_tree : expression_tree
 	{
@@ -233,7 +233,7 @@ namespace p0
 			logical_and,
 			logical_or,
 		};
-	};
+	}
 
 	struct binary_expression_tree : expression_tree
 	{
