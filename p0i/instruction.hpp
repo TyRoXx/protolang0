@@ -36,6 +36,7 @@ namespace p0
 				xor_,
 				shift_left,
 				shift_right,
+				shift_signed,
 				equal,
 				not_equal,
 				less,

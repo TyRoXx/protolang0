@@ -7,6 +7,7 @@
 #include <stdexcept>
 #include <functional>
 #include <boost/static_assert.hpp>
+#include <boost/type_traits/make_unsigned.hpp>
 
 
 namespace p0
@@ -98,7 +99,7 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 32);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 33);
 
 				switch (operation)
 				{
@@ -171,6 +172,7 @@ namespace p0
 				case xor_:
 				case shift_left:
 				case shift_right:
+				case shift_signed:
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 						auto const source_address = static_cast<size_t>(instr_arguments[1]);
@@ -255,6 +257,17 @@ namespace p0
 								break;
 
 							case shift_right:
+							{
+								check_shift_amount(right);
+								typedef boost::make_unsigned<integer>::type unsigned_integer;
+								auto const result =
+									static_cast<unsigned_integer>(left) >>
+									static_cast<unsigned_integer>(right);
+								left = static_cast<integer>(result);
+								break;
+							}
+
+							case shift_signed:
 								check_shift_amount(right);
 								//TODO: result is unspecified in C++ if left is negative
 								left >>= right;

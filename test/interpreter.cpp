@@ -541,40 +541,44 @@ namespace
 			emitter.push_instruction(intermediate::instruction(shift, 1, 2));
 		});
 	}
+
+	void test_negative_invalid_shift(intermediate::instruction_type::Enum operation)
+	{
+		test_invalid_shift_amount(-1, operation);
+		test_invalid_shift_amount(-2, operation);
+		test_invalid_shift_amount(-64, operation);
+		test_invalid_shift_amount(std::numeric_limits<integer>::min(), operation);
+	}
 }
 
 BOOST_AUTO_TEST_CASE(negative_shift_amount_test)
 {
-	using intermediate::instruction_type::shift_left;
-	using intermediate::instruction_type::shift_right;
+	using namespace intermediate::instruction_type;
 
-	test_invalid_shift_amount(-1, shift_left);
-	test_invalid_shift_amount(-2, shift_left);
-	test_invalid_shift_amount(-64, shift_left);
-	test_invalid_shift_amount(std::numeric_limits<integer>::min(), shift_left);
+	test_negative_invalid_shift(shift_left);
+	test_negative_invalid_shift(shift_right);
+	test_negative_invalid_shift(shift_signed);
+}
 
-	test_invalid_shift_amount(-1, shift_right);
-	test_invalid_shift_amount(-2, shift_right);
-	test_invalid_shift_amount(-64, shift_right);
-	test_invalid_shift_amount(std::numeric_limits<integer>::min(), shift_right);
+namespace
+{
+	void test_big_shift(intermediate::instruction_type::Enum operation)
+	{
+		integer const max_shift = sizeof(integer) * CHAR_BIT - 1;
+		test_invalid_shift_amount(max_shift + 1, operation);
+		test_invalid_shift_amount(max_shift * 2, operation);
+		test_invalid_shift_amount(max_shift + 64, operation);
+		test_invalid_shift_amount(std::numeric_limits<integer>::max(), operation);
+	}
 }
 
 BOOST_AUTO_TEST_CASE(big_shift_amount_test)
 {
-	using intermediate::instruction_type::shift_left;
-	using intermediate::instruction_type::shift_right;
+	using namespace intermediate::instruction_type;
 
-	integer const max_shift = sizeof(integer) * CHAR_BIT - 1;
-
-	test_invalid_shift_amount(max_shift + 1, shift_left);
-	test_invalid_shift_amount(max_shift * 2, shift_left);
-	test_invalid_shift_amount(max_shift + 64, shift_left);
-	test_invalid_shift_amount(std::numeric_limits<integer>::max(), shift_left);
-
-	test_invalid_shift_amount(max_shift + 1, shift_right);
-	test_invalid_shift_amount(max_shift * 2, shift_right);
-	test_invalid_shift_amount(max_shift + 64, shift_right);
-	test_invalid_shift_amount(std::numeric_limits<integer>::max(), shift_right);
+	test_big_shift(shift_left);
+	test_big_shift(shift_right);
+	test_big_shift(shift_signed);
 }
 
 namespace
