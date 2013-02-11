@@ -323,6 +323,11 @@ namespace p0
 				operator_ = binary_operator::shift_right;
 				return true;
 
+			case token_type::shift_signed:
+				precedence = 7;
+				operator_ = binary_operator::shift_signed;
+				return true;
+
 			case token_type::plus:
 				precedence = 6;
 				operator_ = binary_operator::add;

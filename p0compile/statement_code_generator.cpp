@@ -213,11 +213,13 @@ namespace p0
 
 	void statement_code_generator::visit(break_tree const &statement)
 	{
+		(void)statement;
 		//TODO
 	}
 
 	void statement_code_generator::visit(continue_tree const &statement)
 	{
+		(void)statement;
 		//TODO
 	}
 

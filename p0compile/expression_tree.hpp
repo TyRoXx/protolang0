@@ -224,6 +224,7 @@ namespace p0
 			bit_xor,
 			shift_left,
 			shift_right,
+			shift_signed,
 			equal,
 			not_equal,
 			less,
@@ -232,6 +233,8 @@ namespace p0
 			greater_equal,
 			logical_and,
 			logical_or,
+
+			count_
 		};
 	}
 

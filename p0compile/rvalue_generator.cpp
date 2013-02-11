@@ -409,6 +409,7 @@ namespace p0
 		{
 			using namespace intermediate;
 
+			BOOST_STATIC_ASSERT(binary_operator::count_ == 19);
 			switch (op)
 			{
 			case binary_operator::add: return instruction_type::add;
@@ -421,6 +422,7 @@ namespace p0
 			case binary_operator::bit_xor: return instruction_type::xor_;
 			case binary_operator::shift_left: return instruction_type::shift_left;
 			case binary_operator::shift_right: return instruction_type::shift_right;
+			case binary_operator::shift_signed: return instruction_type::shift_signed;
 			case binary_operator::equal: return instruction_type::equal;
 			case binary_operator::not_equal: return instruction_type::not_equal;
 			case binary_operator::less: return instruction_type::less;
