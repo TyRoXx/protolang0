@@ -473,7 +473,7 @@ namespace
 			std::vector<value>(),
 			[](value const &)
 		{
-			BOOST_CHECK(!"No result expected");
+			BOOST_CHECK(nullptr == "No result expected");
 		})),
 			std::runtime_error,
 			[](std::runtime_error const &)

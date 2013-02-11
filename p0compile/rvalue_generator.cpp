@@ -94,12 +94,12 @@ namespace p0
 
 			if (c >= '0' && c <= '9')
 			{
-				return (c - '0');
+				return static_cast<unsigned>(c - '0');
 			}
 
 			if (c >= 'a' && c <= 'f')
 			{
-				return 10 + (c - 'a');
+				return static_cast<unsigned>(10 + (c - 'a'));
 			}
 
 			throw compiler_error(
@@ -146,12 +146,13 @@ namespace p0
 								++i;
 								if (i != end)
 								{
-									c = static_cast<char>(hex_digit_value(i) * 16u);
+									auto hex_value = hex_digit_value(i) * 16u;
 
 									++i;
 									if (i != end)
 									{
-										c = static_cast<char>(c + hex_digit_value(i));
+										hex_value += hex_digit_value(i);
+										c = static_cast<char>(hex_value);
 										break;
 									}
 								}
@@ -426,7 +427,7 @@ namespace p0
 			case binary_operator::less_equal: return instruction_type::less_equal;
 			case binary_operator::greater: return instruction_type::greater;
 			case binary_operator::greater_equal: return instruction_type::greater_equal;
-			default: assert(!"invalid binary operator id for direct translation"); return instruction_type::nothing;
+			default: assert(nullptr == "invalid binary operator id for direct translation"); return instruction_type::nothing;
 			}
 		}
 	}

@@ -12,7 +12,7 @@ namespace
 	bool expect_no_error(p0::compiler_error const &error)
 	{
 		std::cerr << error.what() << '\n';
-		BOOST_CHECK(!"no error expected");
+		BOOST_CHECK(nullptr == "no error expected");
 		return true;
 	}
 

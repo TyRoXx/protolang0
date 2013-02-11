@@ -54,10 +54,10 @@ namespace p0
 
 		out << error.what() << '\n';
 
-		size_t const line_index = std::count(
+		auto const line_index = static_cast<size_t>(std::count(
 			source.begin(),
 			pos.begin(),
-			'\n'); //TODO O(n) instead of O(n^2)
+			'\n')); //TODO O(n) instead of O(n^2)
 
 		std::ostringstream line_label_formatter;
 		line_label_formatter << (line_index + 1) << ": ";
@@ -67,7 +67,7 @@ namespace p0
 
 		auto const error_char_index =
 			line_label.size() +
-			std::distance(hint_begin, pos.begin());
+			static_cast<size_t>(std::distance(hint_begin, pos.begin()));
 
 		out << std::string(error_char_index, ' ') << "^\n";
 	}

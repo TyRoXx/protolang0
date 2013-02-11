@@ -32,7 +32,8 @@ namespace p0
 
 				auto const &info = get_instruction_info(instruction.type());
 
-				file << std::setw(address_width) << std::setfill('0') << address << std::setfill(' ');
+				file << std::setw(static_cast<int>(address_width))
+					 << std::setfill('0') << address << std::setfill(' ');
 				file << ": ";
 				file << std::setw(18) << std::left << info.name;
 
@@ -112,7 +113,8 @@ namespace p0
 			}
 
 			auto const string_count = unit.strings().size();
-			auto const base10_index_width = get_base10_index_width(string_count);
+			int const base10_index_width = static_cast<int>(
+				get_base10_index_width(string_count));
 
 			for (size_t s = 0; s < string_count; ++s)
 			{

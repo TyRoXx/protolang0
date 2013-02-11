@@ -4,6 +4,7 @@
 #include "interpreter_listener.hpp"
 #include <cassert>
 #include <climits>
+#include <stdexcept>
 #include <functional>
 #include <boost/static_assert.hpp>
 
@@ -259,7 +260,7 @@ namespace p0
 								left >>= right;
 								break;
 
-							default: assert(!"missing operation"); break;
+							default: assert(nullptr == "missing operation"); break;
 							}
 						}
 						break;
@@ -310,7 +311,7 @@ namespace p0
 						auto const right_address = static_cast<size_t>(instr_arguments[1]);
 						auto const right = get(local_frame, right_address);
 						auto &left = get(local_frame, left_address);
-						int const status = compare(left, right);
+						auto const status = compare(left, right);
 						namespace co = comparison_result;
 						static std::array<unsigned, 6> const expected_status =
 						{{
@@ -341,7 +342,7 @@ namespace p0
 						{
 							throw std::runtime_error("Invalid jump destination");
 						}
-						current_instr = (code.begin() + destination);
+						current_instr = (code.begin() + static_cast<ptrdiff_t>(destination));
 						--current_instr;
 						break;
 					}
@@ -358,7 +359,7 @@ namespace p0
 						auto const &condition = get(local_frame, condition_address);
 						if (to_boolean(condition) == (operation == jump_if))
 						{
-							current_instr = (code.begin() + destination);
+							current_instr = (code.begin() + static_cast<ptrdiff_t>(destination));
 							--current_instr;
 						}
 						break;
@@ -415,7 +416,7 @@ namespace p0
 					}
 
 				default:
-					assert(!"invalid operation id");
+					assert(nullptr == "invalid operation id");
 					break;
 				}
 

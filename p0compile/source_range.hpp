@@ -12,15 +12,12 @@ namespace p0
 	typedef boost::iterator_range<char const *> source_range;
 
 
-	namespace
+	inline std::string source_range_to_string(source_range source)
 	{
-		std::string source_range_to_string(source_range source)
-		{
-			return std::string(
-				source.begin(),
-				source.end()
-				);
-		}
+		return std::string(
+			source.begin(),
+			source.end()
+			);
 	}
 }
 

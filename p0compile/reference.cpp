@@ -5,7 +5,7 @@
 namespace p0
 {
 	reference::reference()
-		: m_local_address(-1)
+		: m_local_address(static_cast<size_t>(-1))
 	{
 	}
 

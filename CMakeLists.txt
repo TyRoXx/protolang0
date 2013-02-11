@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 
 project(protolang0)
 
-if (CMAKE_COMPILER_IS_GNUCXX)
+if (UNIX OR MINGW)
 	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall -Wconversion -Wextra -pedantic")
 endif()
 
