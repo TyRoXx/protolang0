@@ -60,7 +60,7 @@ namespace p0
 			case value_type::object:
 				return true;
 			}
-			assert(!"Invalid value type");
+			assert(nullptr == "Invalid value type");
 			return false;
 		}
 
@@ -89,7 +89,7 @@ namespace p0
 				case value_type::object:
 					return comparison_result::greater;
 				}
-				assert(!"Invalid value type");
+				assert(nullptr == "Invalid value type");
 				return comparison_result::equal;
 			}
 
@@ -110,7 +110,7 @@ namespace p0
 				case value_type::object:
 					return comparison_result::less;
 				}
-				assert(!"Invalid value type");
+				assert(nullptr == "Invalid value type");
 				return comparison_result::equal;
 			}
 
@@ -132,7 +132,7 @@ namespace p0
 					assert(right.obj);
 					return left.compare(*right.obj);
 				}
-				assert(!"Invalid value type");
+				assert(nullptr == "Invalid value type");
 				return comparison_result::equal;
 			}
 		}
@@ -167,7 +167,7 @@ namespace p0
 				return compare_impl(*left.obj, right);
 			}
 
-			assert(!"Invalid value type");
+			assert(nullptr == "Invalid value type");
 			return comparison_result::equal;
 		}
 	}
@@ -179,7 +179,7 @@ std::size_t std::hash<p0::run::value>::operator()(const p0::run::value &value) c
 	switch (value.type)
 	{
 	case null:
-		return -1;
+		return static_cast<size_t>(-1);
 
 	case integer:
 		return std::hash<p0::run::integer>()(value.i);
@@ -192,7 +192,7 @@ std::size_t std::hash<p0::run::value>::operator()(const p0::run::value &value) c
 		return static_cast<std::size_t>(value.obj->get_hash_code());
 
 	default:
-		assert(!"Invalid type");
+		assert(nullptr == "Invalid type");
 		return 0;
 	}
 }

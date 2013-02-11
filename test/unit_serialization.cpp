@@ -76,5 +76,6 @@ BOOST_AUTO_TEST_CASE(load_save_test)
 
 	unit const original_unit(functions, strings);
 
+	//TODO: implement proper unit serialization and test it
 	//throw std::runtime_error("Not implemented");
 }

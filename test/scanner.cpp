@@ -162,7 +162,8 @@ namespace
 		}
 		catch (p0::compiler_error const &e)
 		{
-			std::size_t const error_pos = std::distance(code.data(), e.position().begin());
+			auto const error_pos = static_cast<size_t>(
+				std::distance(code.data(), e.position().begin()));
 			return (position == error_pos);
 		}
 
