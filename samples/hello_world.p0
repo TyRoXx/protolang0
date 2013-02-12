@@ -1,2 +1,2 @@
-var std = load_module "std"
+var std = import "std"
 std.print("Hello, world!", "\n")

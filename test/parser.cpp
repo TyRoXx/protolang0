@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(parse_return_test)
 
 BOOST_AUTO_TEST_CASE(parse_load_module_test)
 {
-	test_parser("load_module name", [](p0::function_tree const &ast)
+	test_parser("import name", [](p0::function_tree const &ast)
 	{
 		BOOST_CHECK(ast.parameters().empty());
 		check_statement(ast.body(), [](p0::block_tree const &block)
@@ -101,7 +101,7 @@ BOOST_AUTO_TEST_CASE(parse_load_module_test)
 			BOOST_REQUIRE(block.body().size() == 1);
 			check_statement(*block.body()[0], [](p0::expression_statement_tree const &statement)
 			{
-				check_expression(statement.expression(), [](p0::load_module_expression_tree const &load_module)
+				check_expression(statement.expression(), [](p0::import_expression_tree const &load_module)
 				{
 					check_expression(load_module.name(), [](p0::name_expression_tree const &name)
 					{

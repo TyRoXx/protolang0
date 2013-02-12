@@ -215,7 +215,7 @@ namespace p0
 		});
 	}
 
-	void lvalue_generator::visit(load_module_expression_tree const &expression)
+	void lvalue_generator::visit(import_expression_tree const &expression)
 	{
 		throw compiler_error(
 			"A load_module expression is not an LValue",

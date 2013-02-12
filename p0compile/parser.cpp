@@ -648,11 +648,11 @@ namespace p0
 					));
 			}
 
-		case token_type::load_module:
+		case token_type::import:
 			{
 				auto name = parse_expression();
 				return std::unique_ptr<expression_tree>(
-					new load_module_expression_tree(std::move(name), first.content));
+					new import_expression_tree(std::move(name), first.content));
 			}
 
 		default:

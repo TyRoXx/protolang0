@@ -330,7 +330,7 @@ namespace p0
 	}
 
 
-	load_module_expression_tree::load_module_expression_tree(
+	import_expression_tree::import_expression_tree(
 		std::unique_ptr<expression_tree> name,
 		source_range position
 		)
@@ -340,17 +340,17 @@ namespace p0
 		assert(m_name);
 	}
 
-	void load_module_expression_tree::accept(expression_tree_visitor &visitor) const
+	void import_expression_tree::accept(expression_tree_visitor &visitor) const
 	{
 		visitor.visit(*this);
 	}
 
-	source_range load_module_expression_tree::position() const
+	source_range import_expression_tree::position() const
 	{
 		return m_position;
 	}
 
-	expression_tree const &load_module_expression_tree::name() const
+	expression_tree const &import_expression_tree::name() const
 	{
 		assert(m_name);
 		return *m_name;

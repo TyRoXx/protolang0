@@ -45,7 +45,7 @@ namespace p0
 		virtual void visit(binary_expression_tree const &expression) override;
 		virtual void visit(dot_element_expression_tree const &expression) override;
 		virtual void visit(subscript_expression_tree const &expression) override;
-		virtual void visit(load_module_expression_tree const &expression) override;
+		virtual void visit(import_expression_tree const &expression) override;
 	};
 }
 

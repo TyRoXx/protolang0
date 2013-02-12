@@ -105,6 +105,7 @@ BOOST_AUTO_TEST_CASE(keyword_test)
 	BOOST_CHECK(scan_single_token("while", while_));
 	BOOST_CHECK(scan_single_token("break", break_));
 	BOOST_CHECK(scan_single_token("continue", continue_));
+	BOOST_CHECK(scan_single_token("import", import));
 }
 
 namespace

@@ -22,7 +22,7 @@ namespace p0
 	struct binary_expression_tree;
 	struct dot_element_expression_tree;
 	struct subscript_expression_tree;
-	struct load_module_expression_tree;
+	struct import_expression_tree;
 	struct statement_tree;
 
 
@@ -40,7 +40,7 @@ namespace p0
 		virtual void visit(binary_expression_tree const &expression) = 0;
 		virtual void visit(dot_element_expression_tree const &expression) = 0;
 		virtual void visit(subscript_expression_tree const &expression) = 0;
-		virtual void visit(load_module_expression_tree const &expression) = 0;
+		virtual void visit(import_expression_tree const &expression) = 0;
 	};
 
 
@@ -297,9 +297,9 @@ namespace p0
 	};
 
 
-	struct load_module_expression_tree : expression_tree
+	struct import_expression_tree : expression_tree
 	{
-		explicit load_module_expression_tree(
+		explicit import_expression_tree(
 			std::unique_ptr<expression_tree> name,
 			source_range position
 			);

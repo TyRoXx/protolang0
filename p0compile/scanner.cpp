@@ -76,7 +76,7 @@ namespace p0
 				{"while", token_type::while_},
 				{"break", token_type::break_},
 				{"continue", token_type::continue_},
-				{"load_module", token_type::load_module},
+				{"import", token_type::import},
 			}};
 
 			using namespace std;
