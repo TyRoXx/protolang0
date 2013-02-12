@@ -45,7 +45,10 @@ namespace p0
 				);
 
 			p0::intermediate::unit compiled_unit = compiler.compile();
-			return compiled_unit;
+			if (error_counter == 0)
+			{
+				return compiled_unit;
+			}
 		}
 		catch (p0::compiler_error const &e)
 		{
