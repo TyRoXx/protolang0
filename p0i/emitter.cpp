@@ -319,6 +319,16 @@ namespace p0
 				source));
 		}
 
+		void emitter::load_module(
+			instruction_argument name_and_result
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::load_module,
+				name_and_result
+				));
+		}
+
 
 		void emitter::push_instruction(
 			instruction const &instruction

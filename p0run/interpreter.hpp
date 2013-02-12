@@ -17,8 +17,13 @@ namespace p0
 
 		struct interpreter
 		{
+			typedef std::function<std::unique_ptr<object> (std::string const &)>
+				load_module_function;
+
+
 			explicit interpreter(
-					intermediate::unit const &program);
+					intermediate::unit const &program,
+					load_module_function load_module);
 			value call(
 					intermediate::function const &function,
 					const std::vector<value> &arguments);
@@ -28,6 +33,7 @@ namespace p0
 		private:
 
 			intermediate::unit const &m_program;
+			load_module_function const m_load_module;
 			garbage_collector m_gc;
 			std::vector<value> m_locals;
 			interpreter_listener *m_listener;

@@ -23,8 +23,10 @@ namespace p0
 		}
 
 
-		interpreter::interpreter(intermediate::unit const &program)
+		interpreter::interpreter(intermediate::unit const &program,
+								 load_module_function load_module)
 			: m_program(program)
+			, m_load_module(std::move(load_module))
 			, m_listener(nullptr)
 		{
 		}
@@ -99,7 +101,7 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 33);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 34);
 
 				switch (operation)
 				{
@@ -427,6 +429,34 @@ namespace p0
 						get(local_frame, value_address) = *result;
 						break;
 					}
+
+				case load_module:
+				{
+					auto const name_address = static_cast<size_t>(instr_arguments[0]);
+					auto const result_address = name_address;
+					auto const name_object = get(local_frame, name_address);
+					if (name_object.type != value_type::object)
+					{
+						throw std::runtime_error("Module name object expected");
+					}
+					//TODO: something better than dynamic_cast
+					string const * const name_string = dynamic_cast<string const *>(name_object.obj);
+					if (!name_string)
+					{
+						throw std::runtime_error("Module name string expected");
+					}
+					if (!m_load_module)
+					{
+						throw std::runtime_error("Loadable modules are currently disabled");
+					}
+					std::string const &name = name_string->content();
+					auto module_object = m_load_module(name);
+					assert(module_object);
+					value const module_ptr(*module_object);
+					m_gc.add_object(std::move(module_object));
+					get(local_frame, result_address) = module_ptr;
+					break;
+				}
 
 				default:
 					assert(nullptr == "invalid operation id");

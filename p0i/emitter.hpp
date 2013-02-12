@@ -117,6 +117,9 @@ namespace p0
 			void push_instruction(
 				instruction const &instruction
 				);
+			void load_module(
+				instruction_argument name_and_result
+				);
 
 		private:
 

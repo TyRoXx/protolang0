@@ -26,7 +26,7 @@ namespace
 		p0::compiler compiler(source_range, expect_no_error);
 		auto const program = compiler.compile();
 
-		p0::run::interpreter interpreter(program);
+		p0::run::interpreter interpreter(program, nullptr);
 		auto const &main_function = program.functions().front();
 		auto const result = interpreter.call(main_function, arguments);
 		check_result(result, program);

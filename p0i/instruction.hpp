@@ -50,6 +50,7 @@ namespace p0
 				new_table,
 				set_element,
 				get_element,
+				load_module,
 
 				count_,
 				invalid_ = count_,

@@ -25,7 +25,7 @@ namespace
 		create(emitter, strings);
 		functions.push_back(intermediate::function(instructions, arguments.size()));
 		intermediate::unit program(functions, strings);
-		interpreter interpreter(program);
+		interpreter interpreter(program, nullptr);
 		auto const result = interpreter.call(program.functions()[0], arguments);
 		handle_result(result);
 	}
@@ -464,22 +464,35 @@ BOOST_AUTO_TEST_CASE(missing_argument_test)
 
 namespace
 {
+	namespace
+	{
+		template <class Emit>
+		void expect_runtime_error(Emit const &emit)
+		{
+			bool found_error = false;
+			BOOST_CHECK_EXCEPTION((
+			run_single_function(
+				emit,
+				std::vector<value>(),
+				[](value const &)
+			{
+				BOOST_CHECK(nullptr == "No result expected");
+			})),
+				std::runtime_error,
+				[&found_error](std::runtime_error const &)
+			{
+				BOOST_REQUIRE(!found_error);
+				found_error = true;
+				return true;
+			});
+			BOOST_CHECK(found_error);
+		}
+	}
+
 	template <class Emit>
 	void expect_arithmetic_error(Emit const &emit)
 	{
-		BOOST_CHECK_EXCEPTION((
-		run_single_function(
-			emit,
-			std::vector<value>(),
-			[](value const &)
-		{
-			BOOST_CHECK(nullptr == "No result expected");
-		})),
-			std::runtime_error,
-			[](std::runtime_error const &)
-		{
-			return true;
-		});
+		expect_runtime_error(emit);
 	}
 }
 
@@ -628,5 +641,19 @@ BOOST_AUTO_TEST_CASE(negation_overflow_test)
 	{
 		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
 		emitter.negate(1);
+	});
+}
+
+BOOST_AUTO_TEST_CASE(modules_disabled_test)
+{
+	//loadable modules have to be explicity enabled,
+	//so we expect an exception when trying to load_module
+	expect_runtime_error([](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &strings)
+	{
+		strings.push_back("module_name");
+		emitter.set_string(1, 0);
+		emitter.load_module(1);
 	});
 }

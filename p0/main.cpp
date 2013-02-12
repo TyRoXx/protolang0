@@ -25,7 +25,7 @@ namespace p0
 		void execute(intermediate::unit const &program,
 					 intermediate::function const &entry_point)
 		{
-			run::interpreter interpreter(program);
+			run::interpreter interpreter(program, nullptr);
 			std::vector<run::value> arguments;
 			interpreter.call(entry_point, arguments);
 		}
