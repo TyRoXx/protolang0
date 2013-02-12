@@ -62,6 +62,12 @@ namespace p0
 			m_listener = listener;
 		}
 
+		void interpreter::register_object(std::unique_ptr<object> object)
+		{
+			assert(object);
+			m_gc.add_object(std::move(object));
+		}
+
 
 		void interpreter::native_call(
 			std::size_t arguments_address,

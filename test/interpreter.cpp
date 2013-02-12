@@ -11,11 +11,12 @@ using namespace p0;
 
 namespace
 {
-	template <class FunctionCreator, class ResultHandler>
+	template <class FunctionCreator, class ResultHandler, class LoadModule>
 	void run_single_function(
 		FunctionCreator const &create,
 		std::vector<value> const &arguments,
-		ResultHandler const &handle_result
+		ResultHandler const &handle_result,
+		LoadModule const &load_module
 		)
 	{
 		intermediate::unit::function_vector functions;
@@ -25,9 +26,19 @@ namespace
 		create(emitter, strings);
 		functions.push_back(intermediate::function(instructions, arguments.size()));
 		intermediate::unit program(functions, strings);
-		interpreter interpreter(program, nullptr);
+		interpreter interpreter(program, load_module);
 		auto const result = interpreter.call(program.functions()[0], arguments);
 		handle_result(result);
+	}
+
+	template <class FunctionCreator, class ResultHandler>
+	void run_single_function(
+		FunctionCreator const &create,
+		std::vector<value> const &arguments,
+		ResultHandler const &handle_result
+		)
+	{
+		run_single_function(create, arguments, handle_result, nullptr);
 	}
 }
 
@@ -682,4 +693,59 @@ BOOST_AUTO_TEST_CASE(load_module_invalid_argument_test)
 		emitter.new_table(0);
 		emitter.load_module(0);
 	});
+}
+
+namespace
+{
+	struct trivial_module : p0::run::object
+	{
+		virtual boost::optional<value> get_element(value const &key) const override
+		{
+			//TODO decide what to do here
+			return boost::optional<value>();
+		}
+
+		virtual bool set_element(value const &key, value const &value) override
+		{
+			BOOST_CHECK(nullptr == "This module is read-only");
+			return false;
+		}
+
+	private:
+
+		virtual void mark_recursively() override
+		{
+		}
+	};
+}
+
+BOOST_AUTO_TEST_CASE(load_trivial_module_test)
+{
+	std::string const module_name = "trivial";
+	bool module_loaded = false;
+
+	run_single_function(
+		[&module_name](
+		intermediate::emitter &emitter,
+		intermediate::unit::string_vector &strings)
+	{
+		strings.push_back(module_name);
+		emitter.set_string(0, 0);
+		emitter.load_module(0);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_REQUIRE(result.type == value_type::object);
+	},
+		[&module_name, &module_loaded](std::string const &name) -> std::unique_ptr<p0::run::object>
+	{
+		BOOST_REQUIRE(!module_loaded);
+		BOOST_CHECK(name == module_name);
+		std::unique_ptr<p0::run::object> module(new trivial_module);
+		module_loaded = true;
+		return module;
+	});
+
+	BOOST_CHECK(module_loaded);
 }

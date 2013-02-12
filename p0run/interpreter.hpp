@@ -29,6 +29,7 @@ namespace p0
 					const std::vector<value> &arguments);
 			void collect_garbage();
 			void set_listener(interpreter_listener *listener);
+			void register_object(std::unique_ptr<object> object);
 
 		private:
 
