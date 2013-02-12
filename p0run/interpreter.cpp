@@ -204,7 +204,10 @@ namespace p0
 									throw std::runtime_error("Quotient out of range");
 								}
 							};
-							static auto const check_shift_amount = [](integer shift)
+#ifndef _MSC_VER
+							static //VC++ 10 crashes here with static
+#endif
+							auto const check_shift_amount = [](integer shift)
 							{
 								integer const integer_size_bits = sizeof(integer) * CHAR_BIT;
 								if (shift < 0)

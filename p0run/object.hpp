@@ -5,6 +5,7 @@
 
 #include "value.hpp"
 #include <boost/optional.hpp>
+#include <vector>
 
 
 namespace p0

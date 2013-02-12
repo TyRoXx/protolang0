@@ -27,8 +27,9 @@ namespace p0
 		template <class F>
 		struct function : run::object
 		{
-			explicit function(F functor)
-				: m_functor(std::move(functor))
+			template <class G>
+			explicit function(G &&functor)
+				: m_functor(std::forward<G>(functor))
 			{
 			}
 

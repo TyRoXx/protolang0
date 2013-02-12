@@ -483,17 +483,17 @@ namespace
 		run_single_function(
 			emit,
 			std::vector<value>(),
-			[](value const &)
+			[](value const &) -> void
 		{
 			BOOST_CHECK(nullptr == "No result expected");
 		})),
 			std::runtime_error,
-			[&found_error](std::runtime_error const &)
+			([&found_error](std::runtime_error const &) -> bool
 		{
 			BOOST_REQUIRE(!found_error);
 			found_error = true;
 			return true;
-		});
+		}));
 		BOOST_CHECK(found_error);
 	}
 
