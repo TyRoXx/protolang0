@@ -740,7 +740,7 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 		BOOST_REQUIRE(result.obj == module_ptr);
 		BOOST_CHECK(result.obj->get_element(value()) == value(static_cast<integer>(456)));
 	},
-		[&module_name, &module_loaded, &module_ptr](std::string const &name)
+		[&module_name, &module_loaded, &module_ptr](interpreter &, std::string const &name)
 			-> std::unique_ptr<p0::run::object>
 	{
 		BOOST_REQUIRE(!module_loaded);

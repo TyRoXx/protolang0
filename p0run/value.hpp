@@ -6,6 +6,7 @@
 #include <cassert>
 #include <cstdint>
 #include <functional>
+#include <ostream>
 
 
 namespace p0
@@ -89,6 +90,8 @@ namespace p0
 		}
 
 		comparison_result::Enum compare(value const &left, value const &right);
+
+		std::ostream &operator << (std::ostream &out, value const &value);
 	}
 }
 

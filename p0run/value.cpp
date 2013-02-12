@@ -170,6 +170,29 @@ namespace p0
 			assert(nullptr == "Invalid value type");
 			return comparison_result::equal;
 		}
+
+		std::ostream &operator << (std::ostream &out, value const &value)
+		{
+			switch (value.type)
+			{
+			case value_type::null:
+				out << "null";
+				break;
+
+			case value_type::integer:
+				out << value.i;
+				break;
+
+			case value_type::function_ptr:
+				out << "function";
+				break;
+
+			case value_type::object:
+				value.obj->print(out);
+				break;
+			}
+			return out;
+		}
 	}
 }
 

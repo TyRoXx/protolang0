@@ -17,7 +17,7 @@ namespace p0
 
 		struct interpreter
 		{
-			typedef std::function<std::unique_ptr<object> (std::string const &)>
+			typedef std::function<std::unique_ptr<object> (interpreter &, std::string const &)>
 				load_module_function;
 
 
@@ -29,7 +29,7 @@ namespace p0
 					const std::vector<value> &arguments);
 			void collect_garbage();
 			void set_listener(interpreter_listener *listener);
-			void register_object(std::unique_ptr<object> object);
+			object &register_object(std::unique_ptr<object> object);
 
 		private:
 

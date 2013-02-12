@@ -64,6 +64,11 @@ namespace p0
 			return object::compare(right);
 		}
 
+		void string::print(std::ostream &out) const
+		{
+			out << m_content;
+		}
+
 
 		void string::mark_recursively()
 		{

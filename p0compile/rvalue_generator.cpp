@@ -632,7 +632,7 @@ namespace p0
 				m_emitter,
 				m_frame,
 				result_ref);
-			expression.accept(name_generator);
+			expression.name().accept(name_generator);
 		}
 		m_emitter.load_module(result_ref.local_address());
 	}

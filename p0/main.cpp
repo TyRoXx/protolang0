@@ -1,9 +1,11 @@
 #include "p0i/unit.hpp"
 #include "p0compile/compile_unit.hpp"
 #include "p0run/interpreter.hpp"
+#include "p0run/string.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
+#include <boost/foreach.hpp>
 
 namespace p0
 {
@@ -22,10 +24,103 @@ namespace p0
 			throw std::runtime_error("Not implemented");
 		}
 
+		template <class F>
+		struct function : run::object
+		{
+			explicit function(F functor)
+				: m_functor(std::move(functor))
+			{
+			}
+
+			virtual boost::optional<run::value> call(
+					std::vector<run::value> const &arguments) const
+			{
+				return m_functor(arguments);
+			}
+
+		private:
+
+			F const m_functor;
+
+			virtual void mark_recursively() override
+			{
+			}
+		};
+
+		template <class F>
+		std::unique_ptr<run::object> make_function(F &&functor)
+		{
+			return std::unique_ptr<run::object>(new function<F>(std::forward<F>(functor)));
+		}
+
+		run::value print_string(std::vector<run::value> const &arguments)
+		{
+			auto &out = std::cout;
+			BOOST_FOREACH (auto &argument, arguments)
+			{
+				out << argument;
+			}
+			return run::value();
+		}
+
+		//TODO implement in library
+		bool equals_string(run::value const &value, std::string const &other)
+		{
+			if (value.type != run::value_type::object)
+			{
+				return false;
+			}
+			auto * const string = dynamic_cast<run::string const *>(value.obj);
+			if (!string)
+			{
+				return false;
+			}
+			return string->content() == other;
+		}
+
+		struct standard_library : run::object
+		{
+			explicit standard_library(run::interpreter &interpreter)
+				: m_print(interpreter.register_object(make_function(print_string)))
+			{
+			}
+
+			virtual boost::optional<run::value> get_element(run::value const &key) const
+			{
+				if (equals_string(key, "print"))
+				{
+					return run::value(m_print);
+				}
+				return run::value();
+			}
+
+		private:
+
+			run::object &m_print;
+
+
+			virtual void mark_recursively() override
+			{
+				m_print.mark();
+			}
+		};
+
+		std::unique_ptr<run::object> load_standard_module(
+				run::interpreter &interpreter,
+				std::string const &name)
+		{
+			std::unique_ptr<run::object> module;
+			if (name == "std")
+			{
+				module.reset(new standard_library(interpreter));
+			}
+			return module;
+		}
+
 		void execute(intermediate::unit const &program,
 					 intermediate::function const &entry_point)
 		{
-			run::interpreter interpreter(program, nullptr);
+			run::interpreter interpreter(program, load_standard_module);
 			std::vector<run::value> arguments;
 			interpreter.call(entry_point, arguments);
 		}

@@ -18,11 +18,13 @@ namespace p0
 			void mark();
 			void unmark();
 			bool is_marked() const;
-			virtual boost::optional<value> get_element(value const &key) const = 0;
-			virtual bool set_element(value const &key, value const &value) = 0;
+			virtual boost::optional<value> get_element(value const &key) const;
+			virtual bool set_element(value const &key, value const &value);
 			virtual integer get_hash_code() const;
 			virtual bool equals(object const &other) const;
 			virtual comparison_result::Enum compare(object const &right) const;
+			virtual boost::optional<value> call(std::vector<value> const &arguments) const;
+			virtual void print(std::ostream &out) const;
 
 		private:
 

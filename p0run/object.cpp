@@ -34,6 +34,16 @@ namespace p0
 			return m_is_marked;
 		}
 
+		boost::optional<value> object::get_element(value const &key) const
+		{
+			return boost::optional<value>();
+		}
+
+		bool object::set_element(value const &key, value const &value)
+		{
+			return false;
+		}
+
 		integer object::get_hash_code() const
 		{
 			return static_cast<integer>(std::hash<object const *>()(this));
@@ -55,6 +65,16 @@ namespace p0
 				return comparison_result::greater;
 			}
 			return comparison_result::equal;
+		}
+
+		boost::optional<value> object::call(std::vector<value> const &arguments) const
+		{
+			return boost::optional<value>();
+		}
+
+		void object::print(std::ostream &out) const
+		{
+			out << "object";
 		}
 	}
 }

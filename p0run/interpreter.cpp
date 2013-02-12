@@ -62,10 +62,12 @@ namespace p0
 			m_listener = listener;
 		}
 
-		void interpreter::register_object(std::unique_ptr<object> object)
+		object &interpreter::register_object(std::unique_ptr<object> object)
 		{
 			assert(object);
+			auto &ref = *object;
 			m_gc.add_object(std::move(object));
+			return ref;
 		}
 
 
@@ -352,7 +354,29 @@ namespace p0
 					{
 						auto const arguments_address = static_cast<size_t>(instr_arguments[0]);
 						auto const argument_count = static_cast<size_t>(instr_arguments[1]);
-						native_call(local_frame + arguments_address, argument_count);
+						auto const &callee = get(local_frame, arguments_address);
+						switch (callee.type)
+						{
+						case value_type::object:
+						{
+							std::vector<value> arguments;
+							for (size_t i = 0; i < argument_count; ++i)
+							{
+								arguments.push_back(get(local_frame, arguments_address + 1 + i));
+							}
+							auto const result = callee.obj->call(arguments);
+							if (!result)
+							{
+								throw std::runtime_error("Called object does not support the call operation");
+							}
+							get(local_frame, arguments_address) = *result;
+							break;
+						}
+
+						default:
+							native_call(local_frame + arguments_address, argument_count);
+							break;
+						}
 						break;
 					}
 
@@ -455,7 +479,7 @@ namespace p0
 					if (m_load_module)
 					{
 						std::string const &name = name_string->content();
-						auto module_object = m_load_module(name);
+						auto module_object = m_load_module(*this, name);
 						if (module_object)
 						{
 							result = value(*module_object);

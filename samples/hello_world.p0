@@ -1,0 +1,2 @@
+var std = load_module "std"
+std.print("Hello, world!", "\n")
