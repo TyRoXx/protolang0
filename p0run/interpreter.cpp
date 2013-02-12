@@ -445,16 +445,18 @@ namespace p0
 					{
 						throw std::runtime_error("Module name string expected");
 					}
-					if (!m_load_module)
+					value result;
+					if (m_load_module)
 					{
-						throw std::runtime_error("Loadable modules are currently disabled");
+						std::string const &name = name_string->content();
+						auto module_object = m_load_module(name);
+						if (module_object)
+						{
+							result = value(*module_object);
+							m_gc.add_object(std::move(module_object));
+						}
 					}
-					std::string const &name = name_string->content();
-					auto module_object = m_load_module(name);
-					assert(module_object);
-					value const module_ptr(*module_object);
-					m_gc.add_object(std::move(module_object));
-					get(local_frame, result_address) = module_ptr;
+					get(local_frame, result_address) = result;
 					break;
 				}
 

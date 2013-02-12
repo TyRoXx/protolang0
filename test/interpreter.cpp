@@ -464,29 +464,26 @@ BOOST_AUTO_TEST_CASE(missing_argument_test)
 
 namespace
 {
-	namespace
+	template <class Emit>
+	void expect_runtime_error(Emit const &emit)
 	{
-		template <class Emit>
-		void expect_runtime_error(Emit const &emit)
+		bool found_error = false;
+		BOOST_CHECK_EXCEPTION((
+		run_single_function(
+			emit,
+			std::vector<value>(),
+			[](value const &)
 		{
-			bool found_error = false;
-			BOOST_CHECK_EXCEPTION((
-			run_single_function(
-				emit,
-				std::vector<value>(),
-				[](value const &)
-			{
-				BOOST_CHECK(nullptr == "No result expected");
-			})),
-				std::runtime_error,
-				[&found_error](std::runtime_error const &)
-			{
-				BOOST_REQUIRE(!found_error);
-				found_error = true;
-				return true;
-			});
-			BOOST_CHECK(found_error);
-		}
+			BOOST_CHECK(nullptr == "No result expected");
+		})),
+			std::runtime_error,
+			[&found_error](std::runtime_error const &)
+		{
+			BOOST_REQUIRE(!found_error);
+			found_error = true;
+			return true;
+		});
+		BOOST_CHECK(found_error);
 	}
 
 	template <class Emit>
@@ -646,14 +643,43 @@ BOOST_AUTO_TEST_CASE(negation_overflow_test)
 
 BOOST_AUTO_TEST_CASE(modules_disabled_test)
 {
-	//loadable modules have to be explicity enabled,
-	//so we expect an exception when trying to load_module
-	expect_runtime_error([](
+	//modules are disabled by default, so we expect load_module to return null
+	run_single_function(
+		[](
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &strings)
 	{
 		strings.push_back("module_name");
-		emitter.set_string(1, 0);
-		emitter.load_module(1);
+		emitter.set_string(0, 0);
+		emitter.load_module(0);
+	},
+		std::vector<value>(),
+		[](value const &result)
+	{
+		BOOST_CHECK(result == value());
+	});
+}
+
+BOOST_AUTO_TEST_CASE(load_module_invalid_argument_test)
+{
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.set_null(0);
+		emitter.load_module(0);
+	});
+
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.set_from_constant(0, 123);
+		emitter.load_module(0);
+	});
+
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.new_table(0);
+		emitter.load_module(0);
 	});
 }
