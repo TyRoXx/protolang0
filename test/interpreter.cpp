@@ -699,15 +699,14 @@ namespace
 {
 	struct trivial_module : p0::run::object
 	{
-		virtual boost::optional<value> get_element(value const &key) const override
+		virtual boost::optional<value> get_element(value const & /*key*/) const override
 		{
-			//TODO decide what to do here
-			return boost::optional<value>();
+			return value(static_cast<integer>(456));
 		}
 
-		virtual bool set_element(value const &key, value const &value) override
+		virtual bool set_element(value const & /*key*/, value const & /*value*/) override
 		{
-			BOOST_CHECK(nullptr == "This module is read-only");
+			BOOST_REQUIRE(nullptr == "This module is read-only");
 			return false;
 		}
 
@@ -723,6 +722,7 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 {
 	std::string const module_name = "trivial";
 	bool module_loaded = false;
+	p0::run::object *module_ptr = nullptr;
 
 	run_single_function(
 		[&module_name](
@@ -734,15 +734,19 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 		emitter.load_module(0);
 	},
 		std::vector<value>(),
-		[](value const &result)
+		[&module_ptr](value const &result)
 	{
 		BOOST_REQUIRE(result.type == value_type::object);
+		BOOST_REQUIRE(result.obj == module_ptr);
+		BOOST_CHECK(result.obj->get_element(value()) == value(static_cast<integer>(456)));
 	},
-		[&module_name, &module_loaded](std::string const &name) -> std::unique_ptr<p0::run::object>
+		[&module_name, &module_loaded, &module_ptr](std::string const &name)
+			-> std::unique_ptr<p0::run::object>
 	{
 		BOOST_REQUIRE(!module_loaded);
 		BOOST_CHECK(name == module_name);
 		std::unique_ptr<p0::run::object> module(new trivial_module);
+		module_ptr = module.get();
 		module_loaded = true;
 		return module;
 	});
