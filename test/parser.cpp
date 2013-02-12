@@ -11,7 +11,7 @@ namespace
 	bool handle_unexpected_error(p0::compiler_error const &error)
 	{
 		(void)error;
-		BOOST_CHECK(nullptr == "No error expected");
+		BOOST_REQUIRE(nullptr == "No error expected");
 		return true;
 	}
 
@@ -85,6 +85,28 @@ BOOST_AUTO_TEST_CASE(parse_return_test)
 			{
 				check_expression(return_.value(), [](p0::null_expression_tree const &)
 				{
+				});
+			});
+		});
+	});
+}
+
+BOOST_AUTO_TEST_CASE(parse_load_module_test)
+{
+	test_parser("load_module name", [](p0::function_tree const &ast)
+	{
+		BOOST_CHECK(ast.parameters().empty());
+		check_statement(ast.body(), [](p0::block_tree const &block)
+		{
+			BOOST_REQUIRE(block.body().size() == 1);
+			check_statement(*block.body()[0], [](p0::expression_statement_tree const &statement)
+			{
+				check_expression(statement.expression(), [](p0::load_module_expression_tree const &load_module)
+				{
+					check_expression(load_module.name(), [](p0::name_expression_tree const &name)
+					{
+						BOOST_CHECK("name" == p0::source_range_to_string(name.name()));
+					});
 				});
 			});
 		});

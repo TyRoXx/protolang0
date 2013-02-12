@@ -648,6 +648,13 @@ namespace p0
 					));
 			}
 
+		case token_type::load_module:
+			{
+				auto name = parse_expression();
+				return std::unique_ptr<expression_tree>(
+					new load_module_expression_tree(std::move(name), first.content));
+			}
+
 		default:
 			throw compiler_error(
 				"Expression expected",

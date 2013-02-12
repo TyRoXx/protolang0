@@ -65,7 +65,7 @@ namespace p0
 		token_type::Enum find_keyword(source_range content)
 		{
 			//a rather simple (= slow) approach of finding keywords
-			static std::array<keyword, 9> const keywords =
+			static std::array<keyword, 10> const keywords =
 			{{
 				{"var", token_type::var},
 				{"function", token_type::function},
@@ -76,6 +76,7 @@ namespace p0
 				{"while", token_type::while_},
 				{"break", token_type::break_},
 				{"continue", token_type::continue_},
+				{"load_module", token_type::load_module},
 			}};
 
 			using namespace std;

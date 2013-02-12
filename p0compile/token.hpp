@@ -22,6 +22,7 @@ namespace p0
 			while_,
 			break_,
 			continue_,
+			load_module,
 			integer_10,
 			string,
 			parenthesis_left,

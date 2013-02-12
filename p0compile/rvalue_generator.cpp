@@ -620,4 +620,20 @@ namespace p0
 			key_expression.accept(key_generator);
 		});
 	}
+
+	void rvalue_generator::visit(load_module_expression_tree const &expression)
+	{
+		temporary const result_variable(m_frame, m_destination.is_valid() ? 0 : 1);
+		reference const result_ref = (m_destination.is_valid() ?
+									  m_destination : result_variable.address());
+		{
+			rvalue_generator name_generator(
+				m_function_generator,
+				m_emitter,
+				m_frame,
+				result_ref);
+			expression.accept(name_generator);
+		}
+		m_emitter.load_module(result_ref.local_address());
+	}
 }

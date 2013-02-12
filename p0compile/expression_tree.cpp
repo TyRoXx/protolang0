@@ -145,7 +145,7 @@ namespace p0
 	{
 		return m_parameters;
 	}
-	
+
 	source_range function_tree::position() const
 	{
 		return m_position;
@@ -327,5 +327,32 @@ namespace p0
 	expression_tree const &subscript_expression_tree::key() const
 	{
 		return *m_key;
+	}
+
+
+	load_module_expression_tree::load_module_expression_tree(
+		std::unique_ptr<expression_tree> name,
+		source_range position
+		)
+		: m_name(std::move(name))
+		, m_position(position)
+	{
+		assert(m_name);
+	}
+
+	void load_module_expression_tree::accept(expression_tree_visitor &visitor) const
+	{
+		visitor.visit(*this);
+	}
+
+	source_range load_module_expression_tree::position() const
+	{
+		return m_position;
+	}
+
+	expression_tree const &load_module_expression_tree::name() const
+	{
+		assert(m_name);
+		return *m_name;
 	}
 }

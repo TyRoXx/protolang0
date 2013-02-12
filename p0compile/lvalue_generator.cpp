@@ -125,7 +125,7 @@ namespace p0
 				);
 
 			destination = element_variable->address();
-			
+
 			commit_write =
 				[&frame, &function_generator, &emitter,
 				element_variable, &table_expression, emit_key]()
@@ -213,5 +213,13 @@ namespace p0
 				);
 			key_expression.accept(key_generator);
 		});
+	}
+
+	void lvalue_generator::visit(load_module_expression_tree const &expression)
+	{
+		throw compiler_error(
+			"A load_module expression is not an LValue",
+			expression.position()
+			);
 	}
 }
