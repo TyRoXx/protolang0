@@ -15,10 +15,6 @@ namespace p0
 			return m_content;
 		}
 
-		void string::mark_recursively()
-		{
-		}
-
 		boost::optional<value> string::get_element(value const &key) const
 		{
 			if (key.type == value_type::integer &&
@@ -66,6 +62,11 @@ namespace p0
 				return comparison_result::equal;
 			}
 			return object::compare(right);
+		}
+
+
+		void string::mark_recursively()
+		{
 		}
 	}
 }
