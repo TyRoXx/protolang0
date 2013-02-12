@@ -34,12 +34,12 @@ namespace p0
 			return m_is_marked;
 		}
 
-		boost::optional<value> object::get_element(value const &key) const
+        boost::optional<value> object::get_element(value const & /*key*/) const
 		{
 			return boost::optional<value>();
 		}
 
-		bool object::set_element(value const &key, value const &value)
+        bool object::set_element(value const & /*key*/, value const & /*value*/)
 		{
 			return false;
 		}
@@ -67,7 +67,7 @@ namespace p0
 			return comparison_result::equal;
 		}
 
-		boost::optional<value> object::call(std::vector<value> const &arguments) const
+        boost::optional<value> object::call(std::vector<value> const & /*arguments*/) const
 		{
 			return boost::optional<value>();
 		}
