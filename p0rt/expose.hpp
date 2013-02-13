@@ -12,18 +12,24 @@ namespace p0
 {
 	namespace rt
 	{
+		struct function_tag {};
+
+
 		template <class F>
-		run::object &expose_fn(run::interpreter &interpreter, F &&functor)
+		run::value expose_fn(run::interpreter &interpreter, F &&functor)
 		{
-			return interpreter.register_object(
-						make_function(std::forward<F>(functor)));
+			return run::value(interpreter.register_object(
+						make_function(std::forward<F>(functor))));
 		}
 
-		run::object &expose(run::interpreter &interpreter, std::string content)
+		template <class F>
+		run::value expose(run::interpreter &interpreter, function_tag, F &&functor)
 		{
-			return interpreter.register_object(
-						std::unique_ptr<run::object>(new run::string(std::move(content))));
+			return run::value(interpreter.register_object(
+						make_function(std::forward<F>(functor))));
 		}
+
+		run::value expose(run::interpreter &interpreter, std::string content);
 	}
 }
 

@@ -11,19 +11,32 @@ namespace p0
 {
 	namespace rt
 	{
-		inline void insert(run::object &table,
+		void insert(run::object &table,
 					run::interpreter &interpreter,
 					std::string key,
-					run::value const &element)
+					run::value const &element);
+
+		void insert(run::object &table,
+					run::interpreter &interpreter,
+					std::string key,
+					std::string element);
+
+		void insert(run::object &table,
+					run::interpreter &interpreter,
+					std::string key,
+					run::integer element);
+
+		template <class Functor>
+		void insert(run::object &table,
+					run::interpreter &interpreter,
+					std::string key,
+					function_tag,
+					Functor &&element)
 		{
-			if (!table.set_element(
-				run::value(expose(interpreter, std::move(key))),
-				element
-				))
-			{
-				//TODO better error handling
-				throw std::runtime_error("Cannot set element in table");
-			}
+			return insert(table,
+				   interpreter,
+				   std::move(key),
+				   expose(interpreter, function_tag(), std::forward<Functor>(element)));
 		}
 	}
 }

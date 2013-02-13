@@ -43,7 +43,7 @@ namespace p0
 			explicit standard_library(run::interpreter &interpreter)
 			{
 				rt::insert(*this, interpreter,
-						  "print", run::value(rt::expose_fn(interpreter, print_string)));
+						  "print", rt::function_tag(), print_string);
 			}
 		};
 
