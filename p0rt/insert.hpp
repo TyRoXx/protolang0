@@ -38,6 +38,30 @@ namespace p0
 				   std::move(key),
 				   expose(interpreter, function_tag(), std::forward<Functor>(element)));
 		}
+
+
+		struct inserter
+		{
+			explicit inserter(run::object &object,
+							  run::interpreter &interpreter
+							  );
+			inserter &insert(std::string key, run::value const &element);
+			inserter &insert(std::string key, run::integer element);
+			inserter &insert(std::string key, std::string element);
+
+			template <class Functor>
+			inserter &insert_fn(std::string key, Functor &&element)
+			{
+				rt::insert(m_object, m_interpreter, std::move(key),
+						   function_tag(), std::forward<Functor>(element));
+				return *this;
+			}
+
+		private:
+
+			run::object &m_object;
+			run::interpreter &m_interpreter;
+		};
 	}
 }
 

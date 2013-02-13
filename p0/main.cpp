@@ -46,8 +46,9 @@ namespace p0
 			if (name == "std")
 			{
 				module.reset(new run::table);
-				rt::insert(*module, interpreter,
-						  "print", rt::function_tag(), print_string);
+				rt::inserter(*module, interpreter)
+					.insert_fn("print", print_string)
+					;
 			}
 			return module;
 		}

@@ -36,5 +36,32 @@ namespace p0
 			return insert(table, interpreter, std::move(key),
 						  expose(interpreter, std::move(element)));
 		}
+
+
+		inserter::inserter(run::object &object,
+						   run::interpreter &interpreter)
+			: m_object(object)
+			, m_interpreter(interpreter)
+		{
+		}
+
+		inserter &inserter::insert(std::string key, run::value const &element)
+		{
+			rt::insert(m_object, m_interpreter, std::move(key), element);
+			return *this;
+		}
+
+		inserter &inserter::insert(std::string key, run::integer element)
+		{
+			rt::insert(m_object, m_interpreter, std::move(key), element);
+			return *this;
+		}
+
+		inserter &inserter::insert(std::string key, std::string element)
+		{
+			rt::insert(m_object, m_interpreter, std::move(key), element);
+			return *this;
+		}
+
 	}
 }
