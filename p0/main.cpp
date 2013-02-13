@@ -47,6 +47,17 @@ namespace p0
 			return run::value();
 		}
 
+		run::value std_to_string(run::interpreter &interpreter,
+								 std::vector<run::value> const &arguments)
+		{
+			std::ostringstream result;
+			BOOST_FOREACH (auto &argument, arguments)
+			{
+				result << argument;
+			}
+			return rt::expose(interpreter, result.str());
+		}
+
 		std::unique_ptr<run::object> load_standard_module(
 				run::interpreter &interpreter,
 				std::string const &name)
@@ -58,6 +69,7 @@ namespace p0
 				rt::inserter(*module, interpreter)
 					.insert_fn("print", print_string)
 					.insert_fn("assert", std_assert)
+					.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
 					;
 			}
 			return module;
