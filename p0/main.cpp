@@ -2,9 +2,7 @@
 #include "p0compile/compile_unit.hpp"
 #include "p0run/interpreter.hpp"
 #include "p0run/table.hpp"
-#include "p0run/string.hpp"
 #include "p0rt/insert.hpp"
-#include "p0rt/expose.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
