@@ -19,12 +19,12 @@ namespace p0
 		void insert(run::object &table,
 					run::interpreter &interpreter,
 					std::string key,
-					std::string element);
+					run::integer element);
 
 		void insert(run::object &table,
 					run::interpreter &interpreter,
 					std::string key,
-					run::integer element);
+					std::string element);
 
 		template <class Functor>
 		void insert(run::object &table,

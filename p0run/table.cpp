@@ -5,6 +5,15 @@ namespace p0
 {
 	namespace run
 	{
+		table::table()
+		{
+		}
+
+		table::table(elements elements)
+			: m_elements(std::move(elements))
+		{
+		}
+
 		boost::optional<value> table::get_element(value const &key) const
 		{
 			auto const e = m_elements.find(key);

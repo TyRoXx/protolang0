@@ -23,18 +23,18 @@ namespace p0
 		void insert(run::object &table,
 					run::interpreter &interpreter,
 					std::string key,
-					std::string element)
+					run::integer element)
 		{
-			return insert(table, interpreter, std::move(key),
-						  expose(interpreter, std::move(element)));
+			return insert(table, interpreter, std::move(key), element);
 		}
 
 		void insert(run::object &table,
 					run::interpreter &interpreter,
 					std::string key,
-					run::integer element)
+					std::string element)
 		{
-			return insert(table, interpreter, std::move(key), element);
+			return insert(table, interpreter, std::move(key),
+						  expose(interpreter, std::move(element)));
 		}
 	}
 }
