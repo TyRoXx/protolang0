@@ -8,6 +8,21 @@
 
 namespace
 {
+	template <class ASTHandler, class ErrorHandler>
+	void check_source(std::string const &source,
+					  ASTHandler const &handle_ast,
+					  ErrorHandler const &handle_error)
+	{
+		p0::source_range const source_range(
+					source.data(),
+					source.data() + source.size());
+		p0::scanner scanner(source_range);
+		p0::parser parser(scanner, handle_error);
+		auto const ast = parser.parse_unit();
+		BOOST_REQUIRE(ast);
+		handle_ast(*ast);
+	}
+
 	bool handle_unexpected_error(p0::compiler_error const &error)
 	{
 		(void)error;
@@ -16,16 +31,30 @@ namespace
 	}
 
 	template <class ASTHandler>
-	void test_parser(std::string const &source, ASTHandler const &handle_ast)
+	void check_valid_source(std::string const &source,
+							ASTHandler const &handle_ast)
 	{
-		p0::source_range const source_range(
-					source.data(),
-					source.data() + source.size());
-		p0::scanner scanner(source_range);
-		p0::parser parser(scanner, handle_unexpected_error);
-		auto const ast = parser.parse_unit();
-		BOOST_REQUIRE(ast);
-		handle_ast(*ast);
+		return check_source(source, handle_ast, handle_unexpected_error);
+	}
+
+	void check_invalid_source(std::string const &source,
+							  std::size_t error_position)
+	{
+		bool has_failed = false;
+		check_source(
+			source,
+			[](p0::function_tree const &)
+		{
+			//ignore results
+		},
+			[error_position, &source, &has_failed](p0::compiler_error const &error) -> bool
+		{
+			auto const error_found_at = error.position().begin();
+			BOOST_CHECK(source.data() + error_position == error_found_at);
+			has_failed = true;
+			return true;
+		});
+		BOOST_CHECK(has_failed);
 	}
 
 	template <class Base>
@@ -63,7 +92,7 @@ namespace
 
 BOOST_AUTO_TEST_CASE(parse_empty_file_test)
 {
-	test_parser("", [](p0::function_tree const &ast)
+	check_valid_source("", [](p0::function_tree const &ast)
 	{
 		BOOST_CHECK(ast.parameters().empty());
 		check_statement(ast.body(), [](p0::block_tree const &block)
@@ -75,7 +104,7 @@ BOOST_AUTO_TEST_CASE(parse_empty_file_test)
 
 BOOST_AUTO_TEST_CASE(parse_return_test)
 {
-	test_parser("return null", [](p0::function_tree const &ast)
+	check_valid_source("return null", [](p0::function_tree const &ast)
 	{
 		BOOST_CHECK(ast.parameters().empty());
 		check_statement(ast.body(), [](p0::block_tree const &block)
@@ -93,7 +122,7 @@ BOOST_AUTO_TEST_CASE(parse_return_test)
 
 BOOST_AUTO_TEST_CASE(parse_load_module_test)
 {
-	test_parser("import name", [](p0::function_tree const &ast)
+	check_valid_source("import name", [](p0::function_tree const &ast)
 	{
 		BOOST_CHECK(ast.parameters().empty());
 		check_statement(ast.body(), [](p0::block_tree const &block)
@@ -111,4 +140,12 @@ BOOST_AUTO_TEST_CASE(parse_load_module_test)
 			});
 		});
 	});
+}
+
+BOOST_AUTO_TEST_CASE(missing_expression_test)
+{
+	check_invalid_source("return ", 7);
+	check_invalid_source("import ", 7);
+	check_invalid_source("5 + ", 4);
+	check_invalid_source("f((((***", 5);
 }
