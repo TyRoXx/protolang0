@@ -38,15 +38,6 @@ namespace p0
 			return run::value();
 		}
 
-		struct standard_library : run::table
-		{
-			explicit standard_library(run::interpreter &interpreter)
-			{
-				rt::insert(*this, interpreter,
-						  "print", rt::function_tag(), print_string);
-			}
-		};
-
 		std::unique_ptr<run::object> load_standard_module(
 				run::interpreter &interpreter,
 				std::string const &name)
@@ -54,7 +45,9 @@ namespace p0
 			std::unique_ptr<run::object> module;
 			if (name == "std")
 			{
-				module.reset(new standard_library(interpreter));
+				module.reset(new run::table);
+				rt::insert(*module, interpreter,
+						  "print", rt::function_tag(), print_string);
 			}
 			return module;
 		}
