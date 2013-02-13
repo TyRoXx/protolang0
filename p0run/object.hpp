@@ -34,6 +34,17 @@ namespace p0
 
 			virtual void mark_recursively() = 0;
 		};
+
+
+		template <class Down>
+		Down *to_object(value const &value)
+		{
+			if (value.type == value_type::object)
+			{
+				return dynamic_cast<Down *>(value.obj);
+			}
+			return nullptr;
+		}
 	}
 }
 

@@ -1,11 +1,13 @@
 #include "p0i/unit.hpp"
 #include "p0compile/compile_unit.hpp"
 #include "p0run/interpreter.hpp"
+#include "p0run/table.hpp"
 #include "p0run/string.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
+
 
 namespace p0
 {
@@ -25,10 +27,10 @@ namespace p0
 		}
 
 		template <class F>
-		struct function : run::object
+		struct native_function : run::object
 		{
 			template <class G>
-			explicit function(G &&functor)
+			explicit native_function(G &&functor)
 				: m_functor(std::forward<G>(functor))
 			{
 			}
@@ -51,7 +53,8 @@ namespace p0
 		template <class F>
 		std::unique_ptr<run::object> make_function(F &&functor)
 		{
-			return std::unique_ptr<run::object>(new function<F>(std::forward<F>(functor)));
+			return std::unique_ptr<run::object>(
+						new native_function<F>(std::forward<F>(functor)));
 		}
 
 		run::value print_string(std::vector<run::value> const &arguments)
@@ -64,45 +67,40 @@ namespace p0
 			return run::value();
 		}
 
-		//TODO implement in library
-		bool equals_string(run::value const &value, std::string const &other)
+		template <class F>
+		run::object &register_function(run::interpreter &interpreter, F &&functor)
 		{
-			if (value.type != run::value_type::object)
-			{
-				return false;
-			}
-			auto * const string = dynamic_cast<run::string const *>(value.obj);
-			if (!string)
-			{
-				return false;
-			}
-			return string->content() == other;
+			return interpreter.register_object(
+						make_function(std::forward<F>(functor)));
 		}
 
-		struct standard_library : run::object
+		run::object &register_string(run::interpreter &interpreter, std::string content)
+		{
+			return interpreter.register_object(
+						std::unique_ptr<run::object>(new run::string(std::move(content))));
+		}
+
+		void insert(run::object &table,
+					run::interpreter &interpreter,
+					std::string key,
+					run::value const &element)
+		{
+			if (!table.set_element(
+						run::value(register_string(interpreter, std::move(key))),
+						element
+						))
+			{
+				//TODO better error handling
+				throw std::runtime_error("Cannot set element in table");
+			}
+		}
+
+		struct standard_library : run::table
 		{
 			explicit standard_library(run::interpreter &interpreter)
-				: m_print(interpreter.register_object(make_function(print_string)))
 			{
-			}
-
-			virtual boost::optional<run::value> get_element(run::value const &key) const
-			{
-				if (equals_string(key, "print"))
-				{
-					return run::value(m_print);
-				}
-				return run::value();
-			}
-
-		private:
-
-			run::object &m_print;
-
-
-			virtual void mark_recursively() override
-			{
-				m_print.mark();
+				insert(*this, interpreter,
+					   "print", run::value(register_function(interpreter, print_string)));
 			}
 		};
 
