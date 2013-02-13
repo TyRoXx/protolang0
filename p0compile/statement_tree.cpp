@@ -187,14 +187,34 @@ namespace p0
 	}
 
 
+	break_tree::break_tree(source_range const &position)
+		: m_position(position)
+	{
+	}
+
 	void break_tree::accept(statement_tree_visitor &visitor) const
 	{
 		visitor.visit(*this);
 	}
 
+	source_range const &break_tree::position() const
+	{
+		return m_position;
+	}
+
+
+	continue_tree::continue_tree(source_range const &position)
+		: m_position(position)
+	{
+	}
 
 	void continue_tree::accept(statement_tree_visitor &visitor) const
 	{
 		visitor.visit(*this);
+	}
+
+	source_range const &continue_tree::position() const
+	{
+		return m_position;
 	}
 }

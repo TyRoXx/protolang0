@@ -179,6 +179,7 @@ namespace p0
 			);
 
 		auto const at_condition_check = m_emitter.get_current_jump_address();
+		loop loop(m_frame, m_emitter, at_condition_check);
 
 		{
 			rvalue_generator condition(
@@ -209,18 +210,34 @@ namespace p0
 		m_emitter.update_jump_destination(
 			at_skip_body,
 			at_after_loop);
+
+		loop.finish(at_after_loop);
 	}
 
 	void statement_code_generator::visit(break_tree const &statement)
 	{
-		(void)statement;
-		//TODO
+		if (auto * const loop = m_frame.get_loop())
+		{
+			loop->emit_break();
+		}
+		else
+		{
+			throw compiler_error("Found break statement outside of a loop",
+								 statement.position());
+		}
 	}
 
 	void statement_code_generator::visit(continue_tree const &statement)
 	{
-		(void)statement;
-		//TODO
+		if (auto * const loop = m_frame.get_loop())
+		{
+			loop->emit_continue();
+		}
+		else
+		{
+			throw compiler_error("Found continue statement outside of a loop",
+								 statement.position());
+		}
 	}
 
 

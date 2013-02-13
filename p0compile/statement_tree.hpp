@@ -168,13 +168,25 @@ namespace p0
 
 	struct break_tree : statement_tree
 	{
+		explicit break_tree(source_range const &position);
 		virtual void accept(statement_tree_visitor &visitor) const override;
+		source_range const &position() const;
+
+	private:
+
+		source_range const m_position;
 	};
 
 
 	struct continue_tree : statement_tree
 	{
+		explicit continue_tree(source_range const &position);
 		virtual void accept(statement_tree_visitor &visitor) const override;
+		source_range const &position() const;
+
+	private:
+
+		source_range const m_position;
 	};
 }
 

@@ -132,6 +132,7 @@ namespace p0
 			{
 				pop_token();
 				return std::unique_ptr<statement_tree>(new break_tree(
+					first.content
 					));
 			}
 
@@ -139,6 +140,7 @@ namespace p0
 			{
 				pop_token();
 				return std::unique_ptr<statement_tree>(new continue_tree(
+					first.content
 					));
 			}
 
