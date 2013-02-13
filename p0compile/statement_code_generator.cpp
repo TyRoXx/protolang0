@@ -178,7 +178,7 @@ namespace p0
 			1
 			);
 
-		const auto at_condition_check = m_emitter.get_current_jump_address();
+		auto const at_condition_check = m_emitter.get_current_jump_address();
 
 		{
 			rvalue_generator condition(
@@ -190,7 +190,7 @@ namespace p0
 			statement.condition().accept(condition);
 		}
 
-		const auto at_skip_body = m_emitter.get_current_jump_address();
+		auto const at_skip_body = m_emitter.get_current_jump_address();
 		m_emitter.jump_if_not(
 			-1,
 			condition_variable.address().local_address()
@@ -205,7 +205,7 @@ namespace p0
 
 		m_emitter.jump(at_condition_check);
 
-		const auto at_after_loop = m_emitter.get_current_jump_address();
+		auto const at_after_loop = m_emitter.get_current_jump_address();
 		m_emitter.update_jump_destination(
 			at_skip_body,
 			at_after_loop);

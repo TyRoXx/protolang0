@@ -21,7 +21,7 @@ namespace p0
 	{
 		return m_unit;
 	}
-	
+
 	size_t code_generator::generate_function(
 		function_tree const &function
 		)
@@ -82,7 +82,7 @@ namespace p0
 	{
 		m_unit.handle_error(error);
 	}
-	
+
 	void code_generator::add_return(std::size_t jump_address)
 	{
 		m_return_instructions.push_back(jump_address);
