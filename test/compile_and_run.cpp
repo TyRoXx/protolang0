@@ -31,6 +31,24 @@ namespace
 		auto const result = interpreter.call(main_function, arguments);
 		check_result(result, program);
 	}
+
+	void check_invalid_source(std::string const &source,
+							  std::size_t error_position)
+	{
+		auto const check_compiler_error =
+			[&source, error_position](p0::compiler_error const &error) -> bool
+		{
+			auto const found_error_position = error.position().begin();
+			BOOST_CHECK(source.data() + error_position == found_error_position);
+			return true;
+		};
+
+		p0::source_range const source_range(
+			source.data(),
+			source.data() + source.size());
+		p0::compiler compiler(source_range, check_compiler_error);
+		compiler.compile(); //TODO make compile() throw
+	}
 }
 
 BOOST_AUTO_TEST_CASE(empty_function_compile_test)
@@ -106,4 +124,12 @@ BOOST_AUTO_TEST_CASE(return_trivial_table_compile_test)
 		BOOST_REQUIRE(element);
 		BOOST_CHECK(*element == value(static_cast<integer>(456)));
 	});
+}
+
+BOOST_AUTO_TEST_CASE(misplaced_break_continue_test)
+{
+	check_invalid_source("break", 0);
+	check_invalid_source("continue", 0);
+	check_invalid_source("{break}", 1);
+	check_invalid_source("{continue}", 1);
 }
