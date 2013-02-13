@@ -1,2 +1,4 @@
 var std = import "std"
-std.print("Hello, world!", "\n")
+var print = std.print
+std.assert(print)
+print("Hello, world!", "\n")

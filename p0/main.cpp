@@ -36,6 +36,17 @@ namespace p0
 			return run::value();
 		}
 
+		run::value std_assert(std::vector<run::value> const &arguments)
+		{
+			if (arguments.empty() ||
+				!run::to_boolean(arguments.front()))
+			{
+				//TODO better handling
+				throw std::runtime_error("Assertion failed");
+			}
+			return run::value();
+		}
+
 		std::unique_ptr<run::object> load_standard_module(
 				run::interpreter &interpreter,
 				std::string const &name)
@@ -46,6 +57,7 @@ namespace p0
 				module.reset(new run::table);
 				rt::inserter(*module, interpreter)
 					.insert_fn("print", print_string)
+					.insert_fn("assert", std_assert)
 					;
 			}
 			return module;
