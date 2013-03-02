@@ -13,7 +13,7 @@ namespace p0
 {
 	namespace run
 	{
-		struct table : object
+		struct table PROTOLANG0_FINAL_CLASS : object
 		{
 			typedef std::unordered_map<value, value> elements;
 

@@ -12,7 +12,7 @@ namespace p0
 {
 	namespace run
 	{
-		struct garbage_collector
+		struct garbage_collector PROTOLANG0_FINAL_CLASS
 		{
 			void add_object(std::unique_ptr<object> object);
 			void unmark();

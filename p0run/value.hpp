@@ -3,6 +3,7 @@
 #define P0RUN_VALUE_HPP
 
 
+#include "p0common/final.hpp"
 #include <cassert>
 #include <cstdint>
 #include <functional>
@@ -40,7 +41,7 @@ namespace p0
 		}
 
 
-		struct value
+		struct value PROTOLANG0_FINAL_CLASS
 		{
 			value_type::Enum type;
 			union

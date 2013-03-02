@@ -12,7 +12,7 @@ namespace p0
 	namespace rt
 	{
 		template <class F>
-		struct native_function : run::object
+		struct native_function PROTOLANG0_FINAL_CLASS : run::object
 		{
 			template <class G>
 			explicit native_function(G &&functor)
@@ -21,7 +21,7 @@ namespace p0
 			}
 
 			virtual boost::optional<run::value> call(
-					std::vector<run::value> const &arguments) const
+					std::vector<run::value> const &arguments) const PROTOLANG0_FINAL_METHOD
 			{
 				return m_functor(arguments);
 			}

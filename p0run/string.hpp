@@ -12,7 +12,7 @@ namespace p0
 {
 	namespace run
 	{
-		struct string : object
+		struct string PROTOLANG0_FINAL_CLASS : object
 		{
 			explicit string(std::string content);
 			std::string const &content() const;

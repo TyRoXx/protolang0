@@ -15,7 +15,7 @@ namespace p0
 		struct interpreter_listener;
 
 
-		struct interpreter
+		struct interpreter PROTOLANG0_FINAL_CLASS
 		{
 			typedef std::function<std::unique_ptr<object> (interpreter &, std::string const &)>
 				load_module_function;

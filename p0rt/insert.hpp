@@ -40,7 +40,7 @@ namespace p0
 		}
 
 
-		struct inserter
+		struct inserter PROTOLANG0_FINAL_CLASS
 		{
 			explicit inserter(run::object &object,
 							  run::interpreter &interpreter

@@ -19,6 +19,7 @@
 
 #elif defined (__GNUC__)
 
+//GCC 4.7 supports final
 #	if (__GNUC__ >= 4) && ((__GNUC__ > 4) || (__GNUC_MINOR__ >= 7))
 #		define PROTOLANG0_FINAL_METHOD final
 #		define PROTOLANG0_FINAL_CLASS final
