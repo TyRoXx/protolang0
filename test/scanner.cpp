@@ -279,3 +279,43 @@ BOOST_AUTO_TEST_CASE(skip_line_test)
 		BOOST_CHECK(scanner.next_token().type == p0::token_type::end_of_file);
 	});
 }
+
+namespace
+{
+	bool test_token_content(
+		std::string const &source,
+		size_t expected_begin_index,
+		size_t expected_end_index)
+	{
+		p0::source_range source_range(
+			source.data(),
+			source.data() + source.size());
+		p0::scanner scanner(source_range);
+		auto const found_token = scanner.next_token();
+		p0::source_range expected_content(
+			source.data() + expected_begin_index,
+			source.data() + expected_end_index);
+		return (expected_content == found_token.content);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(token_content_test)
+{
+	BOOST_CHECK(test_token_content("( ", 0, 1));
+	BOOST_CHECK(test_token_content(") ", 0, 1));
+	BOOST_CHECK(test_token_content("} ", 0, 1));
+	BOOST_CHECK(test_token_content("{ ", 0, 1));
+	BOOST_CHECK(test_token_content("+ ", 0, 1));
+	BOOST_CHECK(test_token_content(" ~ ", 1, 2));
+
+	BOOST_CHECK(test_token_content("<= ", 0, 2));
+
+	BOOST_CHECK(test_token_content("1234 56", 0, 4));
+	BOOST_CHECK(test_token_content("1234", 0, 4));
+	BOOST_CHECK(test_token_content(" 1234", 1, 5));
+
+	BOOST_CHECK(test_token_content("identifier ", 0, 10));
+
+	BOOST_CHECK(test_token_content("if ", 0, 2));
+	BOOST_CHECK(test_token_content(" while ", 1, 6));
+}
