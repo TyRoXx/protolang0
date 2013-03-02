@@ -35,22 +35,28 @@ namespace
 		check_result(result, program);
 	}
 
-	void check_invalid_source(std::string const &source,
-							  std::size_t error_position)
+	bool test_invalid_source(std::string const &correct_head,
+							 std::string const &illformed_tail)
 	{
+		auto const full_source = correct_head + illformed_tail;
+		auto const error_position = correct_head.size();
+		bool found_expected_error = false;
+
 		auto const check_compiler_error =
-			[&source, error_position](p0::compiler_error const &error) -> bool
+			[&full_source, error_position, &found_expected_error]
+			(p0::compiler_error const &error) -> bool
 		{
 			auto const found_error_position = error.position().begin();
-			BOOST_CHECK(source.data() + error_position == found_error_position);
+			found_expected_error = (full_source.data() + error_position == found_error_position);
 			return true;
 		};
 
 		p0::source_range const source_range(
-			source.data(),
-			source.data() + source.size());
+			full_source.data(),
+			full_source.data() + full_source.size());
 		p0::compiler compiler(source_range, check_compiler_error);
 		compiler.compile(); //TODO make compile() throw
+		return found_expected_error;
 	}
 }
 
@@ -131,8 +137,9 @@ BOOST_AUTO_TEST_CASE(return_trivial_table_compile_test)
 
 BOOST_AUTO_TEST_CASE(misplaced_break_continue_test)
 {
-	check_invalid_source("break", 0);
-	check_invalid_source("continue", 0);
-	check_invalid_source("{break}", 1);
-	check_invalid_source("{continue}", 1);
+	BOOST_CHECK(test_invalid_source("", "break"));
+	BOOST_CHECK(test_invalid_source("", "continue"));
+	BOOST_CHECK(test_invalid_source("{", "break}"));
+	BOOST_CHECK(test_invalid_source("{", "continue}"));
+//	BOOST_CHECK(test_invalid_source("while true { function () {", "break} }"));
 }
