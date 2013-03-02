@@ -13,6 +13,7 @@ namespace p0
 	struct unit_generator;
 	struct compiler_error;
 	struct function_tree;
+	struct local_frame;
 
 
 	struct function_generator PROTOLANG0_FINAL_CLASS
@@ -28,7 +29,8 @@ namespace p0
 			);
 		unit_generator &unit() const;
 		size_t generate_function(
-			function_tree const &function
+			function_tree const &function,
+			local_frame *outer_frame
 			);
 		void handle_error(
 			compiler_error const &error

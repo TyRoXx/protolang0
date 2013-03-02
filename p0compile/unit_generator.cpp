@@ -28,7 +28,8 @@ namespace p0
 	{
 		function_generator function_generator(*this);
 		function_generator.generate_function(
-			m_tree
+			m_tree,
+			nullptr
 			);
 
 		intermediate::unit::string_vector strings(

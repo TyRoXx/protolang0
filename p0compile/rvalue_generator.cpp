@@ -283,7 +283,8 @@ namespace p0
 			m_function_generator //parent
 			);
 		auto const function_id = function_generator.generate_function(
-			expression
+			expression,
+			&m_frame
 			);
 
 		if (m_destination.is_valid())

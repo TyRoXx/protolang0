@@ -32,7 +32,8 @@ namespace p0
 	}
 
 	size_t function_generator::generate_function(
-		function_tree const &function
+		function_tree const &function,
+		local_frame *outer_frame
 		)
 	{
 		assert(m_return_instructions.empty());
@@ -43,7 +44,7 @@ namespace p0
 		intermediate::function::instruction_vector instructions;
 		intermediate::emitter emitter(instructions);
 
-		local_frame top_frame(*this);
+		local_frame top_frame(*this, outer_frame);
 
 		//return value
 		top_frame.allocate(1);

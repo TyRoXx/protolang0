@@ -8,18 +8,21 @@
 namespace p0
 {
 	local_frame::local_frame(
-		local_frame &parent
+		local_frame &function_parent
 		)
-		: m_parent(&parent)
-		, m_function_generator(parent.m_function_generator)
+		: m_function_parent(&function_parent)
+		, m_outer_function_frame(function_parent.m_outer_function_frame)
+		, m_function_generator(function_parent.m_function_generator)
 	{
 		init_variables();
 	}
 
 	local_frame::local_frame(
-		function_generator &function_generator
+		function_generator &function_generator,
+		local_frame *outer_function_frame
 		)
-		: m_parent(nullptr)
+		: m_function_parent(nullptr)
+		, m_outer_function_frame(outer_function_frame)
 		, m_function_generator(function_generator)
 	{
 		init_variables();
@@ -85,6 +88,13 @@ namespace p0
 
 		//TODO: look for the variable in outer function
 
+		local_frame *outer_frame = m_outer_function_frame;
+		while (outer_frame)
+		{
+
+			outer_frame = outer_frame->m_outer_function_frame;
+		}
+
 		throw compiler_error(
 			"Unknown identifier",
 			name_position
@@ -124,8 +134,16 @@ namespace p0
 
 	void local_frame::init_variables()
 	{
-		m_next_local_address = (m_parent ? m_parent->m_next_local_address : 0);
-		m_current_loop = (m_parent ? m_parent->m_current_loop : nullptr);
+		if (m_function_parent)
+		{
+			m_next_local_address = m_function_parent->m_next_local_address;
+			m_current_loop = m_function_parent->m_current_loop;
+		}
+		else
+		{
+			m_next_local_address = 0;
+			m_current_loop = nullptr;
+		}
 	}
 
 	reference local_frame::find_function_local_variable(
@@ -140,9 +158,9 @@ namespace p0
 			}
 		}
 
-		if (m_parent)
+		if (m_function_parent)
 		{
-			return m_parent->find_function_local_variable(name);
+			return m_function_parent->find_function_local_variable(name);
 		}
 
 		return reference();
