@@ -1,5 +1,6 @@
 #include "local_frame.hpp"
 #include "compiler_error.hpp"
+#include "function_generator.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/foreach.hpp>
 
@@ -7,9 +8,11 @@
 namespace p0
 {
 	local_frame::local_frame(
-		local_frame const *parent
+		local_frame const *parent,
+		function_generator *function_generator
 		)
 		: m_parent(parent)
+		, m_function_generator(function_generator)
 		, m_next_local_address(parent ? parent->m_next_local_address : 0)
 		, m_current_loop(parent ? parent->m_current_loop : nullptr)
 	{

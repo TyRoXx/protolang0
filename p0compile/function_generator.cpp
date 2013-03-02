@@ -35,7 +35,8 @@ namespace p0
 		intermediate::emitter emitter(instructions);
 
 		local_frame top_frame(
-			nullptr
+			nullptr,
+			this
 			);
 
 		//return value
