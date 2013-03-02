@@ -72,3 +72,10 @@ BOOST_AUTO_TEST_CASE(outmost_scope_closing_brace_test)
 {
 	BOOST_CHECK(test_invalid_source("", "}"));
 }
+
+BOOST_AUTO_TEST_CASE(immutable_bound_variable_test)
+{
+	BOOST_CHECK(test_invalid_source(
+		"var a = 2\n"
+		"var f = function () { ", "a = a + 1 }\n"));
+}
