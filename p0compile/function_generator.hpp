@@ -4,6 +4,7 @@
 
 
 #include "p0i/unit.hpp"
+#include "reference.hpp"
 #include <functional>
 
 
@@ -30,11 +31,13 @@ namespace p0
 			compiler_error const &error
 			);
 		void add_return(std::size_t jump_address);
+		std::size_t bind(reference bound_variable);
 
 	private:
 
 		unit_generator &m_unit;
 		std::vector<std::size_t> m_return_instructions;
+		std::vector<reference> m_bound_variables;
 	};
 }
 

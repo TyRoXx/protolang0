@@ -21,15 +21,18 @@ namespace p0
 			function();
 			explicit function(
 				instruction_vector body,
-				size_t parameters
+				size_t parameters,
+				size_t bound_variables
 				);
 			instruction_vector const &body() const;
 			size_t parameters() const;
+			size_t bound_variables() const;
 
 		private:
 
 			instruction_vector m_body;
 			size_t m_parameters;
+			size_t m_bound_variables;
 		};
 	}
 }

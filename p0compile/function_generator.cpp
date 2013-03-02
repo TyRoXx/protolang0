@@ -70,7 +70,8 @@ namespace p0
 
 		m_unit.define_function(function_index, intermediate::function(
 			std::move(instructions),
-			function.parameters().size()
+			function.parameters().size(),
+			m_bound_variables.size()
 			));
 
 		return function_index;
@@ -86,5 +87,22 @@ namespace p0
 	void function_generator::add_return(std::size_t jump_address)
 	{
 		m_return_instructions.push_back(jump_address);
+	}
+
+	std::size_t function_generator::bind(reference bound_variable)
+	{
+		auto const existing = std::find(
+					begin(m_bound_variables),
+					end(m_bound_variables),
+					bound_variable);
+		if (existing == m_bound_variables.end())
+		{
+			auto const id = m_bound_variables.size();
+			m_bound_variables.push_back(bound_variable);
+			return id;
+		}
+
+		return static_cast<std::size_t>(
+					existing - begin(m_bound_variables));
 	}
 }

@@ -26,4 +26,10 @@ namespace p0
 	{
 		return (m_local_address != reference().m_local_address);
 	}
+
+
+	bool operator == (reference const &left, reference const &right)
+	{
+		return (left.local_address() == right.local_address());
+	}
 }
