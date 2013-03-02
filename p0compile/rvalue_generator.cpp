@@ -280,11 +280,11 @@ namespace p0
 	void rvalue_generator::visit(function_tree const &expression)
 	{
 		function_generator function_generator(
-			m_function_generator //parent
+			m_function_generator, //parent
+			&m_frame //outer_frame
 			);
 		auto const function_id = function_generator.generate_function(
-			expression,
-			&m_frame
+			expression
 			);
 
 		if (m_destination.is_valid())

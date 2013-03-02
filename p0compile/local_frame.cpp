@@ -11,18 +11,15 @@ namespace p0
 		local_frame &function_parent
 		)
 		: m_function_parent(&function_parent)
-		, m_outer_function_frame(function_parent.m_outer_function_frame)
 		, m_function_generator(function_parent.m_function_generator)
 	{
 		init_variables();
 	}
 
 	local_frame::local_frame(
-		function_generator &function_generator,
-		local_frame *outer_function_frame
+		function_generator &function_generator
 		)
 		: m_function_parent(nullptr)
-		, m_outer_function_frame(outer_function_frame)
 		, m_function_generator(function_generator)
 	{
 		init_variables();
@@ -88,17 +85,20 @@ namespace p0
 
 		//TODO: look for the variable in outer function
 
-		local_frame *outer_frame = m_outer_function_frame;
-		while (outer_frame)
+		local_frame *outer_frame = this;
+		for (;;)
 		{
+			outer_frame = outer_frame->outer_function_inner_frame();
+			if (!outer_frame)
+			{
+				throw compiler_error(
+					"Unknown identifier",
+					name_position
+					);
+			}
 
-			outer_frame = outer_frame->m_outer_function_frame;
+			//TODO
 		}
-
-		throw compiler_error(
-			"Unknown identifier",
-			name_position
-			);
 	}
 
 	reference local_frame::allocate(size_t count)
@@ -130,6 +130,12 @@ namespace p0
 	loop *local_frame::get_loop() const
 	{
 		return m_current_loop;
+	}
+
+
+	local_frame *local_frame::outer_function_inner_frame() const
+	{
+		return m_function_generator.outer_frame();
 	}
 
 	void local_frame::init_variables()

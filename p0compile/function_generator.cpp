@@ -14,14 +14,17 @@ namespace p0
 		unit_generator &unit
 		)
 		: m_unit(unit)
+		, m_outer_frame(nullptr)
 		, m_parent(nullptr)
 	{
 	}
 
 	function_generator::function_generator(
-		function_generator &parent
+		function_generator &parent,
+		local_frame *outer_frame
 		)
 		: m_unit(parent.m_unit)
+		, m_outer_frame(outer_frame)
 		, m_parent(&parent)
 	{
 	}
@@ -31,9 +34,13 @@ namespace p0
 		return m_unit;
 	}
 
+	local_frame *function_generator::outer_frame() const
+	{
+		return m_outer_frame;
+	}
+
 	size_t function_generator::generate_function(
-		function_tree const &function,
-		local_frame *outer_frame
+		function_tree const &function
 		)
 	{
 		assert(m_return_instructions.empty());
@@ -44,7 +51,7 @@ namespace p0
 		intermediate::function::instruction_vector instructions;
 		intermediate::emitter emitter(instructions);
 
-		local_frame top_frame(*this, outer_frame);
+		local_frame top_frame(*this);
 
 		//return value
 		top_frame.allocate(1);

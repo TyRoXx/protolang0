@@ -27,8 +27,7 @@ namespace p0
 			local_frame &function_parent
 			);
 		explicit local_frame(
-			function_generator &function_generator,
-			local_frame *outer_function_frame
+			function_generator &function_generator
 			);
 		reference declare_variable(
 			source_range name
@@ -70,13 +69,13 @@ namespace p0
 
 
 		local_frame * const m_function_parent;
-		local_frame * const m_outer_function_frame;
 		function_generator &m_function_generator;
 		symbols_by_name m_symbols_by_name;
 		size_t m_next_local_address;
 		loop *m_current_loop;
 
 
+		local_frame *outer_function_inner_frame() const;
 		void init_variables();
 		reference find_function_local_variable(std::string const &name);
 	};

@@ -25,22 +25,23 @@ namespace p0
 			unit_generator &unit
 			);
 		explicit function_generator(
-			function_generator &parent
+			function_generator &parent,
+			local_frame *outer_frame
 			);
 		unit_generator &unit() const;
+		local_frame *outer_frame() const;
 		size_t generate_function(
-			function_tree const &function,
-			local_frame *outer_frame
+			function_tree const &function
 			);
 		void handle_error(
 			compiler_error const &error
 			);
 		void add_return(std::size_t jump_address);
 		std::size_t bind(reference bound_variable);
-
 	private:
 
 		unit_generator &m_unit;
+		local_frame * const m_outer_frame;
 		function_generator * const m_parent;
 		std::vector<std::size_t> m_return_instructions;
 		std::vector<reference> m_bound_variables;
