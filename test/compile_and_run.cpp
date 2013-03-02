@@ -4,6 +4,7 @@
 #include "p0compile/compiler.hpp"
 #include "p0compile/compiler_error.hpp"
 #include <boost/test/unit_test.hpp>
+#include <boost/lexical_cast.hpp>
 using namespace p0::run;
 
 
@@ -151,4 +152,15 @@ BOOST_AUTO_TEST_CASE(misplaced_break_continue_test)
 
 	//you cannot break out of a function
 	BOOST_CHECK(test_invalid_source("while 1 { function () {", "break} }"));
+}
+
+BOOST_AUTO_TEST_CASE(overflowing_integer_literal_test)
+{
+	{
+		auto const max_integer = std::numeric_limits<boost::int64_t>::max();
+		auto const too_large = static_cast<boost::uint64_t>(max_integer) + 1;
+		BOOST_CHECK(test_invalid_source("", boost::lexical_cast<std::string>(too_large)));
+	}
+
+	BOOST_CHECK(test_invalid_source("", std::string(500, '9')));
 }
