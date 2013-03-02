@@ -57,16 +57,10 @@ namespace p0
 		source_range name_position
 		)
 	{
-		auto const s = m_symbols_by_name.find(name);
-
-		if (s != m_symbols_by_name.end())
+		auto const result = find_function_local_variable(name);
+		if (result.first.is_valid())
 		{
-			return s->second;
-		}
-
-		if (m_parent)
-		{
-			return m_parent->require_writeable(name, name_position);
+			return result.first;
 		}
 
 		throw compiler_error(
@@ -120,6 +114,26 @@ namespace p0
 	{
 		m_next_local_address = (m_parent ? m_parent->m_next_local_address : 0);
 		m_current_loop = (m_parent ? m_parent->m_current_loop : nullptr);
+	}
+
+	std::pair<reference, local_frame *> local_frame::find_function_local_variable(
+			std::string const &name
+			)
+	{
+		{
+			auto const symbol = m_symbols_by_name.find(name);
+			if (symbol != m_symbols_by_name.end())
+			{
+				return std::make_pair(symbol->second, this);
+			}
+		}
+
+		if (m_parent)
+		{
+			return m_parent->find_function_local_variable(name);
+		}
+
+		return std::make_pair(reference(), this);
 	}
 
 
