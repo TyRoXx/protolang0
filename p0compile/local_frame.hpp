@@ -35,6 +35,31 @@ namespace p0
 		reference require_symbol(
 			source_range name
 			) const;
+
+		reference require_writeable(
+			std::string const &name,
+			source_range name_position
+			);
+
+		/**
+		 * @brief Looks for a local variable and makes it readable if found.
+		 *        If the variable is found in an outer function, code is emitted
+		 *        to retrieve the value from bound variables.
+		 * @param name The name of the variable being looked for.
+		 * @param name_position The name's position for helpful error reporting
+		 *        if the variable is not found.
+		 * @param possible_space The method may put the value here.
+		 *        Not required to be valid.
+		 * @return A reference to the value of the variable. May be invalid if
+		 *         'possible_space' was invalid.
+		 * @throws If the variable is not found, a descriptive error is thrown.
+		 */
+		reference emit_read_only(
+			std::string const &name,
+			source_range name_position,
+			reference possible_space
+			);
+
 		reference allocate(size_t count);
 		void deallocate_top(size_t count);
 		loop *enter_loop(loop &loop);

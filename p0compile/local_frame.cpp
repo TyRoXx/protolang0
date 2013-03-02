@@ -76,6 +76,25 @@ namespace p0
 			);
 	}
 
+	reference local_frame::require_writeable(
+		std::string const &name,
+		source_range name_position
+		)
+	{
+		//TODO
+		return require_symbol(name_position);
+	}
+
+	reference local_frame::emit_read_only(
+		std::string const &name,
+		source_range name_position,
+		reference possible_space
+		)
+	{
+		//TODO
+		return require_symbol(name_position);
+	}
+
 	reference local_frame::allocate(size_t count)
 	{
 		reference const result(m_next_local_address);

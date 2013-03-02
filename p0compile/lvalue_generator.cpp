@@ -36,8 +36,10 @@ namespace p0
 
 	void lvalue_generator::visit(name_expression_tree const &expression)
 	{
-		auto const address = m_frame.require_symbol(
-			expression.name()
+		auto const name = expression.name();
+		auto const address = m_frame.require_writeable(
+			source_range_to_string(name),
+			name
 			);
 
 		m_address = address;
