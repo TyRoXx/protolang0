@@ -46,8 +46,9 @@ namespace
 			[&full_source, error_position, &found_expected_error]
 			(p0::compiler_error const &error) -> bool
 		{
-			auto const found_error_position = error.position().begin();
-			found_expected_error = (full_source.data() + error_position == found_error_position);
+			auto const found_error_position =
+				error.position().begin() - full_source.data();
+			found_expected_error = (error_position == found_error_position);
 			return true;
 		};
 
@@ -137,9 +138,17 @@ BOOST_AUTO_TEST_CASE(return_trivial_table_compile_test)
 
 BOOST_AUTO_TEST_CASE(misplaced_break_continue_test)
 {
+	//not allowed in outermost scope
 	BOOST_CHECK(test_invalid_source("", "break"));
 	BOOST_CHECK(test_invalid_source("", "continue"));
+
+	//not allowed in a non-loop scope
 	BOOST_CHECK(test_invalid_source("{", "break}"));
 	BOOST_CHECK(test_invalid_source("{", "continue}"));
-//	BOOST_CHECK(test_invalid_source("while true { function () {", "break} }"));
+
+	//not allowed in the top-level scope of a function
+	BOOST_CHECK(test_invalid_source("function () {", "break}"));
+
+	//you cannot break out of a function
+	BOOST_CHECK(test_invalid_source("while 1 { function () {", "break} }"));
 }
