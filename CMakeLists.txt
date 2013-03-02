@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 2.8)
 project(protolang0)
 
 if (UNIX OR MINGW)
-	list(APPEND CMAKE_CXX_FLAGS "-std=c++0x -g -Wall -Wconversion -Wextra -pedantic")
+	set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -pedantic")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 endif()
 
 if (MSVC)
