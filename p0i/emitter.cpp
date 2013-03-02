@@ -59,6 +59,34 @@ namespace p0
 				));
 		}
 
+		void emitter::bind(
+			instruction_argument closure,
+			instruction_argument bound_index,
+			instruction_argument source
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::bind,
+				closure,
+				bound_index,
+				source
+				));
+		}
+
+		void emitter::get_bound(
+			instruction_argument closure,
+			instruction_argument bound_index,
+			instruction_argument destination
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::get_bound,
+				closure,
+				bound_index,
+				destination
+				));
+		}
+
 		void emitter::set_string(
 			instruction_argument destination,
 			instruction_argument string_id

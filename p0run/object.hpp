@@ -26,6 +26,8 @@ namespace p0
 			virtual comparison_result::Enum compare(object const &right) const;
 			virtual boost::optional<value> call(std::vector<value> const &arguments) const;
 			virtual void print(std::ostream &out) const;
+			virtual bool bind(size_t index, value const &value);
+			virtual boost::optional<value> get_bound(size_t index) const;
 
 		private:
 

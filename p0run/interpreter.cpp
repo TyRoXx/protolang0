@@ -2,6 +2,7 @@
 #include "table.hpp"
 #include "string.hpp"
 #include "interpreter_listener.hpp"
+#include "function.hpp"
 #include <cassert>
 #include <climits>
 #include <stdexcept>
@@ -109,7 +110,7 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 34);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 36);
 
 				switch (operation)
 				{
@@ -143,6 +144,60 @@ namespace p0
 						}
 						auto const &function_ptr = m_program.functions()[function_index];
 						get(local_frame, dest_address) = value(function_ptr);
+						break;
+					}
+
+				case bind:
+					{
+						auto const closure_address = static_cast<size_t>(instr_arguments[0]);
+						auto const bound_index = static_cast<size_t>(instr_arguments[1]);
+						auto const source_address = static_cast<size_t>(instr_arguments[2]);
+						auto const source = get(local_frame, source_address);
+						auto &closure = get(local_frame, closure_address);
+						if (closure.type == value_type::function_ptr)
+						{
+							std::unique_ptr<object> function_object(new run::function(
+								*closure.function_ptr));
+							value const new_closure(*function_object);
+							m_gc.add_object(std::move(function_object));
+							closure = new_closure;
+
+						}
+
+						//TODO type check is redundant if previous if was taken
+						if ((closure.type != value_type::object) ||
+							closure.obj->bind(bound_index, source))
+						{
+							throw std::runtime_error(
+								"Cannot bind a variable to a non-function");
+						}
+						break;
+					}
+
+				case get_bound:
+					{
+						auto const closure_address = static_cast<size_t>(instr_arguments[0]);
+						auto const bound_index = static_cast<size_t>(instr_arguments[1]);
+						auto const dest_address = static_cast<size_t>(instr_arguments[2]);
+						auto const closure = get(local_frame, closure_address);
+
+						if (closure.type != value_type::object)
+						{
+							throw std::runtime_error(
+								"Cannot get bound variable from a non-object");
+						}
+
+						auto const bound = closure.obj->get_bound(bound_index);
+						if (bound)
+						{
+							auto &destination = get(local_frame, dest_address);
+							destination = *bound;
+						}
+						else
+						{
+							throw std::runtime_error(
+								"A bound variable was not found in the object");
+						}
 						break;
 					}
 

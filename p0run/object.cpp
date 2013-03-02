@@ -76,5 +76,15 @@ namespace p0
 		{
 			out << "object";
 		}
+
+		bool object::bind(size_t index, value const &value)
+		{
+			return false;
+		}
+
+		boost::optional<value> object::get_bound(size_t index) const
+		{
+			return boost::optional<value>();
+		}
 	}
 }
