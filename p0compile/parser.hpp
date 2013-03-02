@@ -19,7 +19,7 @@ namespace p0
 	typedef size_t infix_precedence;
 
 
-	struct parser
+	struct parser PROTOLANG0_FINAL_CLASS
 	{
 		typedef std::function<bool (compiler_error const &)> compiler_error_handler;
 

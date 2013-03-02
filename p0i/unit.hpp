@@ -12,7 +12,7 @@ namespace p0
 {
 	namespace intermediate
 	{
-		struct unit
+		struct unit PROTOLANG0_FINAL_CLASS
 		{
 			typedef std::vector<function> function_vector;
 			typedef std::vector<std::string> string_vector;

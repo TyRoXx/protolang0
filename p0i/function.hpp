@@ -4,6 +4,7 @@
 
 
 #include "instruction.hpp"
+#include "p0common/final.hpp"
 #include <vector>
 #include <cstddef>
 
@@ -12,7 +13,7 @@ namespace p0
 {
 	namespace intermediate
 	{
-		struct function
+		struct function PROTOLANG0_FINAL_CLASS
 		{
 			typedef std::vector<instruction> instruction_vector;
 

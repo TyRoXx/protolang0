@@ -4,6 +4,7 @@
 
 
 #include "source_range.hpp"
+#include "p0common/final.hpp"
 
 
 namespace p0
@@ -60,7 +61,7 @@ namespace p0
 	}
 
 
-	struct token
+	struct token PROTOLANG0_FINAL_CLASS
 	{
 		token_type::Enum type;
 		source_range content;

@@ -10,7 +10,7 @@
 
 namespace p0
 {
-	struct scanner
+	struct scanner PROTOLANG0_FINAL_CLASS
 	{
 		explicit scanner(
 			source_range source

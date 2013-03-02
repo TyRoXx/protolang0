@@ -3,12 +3,13 @@
 #define P0C_REFERENCE_HPP
 
 
+#include "p0common/final.hpp"
 #include <cstddef>
 
 
 namespace p0
 {
-	struct reference
+	struct reference PROTOLANG0_FINAL_CLASS
 	{
 		reference();
 		explicit reference(

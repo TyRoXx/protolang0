@@ -4,6 +4,7 @@
 
 
 #include "source_range.hpp"
+#include "p0common/final.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -52,7 +53,7 @@ namespace p0
 	};
 
 
-	struct name_expression_tree : expression_tree
+	struct name_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit name_expression_tree(
 			source_range name
@@ -67,7 +68,7 @@ namespace p0
 	};
 
 
-	struct integer_10_expression_tree : expression_tree
+	struct integer_10_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit integer_10_expression_tree(
 			source_range value
@@ -82,7 +83,7 @@ namespace p0
 	};
 
 
-	struct string_expression_tree : expression_tree
+	struct string_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		typedef std::vector<source_range> part_vector;
 
@@ -100,7 +101,7 @@ namespace p0
 	};
 
 
-	struct call_expression_tree : expression_tree
+	struct call_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		typedef std::vector<std::unique_ptr<expression_tree>> expression_vector;
 
@@ -121,7 +122,7 @@ namespace p0
 	};
 
 
-	struct function_tree : expression_tree
+	struct function_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		typedef std::vector<source_range> name_vector;
 
@@ -145,7 +146,7 @@ namespace p0
 	};
 
 
-	struct null_expression_tree : expression_tree
+	struct null_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit null_expression_tree(
 			source_range position
@@ -159,7 +160,7 @@ namespace p0
 	};
 
 
-	struct table_expression_tree : expression_tree
+	struct table_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		typedef std::pair<source_range, std::unique_ptr<expression_tree>> element;
 		typedef std::vector<element> element_vector;
@@ -190,7 +191,7 @@ namespace p0
 		};
 	}
 
-	struct unary_expression_tree : expression_tree
+	struct unary_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit unary_expression_tree(
 			unary_operator::Enum type,
@@ -238,7 +239,7 @@ namespace p0
 		};
 	}
 
-	struct binary_expression_tree : expression_tree
+	struct binary_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit binary_expression_tree(
 			binary_operator::Enum type,
@@ -260,7 +261,7 @@ namespace p0
 	};
 
 
-	struct dot_element_expression_tree : expression_tree
+	struct dot_element_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit dot_element_expression_tree(
 			std::unique_ptr<expression_tree> table,
@@ -278,7 +279,7 @@ namespace p0
 	};
 
 
-	struct subscript_expression_tree : expression_tree
+	struct subscript_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit subscript_expression_tree(
 			std::unique_ptr<expression_tree> table,
@@ -297,7 +298,7 @@ namespace p0
 	};
 
 
-	struct import_expression_tree : expression_tree
+	struct import_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
 	{
 		explicit import_expression_tree(
 			std::unique_ptr<expression_tree> name,

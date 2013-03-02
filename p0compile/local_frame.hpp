@@ -20,7 +20,7 @@ namespace p0
 	}
 
 
-	struct local_frame
+	struct local_frame PROTOLANG0_FINAL_CLASS
 	{
 		explicit local_frame(
 			local_frame const *parent
@@ -49,7 +49,7 @@ namespace p0
 	};
 
 
-	struct loop
+	struct loop PROTOLANG0_FINAL_CLASS
 	{
 		explicit loop(local_frame &frame,
 					  intermediate::emitter &emitter,

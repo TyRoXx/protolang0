@@ -3,6 +3,7 @@
 #define P0I_INSTRUCTION_HPP
 
 
+#include "p0common/final.hpp"
 #include <array>
 #include <string>
 #include <cstdint>
@@ -60,7 +61,7 @@ namespace p0
 		typedef std::int64_t instruction_argument;
 
 
-		struct instruction_info
+		struct instruction_info PROTOLANG0_FINAL_CLASS
 		{
 			char const *name;
 			size_t argument_count;
@@ -72,7 +73,7 @@ namespace p0
 		instruction_type::Enum find_instruction_by_name(std::string const &name);
 
 
-		struct instruction
+		struct instruction PROTOLANG0_FINAL_CLASS
 		{
 			enum
 			{

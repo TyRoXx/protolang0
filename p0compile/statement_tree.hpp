@@ -4,6 +4,7 @@
 
 
 #include "source_range.hpp"
+#include "p0common/final.hpp"
 #include <memory>
 #include <string>
 #include <vector>
@@ -45,7 +46,7 @@ namespace p0
 	};
 
 
-	struct declaration_tree : statement_tree
+	struct declaration_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit declaration_tree(
 			source_range name,
@@ -63,7 +64,7 @@ namespace p0
 	};
 
 
-	struct return_tree : statement_tree
+	struct return_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit return_tree(
 			std::unique_ptr<expression_tree> value
@@ -78,7 +79,7 @@ namespace p0
 	};
 
 
-	struct block_tree : statement_tree
+	struct block_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		typedef std::vector<std::unique_ptr<statement_tree>> statement_vector;
 
@@ -95,7 +96,7 @@ namespace p0
 	};
 
 
-	struct expression_statement_tree : statement_tree
+	struct expression_statement_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit expression_statement_tree(
 			std::unique_ptr<expression_tree> expression
@@ -110,7 +111,7 @@ namespace p0
 	};
 
 
-	struct assignment_tree : statement_tree
+	struct assignment_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit assignment_tree(
 			std::unique_ptr<expression_tree> destination,
@@ -127,7 +128,7 @@ namespace p0
 	};
 
 
-	struct if_tree : statement_tree
+	struct if_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit if_tree(
 			std::unique_ptr<expression_tree> condition,
@@ -149,7 +150,7 @@ namespace p0
 	};
 
 
-	struct while_tree : statement_tree
+	struct while_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit while_tree(
 			std::unique_ptr<expression_tree> condition,
@@ -166,7 +167,7 @@ namespace p0
 	};
 
 
-	struct break_tree : statement_tree
+	struct break_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit break_tree(source_range const &position);
 		virtual void accept(statement_tree_visitor &visitor) const override;
@@ -178,7 +179,7 @@ namespace p0
 	};
 
 
-	struct continue_tree : statement_tree
+	struct continue_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit continue_tree(source_range const &position);
 		virtual void accept(statement_tree_visitor &visitor) const override;

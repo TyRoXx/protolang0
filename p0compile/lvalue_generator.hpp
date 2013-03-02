@@ -16,7 +16,7 @@ namespace p0
 	struct code_generator;
 
 
-	struct lvalue_generator : expression_tree_visitor
+	struct lvalue_generator PROTOLANG0_FINAL_CLASS : expression_tree_visitor
 	{
 		explicit lvalue_generator(
 			code_generator &function_generator,

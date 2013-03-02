@@ -14,7 +14,7 @@ namespace p0
 	struct function_tree;
 
 
-	struct code_generator
+	struct code_generator PROTOLANG0_FINAL_CLASS
 	{
 		typedef std::function<bool (compiler_error const &)> compiler_error_handler;
 

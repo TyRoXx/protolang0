@@ -11,7 +11,7 @@ namespace p0
 	struct local_frame;
 
 
-	struct temporary
+	struct temporary PROTOLANG0_FINAL_CLASS
 	{
 		explicit temporary(
 			local_frame &frame,

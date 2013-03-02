@@ -13,7 +13,7 @@ namespace p0
 	struct compiler_error;
 
 
-	struct compiler
+	struct compiler PROTOLANG0_FINAL_CLASS
 	{
 		typedef std::function<bool (compiler_error const &)> compiler_error_handler;
 

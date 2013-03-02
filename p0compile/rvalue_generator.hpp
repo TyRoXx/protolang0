@@ -16,7 +16,7 @@ namespace p0
 	struct code_generator;
 
 
-	struct rvalue_generator : expression_tree_visitor
+	struct rvalue_generator PROTOLANG0_FINAL_CLASS : expression_tree_visitor
 	{
 		///@destination may be invalid to indicate that the value is not supposed to be stored
 		explicit rvalue_generator(

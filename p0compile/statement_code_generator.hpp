@@ -14,7 +14,7 @@ namespace p0
 	struct code_generator;
 
 
-	struct statement_code_generator : statement_tree_visitor
+	struct statement_code_generator PROTOLANG0_FINAL_CLASS : statement_tree_visitor
 	{
 		explicit statement_code_generator(
 			code_generator &function_generator,
