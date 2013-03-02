@@ -15,7 +15,7 @@ Dependencies:
 Usually working compilers:
 	- GCC 4.7
 	- Clang 3.2
-	- Visual C++ 10
+	- Visual C++ 2010
 
 TyRoXx
 tyroxxxx@gmail.com
