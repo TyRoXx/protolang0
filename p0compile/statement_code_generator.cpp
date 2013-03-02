@@ -2,7 +2,7 @@
 #include "local_frame.hpp"
 #include "lvalue_generator.hpp"
 #include "rvalue_generator.hpp"
-#include "code_generator.hpp"
+#include "function_generator.hpp"
 #include "compiler_error.hpp"
 #include "temporary.hpp"
 
@@ -10,7 +10,7 @@
 namespace p0
 {
 	statement_code_generator::statement_code_generator(
-		code_generator &function_generator,
+		function_generator &function_generator,
 		intermediate::emitter &emitter,
 		local_frame &frame
 		)
@@ -243,7 +243,7 @@ namespace p0
 
 	void generate_statement(
 		statement_tree const &tree,
-		code_generator &function_generator,
+		function_generator &function_generator,
 		intermediate::emitter &emitter,
 		local_frame &frame
 		)

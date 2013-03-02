@@ -1,7 +1,7 @@
 #include "rvalue_generator.hpp"
 #include "local_frame.hpp"
 #include "compiler_error.hpp"
-#include "code_generator.hpp"
+#include "function_generator.hpp"
 #include "unit_generator.hpp"
 #include "temporary.hpp"
 #include <sstream>
@@ -11,7 +11,7 @@
 namespace p0
 {
 	rvalue_generator::rvalue_generator(
-		code_generator &function_generator,
+		function_generator &function_generator,
 		intermediate::emitter &emitter,
 		local_frame &frame,
 		reference destination
@@ -272,7 +272,7 @@ namespace p0
 
 	void rvalue_generator::visit(function_tree const &expression)
 	{
-		code_generator function_generator(
+		function_generator function_generator(
 			m_function_generator.unit()
 			);
 		auto const function_id = function_generator.generate_function(
@@ -534,7 +534,7 @@ namespace p0
 		void generate_subscript(
 			local_frame &frame,
 			intermediate::emitter &emitter,
-			code_generator &function_generator,
+			function_generator &function_generator,
 			reference destination,
 			expression_tree const &table_expression,
 			std::function<void (reference &key_destination)> const &emit_key

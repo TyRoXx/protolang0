@@ -3,14 +3,14 @@
 #include "compiler_error.hpp"
 #include "temporary.hpp"
 #include "rvalue_generator.hpp"
-#include "code_generator.hpp"
+#include "function_generator.hpp"
 #include "unit_generator.hpp"
 
 
 namespace p0
 {
 	lvalue_generator::lvalue_generator(
-		code_generator &function_generator,
+		function_generator &function_generator,
 		intermediate::emitter &emitter,
 		local_frame &frame
 		)
@@ -112,7 +112,7 @@ namespace p0
 		void generate_subscript(
 			local_frame &frame,
 			intermediate::emitter &emitter,
-			code_generator &function_generator,
+			function_generator &function_generator,
 			reference &destination,
 			std::function<void ()> &commit_write,
 			expression_tree const &table_expression,

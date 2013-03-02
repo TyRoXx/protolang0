@@ -13,13 +13,13 @@
 namespace p0
 {
 	struct local_frame;
-	struct code_generator;
+	struct function_generator;
 
 
 	struct lvalue_generator PROTOLANG0_FINAL_CLASS : expression_tree_visitor
 	{
 		explicit lvalue_generator(
-			code_generator &function_generator,
+			function_generator &function_generator,
 			intermediate::emitter &emitter,
 			local_frame &frame
 			);
@@ -28,7 +28,7 @@ namespace p0
 
 	private:
 
-		code_generator &m_function_generator;
+		function_generator &m_function_generator;
 		intermediate::emitter &m_emitter;
 		local_frame &m_frame;
 		reference m_address;

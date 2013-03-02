@@ -1,6 +1,6 @@
 #pragma once
-#ifndef P0C_CODE_GENERATOR_HPP
-#define P0C_CODE_GENERATOR_HPP
+#ifndef P0C_FUNCTION_GENERATOR_HPP
+#define P0C_FUNCTION_GENERATOR_HPP
 
 
 #include "p0i/unit.hpp"
@@ -14,12 +14,12 @@ namespace p0
 	struct function_tree;
 
 
-	struct code_generator PROTOLANG0_FINAL_CLASS
+	struct function_generator PROTOLANG0_FINAL_CLASS
 	{
 		typedef std::function<bool (compiler_error const &)> compiler_error_handler;
 
 
-		explicit code_generator(
+		explicit function_generator(
 			unit_generator &unit
 			);
 		unit_generator &unit() const;

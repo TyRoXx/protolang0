@@ -11,20 +11,20 @@
 namespace p0
 {
 	struct local_frame;
-	struct code_generator;
+	struct function_generator;
 
 
 	struct statement_code_generator PROTOLANG0_FINAL_CLASS : statement_tree_visitor
 	{
 		explicit statement_code_generator(
-			code_generator &function_generator,
+			function_generator &function_generator,
 			intermediate::emitter &emitter,
 			local_frame &frame
 			);
 
 	private:
 
-		code_generator &m_function_generator;
+		function_generator &m_function_generator;
 		intermediate::emitter &m_emitter;
 		local_frame &m_frame;
 
@@ -43,7 +43,7 @@ namespace p0
 
 	void generate_statement(
 		statement_tree const &tree,
-		code_generator &function_generator,
+		function_generator &function_generator,
 		intermediate::emitter &emitter,
 		local_frame &frame
 		);

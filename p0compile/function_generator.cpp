@@ -1,4 +1,4 @@
-#include "code_generator.hpp"
+#include "function_generator.hpp"
 #include "unit_generator.hpp"
 #include "local_frame.hpp"
 #include "expression_tree.hpp"
@@ -10,19 +10,19 @@
 
 namespace p0
 {
-	code_generator::code_generator(
+	function_generator::function_generator(
 		unit_generator &unit
 		)
 		: m_unit(unit)
 	{
 	}
 
-	unit_generator &code_generator::unit() const
+	unit_generator &function_generator::unit() const
 	{
 		return m_unit;
 	}
 
-	size_t code_generator::generate_function(
+	size_t function_generator::generate_function(
 		function_tree const &function
 		)
 	{
@@ -76,14 +76,14 @@ namespace p0
 		return function_index;
 	}
 
-	void code_generator::handle_error(
+	void function_generator::handle_error(
 		compiler_error const &error
 		)
 	{
 		m_unit.handle_error(error);
 	}
 
-	void code_generator::add_return(std::size_t jump_address)
+	void function_generator::add_return(std::size_t jump_address)
 	{
 		m_return_instructions.push_back(jump_address);
 	}

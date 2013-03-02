@@ -1,5 +1,5 @@
 #include "unit_generator.hpp"
-#include "code_generator.hpp"
+#include "function_generator.hpp"
 #include <cassert>
 
 
@@ -26,7 +26,7 @@ namespace p0
 
 	intermediate::unit unit_generator::generate_unit()
 	{
-		code_generator function_generator(*this);
+		function_generator function_generator(*this);
 		function_generator.generate_function(
 			m_tree
 			);
