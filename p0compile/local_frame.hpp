@@ -7,6 +7,7 @@
 #include "source_range.hpp"
 #include <map>
 #include <string>
+#include <vector>
 
 
 namespace p0

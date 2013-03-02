@@ -26,7 +26,7 @@ namespace p0
 			throw std::runtime_error("Not implemented");
 		}
 
-		run::value print_string(std::vector<run::value> const &arguments)
+		run::value std_print_string(std::vector<run::value> const &arguments)
 		{
 			auto &out = std::cout;
 			BOOST_FOREACH (auto &argument, arguments)
@@ -67,8 +67,8 @@ namespace p0
 			{
 				module.reset(new run::table);
 				rt::inserter(*module, interpreter)
-					.insert_fn("print", print_string)
-					.insert_fn("assert", std_assert)
+					.insert_fn("print", &std_print_string)
+					.insert_fn("assert", &std_assert)
 					.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
 					;
 			}
