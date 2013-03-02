@@ -5,6 +5,7 @@
 
 #include "statement_tree.hpp"
 #include "p0i/emitter.hpp"
+#include "p0common/final.hpp"
 
 
 namespace p0
@@ -28,15 +29,15 @@ namespace p0
 		local_frame &m_frame;
 
 
-		virtual void visit(declaration_tree const &statement) override;
-		virtual void visit(return_tree const &statement) override;
-		virtual void visit(block_tree const &statement) override;
-		virtual void visit(expression_statement_tree const &statement) override;
-		virtual void visit(assignment_tree const &statement) override;
-		virtual void visit(if_tree const &statement) override;
-		virtual void visit(while_tree const &statement) override;
-		virtual void visit(break_tree const &statement) override;
-		virtual void visit(continue_tree const &statement) override;
+		virtual void visit(declaration_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(return_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(block_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(expression_statement_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(assignment_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(if_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(while_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(break_tree const &statement) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(continue_tree const &statement) PROTOLANG0_FINAL_METHOD;
 	};
 
 

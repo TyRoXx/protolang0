@@ -6,6 +6,7 @@
 #include "expression_tree.hpp"
 #include "reference.hpp"
 #include "p0i/emitter.hpp"
+#include "p0common/final.hpp"
 #include <functional>
 
 
@@ -33,18 +34,18 @@ namespace p0
 		reference const m_destination;
 
 
-		virtual void visit(name_expression_tree const &expression) override;
-		virtual void visit(integer_10_expression_tree const &expression) override;
-		virtual void visit(string_expression_tree const &expression) override;
-		virtual void visit(call_expression_tree const &expression) override;
-		virtual void visit(function_tree const &expression) override;
-		virtual void visit(null_expression_tree const &expression) override;
-		virtual void visit(table_expression_tree const &expression) override;
-		virtual void visit(unary_expression_tree const &expression) override;
-		virtual void visit(binary_expression_tree const &expression) override;
-		virtual void visit(dot_element_expression_tree const &expression) override;
-		virtual void visit(subscript_expression_tree const &expression) override;
-		virtual void visit(import_expression_tree const &expression) override;
+		virtual void visit(name_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(integer_10_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(string_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(call_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(function_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(null_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(table_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(unary_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(binary_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(dot_element_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(subscript_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(import_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 	};
 }
 

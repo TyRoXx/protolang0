@@ -5,6 +5,7 @@
 
 #include "value.hpp"
 #include "object.hpp"
+#include "p0common/final.hpp"
 #include <unordered_map>
 
 
@@ -19,8 +20,8 @@ namespace p0
 
 			table();
 			explicit table(elements elements);
-			virtual boost::optional<value> get_element(value const &key) const override;
-			virtual bool set_element(value const &key, value const &value) override;
+			virtual boost::optional<value> get_element(value const &key) const PROTOLANG0_FINAL_METHOD;
+			virtual bool set_element(value const &key, value const &value) PROTOLANG0_FINAL_METHOD;
 
 		private:
 
