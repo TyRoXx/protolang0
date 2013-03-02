@@ -52,7 +52,7 @@ namespace p0
 
 	void statement_code_generator::visit(block_tree const &statement)
 	{
-		local_frame block_symbols(&m_frame, nullptr);
+		local_frame block_symbols(m_frame);
 
 		for (auto s = begin(statement.body()); s != end(statement.body()); ++s)
 		{

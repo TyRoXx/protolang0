@@ -8,14 +8,21 @@
 namespace p0
 {
 	local_frame::local_frame(
-		local_frame const *parent,
-		function_generator *function_generator
+		local_frame &parent
 		)
-		: m_parent(parent)
-		, m_function_generator(function_generator)
-		, m_next_local_address(parent ? parent->m_next_local_address : 0)
-		, m_current_loop(parent ? parent->m_current_loop : nullptr)
+		: m_parent(&parent)
+		, m_function_generator(parent.m_function_generator)
 	{
+		init_variables();
+	}
+
+	local_frame::local_frame(
+		function_generator &function_generator
+		)
+		: m_parent(nullptr)
+		, m_function_generator(function_generator)
+	{
+		init_variables();
 	}
 
 	reference local_frame::declare_variable(
@@ -98,6 +105,12 @@ namespace p0
 	loop *local_frame::get_loop() const
 	{
 		return m_current_loop;
+	}
+
+	void local_frame::init_variables()
+	{
+		m_next_local_address = (m_parent ? m_parent->m_next_local_address : 0);
+		m_current_loop = (m_parent ? m_parent->m_current_loop : nullptr);
 	}
 
 

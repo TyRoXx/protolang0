@@ -24,8 +24,10 @@ namespace p0
 	struct local_frame PROTOLANG0_FINAL_CLASS
 	{
 		explicit local_frame(
-			local_frame const *parent,
-			function_generator *function_generator
+			local_frame &parent
+			);
+		explicit local_frame(
+			function_generator &function_generator
 			);
 		reference declare_variable(
 			source_range name
@@ -44,11 +46,14 @@ namespace p0
 		typedef std::map<std::string, reference> symbols_by_name;
 
 
-		local_frame const * const m_parent;
-		function_generator * const m_function_generator;
+		local_frame * const m_parent;
+		function_generator &m_function_generator;
 		symbols_by_name m_symbols_by_name;
 		size_t m_next_local_address;
 		loop *m_current_loop;
+
+
+		void init_variables();
 	};
 
 

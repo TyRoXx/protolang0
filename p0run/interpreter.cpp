@@ -161,7 +161,6 @@ namespace p0
 							value const new_closure(*function_object);
 							m_gc.add_object(std::move(function_object));
 							closure = new_closure;
-
 						}
 
 						//TODO type check is redundant if previous if was taken

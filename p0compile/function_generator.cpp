@@ -34,10 +34,7 @@ namespace p0
 		intermediate::function::instruction_vector instructions;
 		intermediate::emitter emitter(instructions);
 
-		local_frame top_frame(
-			nullptr,
-			this
-			);
+		local_frame top_frame(*this);
 
 		//return value
 		top_frame.allocate(1);
