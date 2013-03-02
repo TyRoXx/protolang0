@@ -25,7 +25,7 @@ namespace p0
 					std::string key,
 					run::integer element)
 		{
-			return insert(table, interpreter, std::move(key), element);
+			return insert(table, interpreter, std::move(key), run::value(element));
 		}
 
 		void insert(run::object &table,
