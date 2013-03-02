@@ -47,7 +47,7 @@ namespace
 			(p0::compiler_error const &error) -> bool
 		{
 			auto const found_error_position =
-				error.position().begin() - full_source.data();
+				static_cast<size_t>(error.position().begin() - full_source.data());
 			found_expected_error = (error_position == found_error_position);
 			return true;
 		};
