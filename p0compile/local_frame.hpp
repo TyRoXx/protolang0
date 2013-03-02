@@ -76,9 +76,7 @@ namespace p0
 
 
 		void init_variables();
-		std::pair<reference, local_frame *> find_function_local_variable(
-				std::string const &name
-				);
+		reference find_function_local_variable(std::string const &name);
 	};
 
 

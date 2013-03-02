@@ -58,9 +58,9 @@ namespace p0
 		)
 	{
 		auto const result = find_function_local_variable(name);
-		if (result.first.is_valid())
+		if (result.is_valid())
 		{
-			return result.first;
+			return result;
 		}
 
 		throw compiler_error(
@@ -75,8 +75,20 @@ namespace p0
 		reference possible_space
 		)
 	{
-		//TODO
-		return require_writeable(name, name_position);
+		//trivial case:
+		//The variable is function-local therefore direcly accessible.
+		auto const function_local = find_function_local_variable(name);
+		if (function_local.is_valid())
+		{
+			return function_local;
+		}
+
+		//TODO: look for the variable in outer function
+
+		throw compiler_error(
+			"Unknown identifier",
+			name_position
+			);
 	}
 
 	reference local_frame::allocate(size_t count)
@@ -116,7 +128,7 @@ namespace p0
 		m_current_loop = (m_parent ? m_parent->m_current_loop : nullptr);
 	}
 
-	std::pair<reference, local_frame *> local_frame::find_function_local_variable(
+	reference local_frame::find_function_local_variable(
 			std::string const &name
 			)
 	{
@@ -124,7 +136,7 @@ namespace p0
 			auto const symbol = m_symbols_by_name.find(name);
 			if (symbol != m_symbols_by_name.end())
 			{
-				return std::make_pair(symbol->second, this);
+				return symbol->second;
 			}
 		}
 
@@ -133,7 +145,7 @@ namespace p0
 			return m_parent->find_function_local_variable(name);
 		}
 
-		return std::make_pair(reference(), this);
+		return reference();
 	}
 
 
