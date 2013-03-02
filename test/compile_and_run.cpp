@@ -124,3 +124,22 @@ BOOST_AUTO_TEST_CASE(bind_local_variable_test)
 		BOOST_CHECK(result == value(static_cast<integer>(9)));
 	});
 }
+
+BOOST_AUTO_TEST_CASE(bind_far_variable_test)
+{
+	std::string const source =
+			"var a = 7\n"
+			"var f = function () {\n"
+			"	var g = function () {\n"
+			"		return a + 2\n"
+			"	}\n"
+			"	return g\n"
+			"}\n"
+			"return f()()";
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(9)));
+	});
+}
