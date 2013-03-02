@@ -59,3 +59,16 @@ BOOST_AUTO_TEST_CASE(overflowing_integer_literal_test)
 
 	BOOST_CHECK(test_invalid_source("", std::string(500, '9')));
 }
+
+BOOST_AUTO_TEST_CASE(missing_expression_test)
+{
+	BOOST_CHECK(test_invalid_source("return ", ""));
+	BOOST_CHECK(test_invalid_source("import ", ""));
+	BOOST_CHECK(test_invalid_source("5 + ", ""));
+	BOOST_CHECK(test_invalid_source("f((((", "***"));
+}
+
+BOOST_AUTO_TEST_CASE(outmost_scope_closing_brace_test)
+{
+	BOOST_CHECK(test_invalid_source("", "}"));
+}
