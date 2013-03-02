@@ -14,6 +14,15 @@ namespace p0
 		unit_generator &unit
 		)
 		: m_unit(unit)
+		, m_parent(nullptr)
+	{
+	}
+
+	function_generator::function_generator(
+		function_generator &parent
+		)
+		: m_unit(parent.m_unit)
+		, m_parent(&parent)
 	{
 	}
 
