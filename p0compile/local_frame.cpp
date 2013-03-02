@@ -52,13 +52,12 @@ namespace p0
 		return variable_address;
 	}
 
-	reference local_frame::require_symbol(
-		source_range name
-		) const
+	reference local_frame::require_writeable(
+		std::string const &name,
+		source_range name_position
+		)
 	{
-		auto const s = m_symbols_by_name.find(
-			source_range_to_string(name)
-			);
+		auto const s = m_symbols_by_name.find(name);
 
 		if (s != m_symbols_by_name.end())
 		{
@@ -67,22 +66,13 @@ namespace p0
 
 		if (m_parent)
 		{
-			return m_parent->require_symbol(name);
+			return m_parent->require_writeable(name, name_position);
 		}
 
 		throw compiler_error(
 			"Unknown identifier",
-			name
+			name_position
 			);
-	}
-
-	reference local_frame::require_writeable(
-		std::string const &name,
-		source_range name_position
-		)
-	{
-		//TODO
-		return require_symbol(name_position);
 	}
 
 	reference local_frame::emit_read_only(
@@ -92,7 +82,7 @@ namespace p0
 		)
 	{
 		//TODO
-		return require_symbol(name_position);
+		return require_writeable(name, name_position);
 	}
 
 	reference local_frame::allocate(size_t count)

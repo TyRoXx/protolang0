@@ -32,9 +32,6 @@ namespace p0
 		reference declare_variable(
 			source_range name
 			);
-		reference require_symbol(
-			source_range name
-			) const;
 
 		reference require_writeable(
 			std::string const &name,
