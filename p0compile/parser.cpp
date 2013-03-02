@@ -200,11 +200,21 @@ namespace p0
 				}
 
 				//end of the block
-				if (try_skip_token(
-					token_type::brace_right
-					))
 				{
-					break;
+					auto const maybe_brace_right = peek_token();
+					if (maybe_brace_right.type == token_type::brace_right)
+					{
+						if (is_global)
+						{
+							throw compiler_error(
+								"Unexpected closing brace '}' in outmost scope",
+								maybe_brace_right.content
+								);
+						}
+
+						pop_token();
+						break;
+					}
 				}
 
 				auto statement = parse_statement();

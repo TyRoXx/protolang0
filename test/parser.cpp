@@ -37,24 +37,24 @@ namespace
 		return check_source(source, handle_ast, handle_unexpected_error);
 	}
 
-	void check_invalid_source(std::string const &source,
+	bool test_invalid_source(std::string const &source,
 							  std::size_t error_position)
 	{
-		bool has_failed = false;
+		bool found_expected_error = false;
 		check_source(
 			source,
 			[](p0::function_tree const &)
 		{
 			//ignore results
 		},
-			[error_position, &source, &has_failed](p0::compiler_error const &error) -> bool
+			[error_position, &source, &found_expected_error]
+			(p0::compiler_error const &error) -> bool
 		{
 			auto const error_found_at = error.position().begin();
-			BOOST_CHECK(source.data() + error_position == error_found_at);
-			has_failed = true;
+			found_expected_error = (source.data() + error_position == error_found_at);
 			return true;
 		});
-		BOOST_CHECK(has_failed);
+		return found_expected_error;
 	}
 
 	template <class Base>
@@ -144,8 +144,13 @@ BOOST_AUTO_TEST_CASE(parse_load_module_test)
 
 BOOST_AUTO_TEST_CASE(missing_expression_test)
 {
-	check_invalid_source("return ", 7);
-	check_invalid_source("import ", 7);
-	check_invalid_source("5 + ", 4);
-	check_invalid_source("f((((***", 5);
+	BOOST_CHECK(test_invalid_source("return ", 7));
+	BOOST_CHECK(test_invalid_source("import ", 7));
+	BOOST_CHECK(test_invalid_source("5 + ", 4));
+	BOOST_CHECK(test_invalid_source("f((((***", 5));
+}
+
+BOOST_AUTO_TEST_CASE(outmost_scope_closing_brace_test)
+{
+	BOOST_CHECK(test_invalid_source("}", 0));
 }
