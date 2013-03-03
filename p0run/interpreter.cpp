@@ -83,6 +83,7 @@ namespace p0
 
 			size_t const local_frame = arguments_address;
 
+			//TODO: support run::function
 			auto const function_var = get(local_frame, 0);
 			if (function_var.type != value_type::function_ptr)
 			{
@@ -110,7 +111,7 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 36);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 37);
 
 				switch (operation)
 				{
@@ -197,6 +198,13 @@ namespace p0
 							throw std::runtime_error(
 								"A bound variable was not found in the object");
 						}
+						break;
+					}
+
+				case current_function:
+					{
+						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+						get(local_frame, dest_address) = function_var;
 						break;
 					}
 

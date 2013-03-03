@@ -23,6 +23,7 @@ namespace p0
 				set_null,
 				set_function,
 				bind,
+				current_function,
 				get_bound,
 				set_string,
 				copy,

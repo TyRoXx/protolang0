@@ -43,6 +43,7 @@ namespace p0
 				instruction_argument bound_index,
 				instruction_argument destination
 				);
+			void current_function(instruction_argument destination);
 			void set_string(
 				instruction_argument destination,
 				instruction_argument string_id

@@ -87,6 +87,14 @@ namespace p0
 				));
 		}
 
+		void emitter::current_function(instruction_argument destination)
+		{
+			push_instruction(instruction(
+				instruction_type::current_function,
+				destination
+				));
+		}
+
 		void emitter::set_string(
 			instruction_argument destination,
 			instruction_argument string_id
