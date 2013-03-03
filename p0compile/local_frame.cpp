@@ -3,6 +3,7 @@
 #include "function_generator.hpp"
 #include "temporary.hpp"
 #include "p0i/emitter.hpp"
+#include <boost/foreach.hpp>
 
 
 namespace p0
@@ -83,13 +84,12 @@ namespace p0
 		{
 			return function_local;
 		}
-
-		//TODO: look for the variable in outer function
-
-		std::vector<function_generator *> frames;
+		
+		std::vector<function_generator *> forwarding_functions;
 		size_t current_bound_index = static_cast<size_t>(-1);
 
 		local_frame *outer_frame = this;
+		function_generator *last_function = &outer_frame->m_function_generator;
 		for (;;)
 		{
 			outer_frame = outer_frame->outer_function_inner_frame();
@@ -108,26 +108,26 @@ namespace p0
 			if (local.is_valid())
 			{
 				auto const outmost_bound_index =
-					current_function.bind_local(local);
+					last_function->bind_local(local);
 
 				current_bound_index = outmost_bound_index;
 				break;
 			}
+			else
+			{
+				forwarding_functions.push_back(last_function);
+			}
 
-			frames.push_back(&current_function);
+			last_function = &current_function;
 		}
 
-		assert(current_bound_index != static_cast<size_t>(-1));
-
-		for (auto f = frames.begin(); f != frames.end(); ++f)
+		BOOST_FOREACH (auto * const forwarding, forwarding_functions)
 		{
-			auto &inner_function = **f;
-
-			current_bound_index = inner_function.bind_from_parent(
+			current_bound_index = forwarding->bind_from_parent(
 				current_bound_index
 				);
 		}
-
+		
 		if (possible_space.is_valid())
 		{
 			temporary const current_function_variable(*this, 1);

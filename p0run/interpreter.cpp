@@ -188,7 +188,7 @@ namespace p0
 
 						//TODO type check is redundant if previous if was taken
 						if ((closure.type != value_type::object) ||
-							closure.obj->bind(bound_index, source))
+							!closure.obj->bind(bound_index, source))
 						{
 							throw std::runtime_error(
 								"Cannot bind a variable to a non-function");

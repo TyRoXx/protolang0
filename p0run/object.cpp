@@ -69,7 +69,7 @@ namespace p0
 
 		boost::optional<value> object::call(
 			std::vector<value> const & /*arguments*/,
-			interpreter & /*interpreter*/) const
+			interpreter & /*interpreter*/)
 		{
 			return boost::optional<value>();
 		}

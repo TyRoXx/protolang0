@@ -15,9 +15,9 @@ namespace p0
 
 		boost::optional<value> function::call(
 			std::vector<value> const &arguments,
-			interpreter &interpreter) const
+			interpreter &interpreter)
 		{
-			return interpreter.call(m_function, value(m_function), arguments);
+			return interpreter.call(m_function, value(*this), arguments);
 		}
 
 		void function::print(std::ostream &out) const

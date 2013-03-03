@@ -18,7 +18,7 @@ namespace p0
 			virtual boost::optional<value> call(
 				std::vector<value> const &arguments,
 				interpreter &interpreter
-				) const PROTOLANG0_FINAL_METHOD;
+				) PROTOLANG0_FINAL_METHOD;
 			virtual void print(std::ostream &out) const PROTOLANG0_FINAL_METHOD;
 			virtual bool bind(size_t index, value const &value) PROTOLANG0_FINAL_METHOD;
 			virtual boost::optional<value> get_bound(size_t index) const PROTOLANG0_FINAL_METHOD;
