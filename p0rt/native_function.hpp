@@ -21,7 +21,8 @@ namespace p0
 			}
 
 			virtual boost::optional<run::value> call(
-					std::vector<run::value> const &arguments) const PROTOLANG0_FINAL_METHOD
+				std::vector<run::value> const &arguments,
+				run::interpreter & /*interpreter*/) const PROTOLANG0_FINAL_METHOD
 			{
 				return m_functor(arguments);
 			}

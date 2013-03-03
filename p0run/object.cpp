@@ -67,7 +67,9 @@ namespace p0
 			return comparison_result::equal;
 		}
 
-        boost::optional<value> object::call(std::vector<value> const & /*arguments*/) const
+		boost::optional<value> object::call(
+			std::vector<value> const & /*arguments*/,
+			interpreter & /*interpreter*/) const
 		{
 			return boost::optional<value>();
 		}

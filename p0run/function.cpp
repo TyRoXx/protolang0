@@ -1,4 +1,5 @@
 #include "function.hpp"
+#include "interpreter.hpp"
 #include "p0i/function.hpp"
 
 
@@ -12,10 +13,11 @@ namespace p0
 		{
 		}
 
-		boost::optional<value> function::call(std::vector<value> const &arguments) const
+		boost::optional<value> function::call(
+			std::vector<value> const &arguments,
+			interpreter &interpreter) const
 		{
-			//TODO
-			return boost::optional<value>();
+			return interpreter.call(m_function, value(m_function), arguments);
 		}
 
 		void function::print(std::ostream &out) const

@@ -21,6 +21,26 @@ namespace p0
 			{
 				return (1u << index);
 			}
+
+			template <class Container>
+			struct pop_guard
+			{
+				template <class E>
+				pop_guard(Container &container, E &&element)
+					: m_container(container)
+				{
+					m_container.push_back(std::forward<E>(element));
+				}
+
+				~pop_guard()
+				{
+					m_container.pop_back();
+				}
+
+			private:
+
+				Container &m_container;
+			};
 		}
 
 
@@ -34,27 +54,30 @@ namespace p0
 
 		value interpreter::call(
 			intermediate::function const &function,
+			value const &current_function,
 			const std::vector<value> &arguments)
 		{
 			m_locals.clear();
-			m_locals.push_back(value(function));
+			m_locals.push_back(current_function);
 			m_locals.insert(m_locals.end(), arguments.begin(), arguments.end());
-			native_call(0, arguments.size());
+			native_call(function, 0, arguments.size());
 			assert(!m_locals.empty());
 			return m_locals.front();
+		}
+
+		value interpreter::call(
+			intermediate::function const &function,
+			const std::vector<value> &arguments
+			)
+		{
+			return call(function, value(function), arguments);
 		}
 
 		void interpreter::collect_garbage()
 		{
 			m_gc.unmark();
-			std::for_each(m_locals.begin(), m_locals.end(),
-				[](value const &variable)
-			{
-				if (variable.type == value_type::object)
-				{
-					variable.obj->mark();
-				}
-			});
+			mark_values(m_locals);
+			mark_values(m_current_function_stack);
 			m_gc.sweep();
 		}
 
@@ -73,6 +96,7 @@ namespace p0
 
 
 		void interpreter::native_call(
+			intermediate::function const &function,
 			std::size_t arguments_address,
 			std::size_t argument_count)
 		{
@@ -83,13 +107,11 @@ namespace p0
 
 			size_t const local_frame = arguments_address;
 
-			//TODO: support run::function
-			auto const function_var = get(local_frame, 0);
-			if (function_var.type != value_type::function_ptr)
-			{
-				throw std::runtime_error("Cannot call non-function-ptr value");
-			}
-			auto const &function = *function_var.function_ptr;
+			pop_guard<decltype(m_current_function_stack)> const
+				current_function_stack_entry(
+					m_current_function_stack,
+					get(local_frame, 0)
+				);
 
 			//set missing arguments to null
 			for (size_t i = argument_count; i < function.parameters(); ++i)
@@ -204,7 +226,7 @@ namespace p0
 				case current_function:
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
-						get(local_frame, dest_address) = function_var;
+						get(local_frame, dest_address) = m_current_function_stack.back();
 						break;
 					}
 
@@ -429,7 +451,7 @@ namespace p0
 							{
 								arguments.push_back(get(local_frame, arguments_address + 1 + i));
 							}
-							auto const result = callee.obj->call(arguments);
+							auto const result = callee.obj->call(arguments, *this);
 							if (!result)
 							{
 								throw std::runtime_error("Called object does not support the call operation");
@@ -438,9 +460,16 @@ namespace p0
 							break;
 						}
 
-						default:
-							native_call(local_frame + arguments_address, argument_count);
+						case value_type::function_ptr:
+							native_call(
+								*callee.function_ptr,
+								local_frame + arguments_address,
+								argument_count);
 							break;
+
+						default:
+							throw std::runtime_error(
+								"Cannot call that value as a function");
 						}
 						break;
 					}
@@ -580,6 +609,20 @@ namespace p0
 				m_locals.resize(absolute_address + 1);
 			}
 			return m_locals[absolute_address];
+		}
+
+		void interpreter::mark_values(std::vector<value> const &values)
+		{
+			std::for_each(
+				values.begin(),
+				values.end(),
+				[](value const &variable)
+			{
+				if (variable.type == value_type::object)
+				{
+					variable.obj->mark();
+				}
+			});
 		}
 	}
 }
