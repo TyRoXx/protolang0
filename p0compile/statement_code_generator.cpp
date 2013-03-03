@@ -1,5 +1,6 @@
 #include "statement_code_generator.hpp"
 #include "local_frame.hpp"
+#include "loop.hpp"
 #include "lvalue_generator.hpp"
 #include "rvalue_generator.hpp"
 #include "function_generator.hpp"
