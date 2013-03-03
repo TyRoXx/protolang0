@@ -34,19 +34,20 @@ namespace
 
 BOOST_AUTO_TEST_CASE(misplaced_break_continue_test)
 {
-	//not allowed in outermost scope
+	//break/continue are not allowed in outermost scope
 	BOOST_CHECK(test_invalid_source("", "break"));
 	BOOST_CHECK(test_invalid_source("", "continue"));
 
-	//not allowed in a non-loop scope
+	//break/continue are not allowed in a non-loop scope
 	BOOST_CHECK(test_invalid_source("{", "break}"));
 	BOOST_CHECK(test_invalid_source("{", "continue}"));
 
-	//not allowed in the top-level scope of a function
+	//break/continue are not allowed in the top-level scope of a function
 	BOOST_CHECK(test_invalid_source("function () {", "break}"));
 
-	//you cannot break out of a function
+	//you cannot break/continue a loop outside of a function
 	BOOST_CHECK(test_invalid_source("while 1 { function () {", "break} }"));
+	BOOST_CHECK(test_invalid_source("while 1 { function () {", "continue} }"));
 }
 
 BOOST_AUTO_TEST_CASE(overflowing_integer_literal_test)
@@ -60,21 +61,9 @@ BOOST_AUTO_TEST_CASE(overflowing_integer_literal_test)
 	BOOST_CHECK(test_invalid_source("", std::string(500, '9')));
 }
 
-BOOST_AUTO_TEST_CASE(missing_expression_test)
-{
-	BOOST_CHECK(test_invalid_source("return ", ""));
-	BOOST_CHECK(test_invalid_source("import ", ""));
-	BOOST_CHECK(test_invalid_source("5 + ", ""));
-	BOOST_CHECK(test_invalid_source("f((((", "***"));
-}
-
-BOOST_AUTO_TEST_CASE(outmost_scope_closing_brace_test)
-{
-	BOOST_CHECK(test_invalid_source("", "}"));
-}
-
 BOOST_AUTO_TEST_CASE(immutable_bound_variable_test)
 {
+	//a variable is immutable when bound
 	BOOST_CHECK(test_invalid_source(
 		"var a = 2\n"
 		"var f = function () { ", "a = a + 1 }\n"));
