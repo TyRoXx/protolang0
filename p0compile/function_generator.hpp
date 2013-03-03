@@ -15,6 +15,11 @@ namespace p0
 	struct function_tree;
 	struct local_frame;
 
+	namespace intermediate
+	{
+		struct emitter;
+	}
+
 
 	struct function_generator PROTOLANG0_FINAL_CLASS
 	{
@@ -30,14 +35,16 @@ namespace p0
 			);
 		unit_generator &unit() const;
 		local_frame *outer_frame() const;
-		size_t generate_function(
-			function_tree const &function
+		void emit_function(
+			function_tree const &function,
+			reference destination
 			);
 		void handle_error(
 			compiler_error const &error
 			);
 		void add_return(std::size_t jump_address);
 		std::size_t bind(reference bound_variable);
+
 	private:
 
 		unit_generator &m_unit;
@@ -45,6 +52,11 @@ namespace p0
 		function_generator * const m_parent;
 		std::vector<std::size_t> m_return_instructions;
 		std::vector<reference> m_bound_variables;
+
+
+		void emit_bindings(
+			size_t closure_address,
+			intermediate::emitter &emitter) const;
 	};
 }
 

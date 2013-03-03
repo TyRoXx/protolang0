@@ -39,8 +39,9 @@ namespace p0
 		return m_outer_frame;
 	}
 
-	size_t function_generator::generate_function(
-		function_tree const &function
+	void function_generator::emit_function(
+		function_tree const &function,
+		reference destination
 		)
 	{
 		assert(m_return_instructions.empty());
@@ -89,7 +90,15 @@ namespace p0
 			m_bound_variables.size()
 			));
 
-		return function_index;
+		if (destination.is_valid())
+		{
+			emit_bindings(destination.local_address(), emitter);
+
+			emitter.set_function(
+				destination.local_address(),
+				function_index
+				);
+		}
 	}
 
 	void function_generator::handle_error(
@@ -119,5 +128,19 @@ namespace p0
 
 		return static_cast<std::size_t>(
 					existing - begin(m_bound_variables));
+	}
+
+	void function_generator::emit_bindings(
+		size_t closure_address,
+		intermediate::emitter &emitter) const
+	{
+		for (size_t i = 0; i < m_bound_variables.size(); ++i)
+		{
+			auto &variable = m_bound_variables[i];
+			assert(variable.is_valid());
+			emitter.bind(closure_address,
+						 i,
+						 variable.local_address());
+		}
 	}
 }

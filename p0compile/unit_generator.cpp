@@ -27,8 +27,9 @@ namespace p0
 	intermediate::unit unit_generator::generate_unit()
 	{
 		function_generator function_generator(*this);
-		function_generator.generate_function(
-			m_tree
+		function_generator.emit_function(
+			m_tree,
+			reference()
 			);
 
 		intermediate::unit::string_vector strings(

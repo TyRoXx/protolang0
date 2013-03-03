@@ -283,17 +283,11 @@ namespace p0
 			m_function_generator, //parent
 			&m_frame //outer_frame
 			);
-		auto const function_id = function_generator.generate_function(
-			expression
-			);
 
-		if (m_destination.is_valid())
-		{
-			m_emitter.set_function(
-				m_destination.local_address(),
-				function_id
-				);
-		}
+		function_generator.emit_function(
+			expression,
+			m_destination
+			);
 	}
 
 	void rvalue_generator::visit(null_expression_tree const & /*expression*/)
