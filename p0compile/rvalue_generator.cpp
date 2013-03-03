@@ -296,7 +296,9 @@ namespace p0
 
 			function_generator.emit_bindings(
 				m_destination.local_address(),
-				m_emitter);
+				m_frame,
+				m_emitter
+				);
 		}
 	}
 

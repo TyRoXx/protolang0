@@ -6,6 +6,7 @@
 #include "p0i/unit.hpp"
 #include "reference.hpp"
 #include <functional>
+#include <boost/variant.hpp>
 
 
 namespace p0
@@ -42,18 +43,32 @@ namespace p0
 			compiler_error const &error
 			);
 		void add_return(std::size_t jump_address);
-		std::size_t bind(reference bound_variable);
+		std::size_t bind_local(reference bound_variable);
+		std::size_t bind_from_parent(size_t index_in_parent);
 		void emit_bindings(
 			size_t closure_address,
+			local_frame &frame,
 			intermediate::emitter &emitter) const;
 
 	private:
+
+		typedef size_t bound_from_parent;
+		typedef reference bound_locally;
+
+		typedef boost::variant<bound_from_parent, bound_locally>
+			bound_variable;
+
+		struct bound_variable_emitter;
+
 
 		unit_generator &m_unit;
 		local_frame * const m_outer_frame;
 		function_generator * const m_parent;
 		std::vector<std::size_t> m_return_instructions;
-		std::vector<reference> m_bound_variables;
+		std::vector<bound_variable> m_bound_variables;
+
+
+		std::size_t bind(bound_variable const &bound);
 	};
 }
 
