@@ -79,3 +79,16 @@ BOOST_AUTO_TEST_CASE(immutable_bound_variable_test)
 		"var a = 2\n"
 		"var f = function () { ", "a = a + 1 }\n"));
 }
+
+BOOST_AUTO_TEST_CASE(invalid_lvalue_test)
+{
+	BOOST_CHECK(test_invalid_source("", "null = null"));
+	BOOST_CHECK(test_invalid_source("", "[] = null"));
+	BOOST_CHECK(test_invalid_source("", "function () {} = null"));
+	BOOST_CHECK(test_invalid_source("var f = function (){}\n", "f() = null"));
+	BOOST_CHECK(test_invalid_source("\"", "\" = null")); //TODO fix position
+	BOOST_CHECK(test_invalid_source("", "123 = null"));
+	BOOST_CHECK(test_invalid_source("var a = null\n", "~a = null"));
+	BOOST_CHECK(test_invalid_source("", "1 + 2 = null"));
+	BOOST_CHECK(test_invalid_source("", "import \"\" = null"));
+}
