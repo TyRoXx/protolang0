@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(bind_local_variable_test)
 	});
 }
 
-BOOST_AUTO_TEST_CASE(two_level_bind__test)
+BOOST_AUTO_TEST_CASE(two_level_bind_test)
 {
 	std::string const source =
 			"var a = 7\n"
@@ -144,7 +144,7 @@ BOOST_AUTO_TEST_CASE(two_level_bind__test)
 	});
 }
 
-BOOST_AUTO_TEST_CASE(three_level_bind__test)
+BOOST_AUTO_TEST_CASE(three_level_bind_test)
 {
 	std::string const source =
 			"var a = 76\n"
@@ -166,5 +166,30 @@ BOOST_AUTO_TEST_CASE(three_level_bind__test)
 		[](value const &result, p0::intermediate::unit const & /*program*/)
 	{
 		BOOST_CHECK(result == value(static_cast<integer>(38)));
+	});
+}
+
+BOOST_AUTO_TEST_CASE(bind_many_variables_test)
+{
+	std::string const source =
+			"var a = 2\n"
+			"var b = 3\n"
+			"var c = 5\n"
+			"var d = 7\n"
+			"var e = 11\n"
+			"var f = function () {\n"
+			"	var zero = 0\n"
+			"	var g = function () {\n"
+			"		return zero + a + b / c - d * e\n"
+			"	}\n"
+			"	return g\n"
+			"}\n"
+			"return f()()";
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(
+					static_cast<integer>(2 + 3 / 5 - 7 * 11)));
 	});
 }
