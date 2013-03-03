@@ -35,15 +35,17 @@ namespace p0
 			);
 		unit_generator &unit() const;
 		local_frame *outer_frame() const;
-		void emit_function(
-			function_tree const &function,
-			reference destination
+		size_t generate_function(
+			function_tree const &function
 			);
 		void handle_error(
 			compiler_error const &error
 			);
 		void add_return(std::size_t jump_address);
 		std::size_t bind(reference bound_variable);
+		void emit_bindings(
+			size_t closure_address,
+			intermediate::emitter &emitter) const;
 
 	private:
 
@@ -52,11 +54,6 @@ namespace p0
 		function_generator * const m_parent;
 		std::vector<std::size_t> m_return_instructions;
 		std::vector<reference> m_bound_variables;
-
-
-		void emit_bindings(
-			size_t closure_address,
-			intermediate::emitter &emitter) const;
 	};
 }
 
