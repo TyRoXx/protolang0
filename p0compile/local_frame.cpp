@@ -3,7 +3,6 @@
 #include "function_generator.hpp"
 #include "temporary.hpp"
 #include "p0i/emitter.hpp"
-#include <boost/foreach.hpp>
 
 
 namespace p0
@@ -84,7 +83,7 @@ namespace p0
 		{
 			return function_local;
 		}
-		
+
 		std::vector<function_generator *> forwarding_functions;
 		size_t current_bound_index = static_cast<size_t>(-1);
 
@@ -121,13 +120,15 @@ namespace p0
 			last_function = &current_function;
 		}
 
-		BOOST_FOREACH (auto * const forwarding, forwarding_functions)
+		std::for_each(forwarding_functions.rbegin(),
+					  forwarding_functions.rend(),
+			[&current_bound_index](function_generator *forwarding)
 		{
 			current_bound_index = forwarding->bind_from_parent(
 				current_bound_index
 				);
-		}
-		
+		});
+
 		if (possible_space.is_valid())
 		{
 			temporary const current_function_variable(*this, 1);
