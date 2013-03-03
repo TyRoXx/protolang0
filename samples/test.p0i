@@ -290,9 +290,8 @@ end
 
 function 9
 0: set_from_constant          1         0
-1: copy                       1         1
-2: set_from_constant          0       123
-3: jump                       4
+1: set_from_constant          0       123
+2: jump                       3
 end
 
 function 10
