@@ -47,6 +47,7 @@ namespace p0
 		 *        if the variable is not found.
 		 * @param possible_space The method may put the value here.
 		 *        Not required to be valid.
+		 * @param emitter Where to put instructions to prepare the value.
 		 * @return A reference to the value of the variable. May be invalid if
 		 *         'possible_space' was invalid.
 		 * @throws If the variable is not found, a descriptive error is thrown.
@@ -54,7 +55,8 @@ namespace p0
 		reference emit_read_only(
 			std::string const &name,
 			source_range name_position,
-			reference possible_space
+			reference possible_space,
+			intermediate::emitter &emitter
 			);
 
 		reference allocate(size_t count);

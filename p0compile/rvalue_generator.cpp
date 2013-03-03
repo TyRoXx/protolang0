@@ -31,7 +31,8 @@ namespace p0
 		auto const address = m_frame.emit_read_only(
 			source_range_to_string(name),
 			name,
-			m_destination
+			m_destination,
+			m_emitter
 			);
 
 		using namespace std::rel_ops;

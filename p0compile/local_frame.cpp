@@ -1,6 +1,7 @@
 #include "local_frame.hpp"
 #include "compiler_error.hpp"
 #include "function_generator.hpp"
+#include "temporary.hpp"
 #include "p0i/emitter.hpp"
 
 
@@ -71,7 +72,8 @@ namespace p0
 	reference local_frame::emit_read_only(
 		std::string const &name,
 		source_range name_position,
-		reference possible_space
+		reference possible_space,
+		intermediate::emitter &emitter
 		)
 	{
 		//trivial case:
@@ -83,6 +85,9 @@ namespace p0
 		}
 
 		//TODO: look for the variable in outer function
+
+		std::vector<function_generator *> frames;
+		size_t current_bound_index = static_cast<size_t>(-1);
 
 		local_frame *outer_frame = this;
 		for (;;)
@@ -96,8 +101,47 @@ namespace p0
 					);
 			}
 
-			//TODO
+			auto &current_function = outer_frame->m_function_generator;
+
+			auto const local =
+				outer_frame->find_function_local_variable(name);
+			if (local.is_valid())
+			{
+				auto const outmost_bound_index =
+					current_function.bind_local(local);
+
+				current_bound_index = outmost_bound_index;
+				break;
+			}
+
+			frames.push_back(&current_function);
 		}
+
+		assert(current_bound_index != static_cast<size_t>(-1));
+
+		for (auto f = frames.begin(); f != frames.end(); ++f)
+		{
+			auto &inner_function = **f;
+
+			current_bound_index = inner_function.bind_from_parent(
+				current_bound_index
+				);
+		}
+
+		if (possible_space.is_valid())
+		{
+			temporary const current_function_variable(*this, 1);
+
+			emitter.current_function(
+				current_function_variable.address().local_address()
+				);
+			emitter.get_bound(
+				current_function_variable.address().local_address(),
+				current_bound_index,
+				possible_space.local_address()
+				);
+		}
+		return possible_space;
 	}
 
 	reference local_frame::allocate(size_t count)
