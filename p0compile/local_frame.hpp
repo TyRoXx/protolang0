@@ -13,6 +13,7 @@
 namespace p0
 {
 	struct loop;
+	struct function_generator;
 
 	namespace intermediate
 	{
@@ -23,14 +24,41 @@ namespace p0
 	struct local_frame PROTOLANG0_FINAL_CLASS
 	{
 		explicit local_frame(
-			local_frame const *parent
+			local_frame &function_parent
+			);
+		explicit local_frame(
+			function_generator &function_generator
 			);
 		reference declare_variable(
 			source_range name
 			);
-		reference require_symbol(
-			source_range name
-			) const;
+
+		reference require_writeable(
+			std::string const &name,
+			source_range name_position
+			);
+
+		/**
+		 * @brief Looks for a local variable and makes it readable if found.
+		 *        If the variable is found in an outer function, code is emitted
+		 *        to retrieve the value from bound variables.
+		 * @param name The name of the variable being looked for.
+		 * @param name_position The name's position for helpful error reporting
+		 *        if the variable is not found.
+		 * @param possible_space The method may put the value here.
+		 *        Not required to be valid.
+		 * @param emitter Where to put instructions to prepare the value.
+		 * @return A reference to the value of the variable. May be invalid if
+		 *         'possible_space' was invalid.
+		 * @throws If the variable is not found, a descriptive error is thrown.
+		 */
+		reference emit_read_only(
+			std::string const &name,
+			source_range name_position,
+			reference possible_space,
+			intermediate::emitter &emitter
+			);
+
 		reference allocate(size_t count);
 		void deallocate_top(size_t count);
 		loop *enter_loop(loop &loop);
@@ -42,33 +70,17 @@ namespace p0
 		typedef std::map<std::string, reference> symbols_by_name;
 
 
-		local_frame const * const m_parent;
+		local_frame * const m_function_parent;
+		function_generator &m_function_generator;
 		symbols_by_name m_symbols_by_name;
 		size_t m_next_local_address;
 		loop *m_current_loop;
+
+
+		local_frame *outer_function_inner_frame() const;
+		void init_variables();
+		reference find_function_local_variable(std::string const &name);
 	};
-
-
-	struct loop PROTOLANG0_FINAL_CLASS
-	{
-		explicit loop(local_frame &frame,
-					  intermediate::emitter &emitter,
-					  std::size_t continue_destination);
-		~loop();
-		void emit_break();
-		void emit_continue();
-		void finish(std::size_t after_loop);
-
-	private:
-
-		local_frame &m_frame;
-		intermediate::emitter &m_emitter;
-		loop * const m_previous;
-		std::size_t const m_continue_destination;
-		std::vector<std::size_t> m_breaks;
-	};
-
-
 }
 
 

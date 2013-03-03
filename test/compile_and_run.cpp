@@ -110,3 +110,61 @@ BOOST_AUTO_TEST_CASE(return_trivial_table_compile_test)
 		BOOST_CHECK(*element == value(static_cast<integer>(456)));
 	});
 }
+
+BOOST_AUTO_TEST_CASE(bind_local_variable_test)
+{
+	std::string const source =
+			"var a = 7\n"
+			"var f = function () { return a + 2 }\n"
+			"return f()";
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(9)));
+	});
+}
+
+BOOST_AUTO_TEST_CASE(two_level_bind__test)
+{
+	std::string const source =
+			"var a = 7\n"
+			"var f = function () {\n"
+			"	var g = function () {\n"
+			"		return a + 2\n"
+			"	}\n"
+			"	return g\n"
+			"}\n"
+			"return f()()";
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(9)));
+	});
+}
+
+BOOST_AUTO_TEST_CASE(three_level_bind__test)
+{
+	std::string const source =
+			"var a = 76\n"
+			"var f = function () {\n"
+			"	var unrelated = null\n"
+			"	var g = function () {\n"
+			"		var two = 2\n"
+			"		var h = function () {\n"
+			"			{unrelated}\n"
+			"			return a / two\n"
+			"		}\n"
+			"		return h\n"
+			"	}\n"
+			"	return g\n"
+			"}\n"
+			"return f()()()";
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(38)));
+	});
+}

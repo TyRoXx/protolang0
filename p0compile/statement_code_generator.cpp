@@ -1,5 +1,6 @@
 #include "statement_code_generator.hpp"
 #include "local_frame.hpp"
+#include "loop.hpp"
 #include "lvalue_generator.hpp"
 #include "rvalue_generator.hpp"
 #include "function_generator.hpp"
@@ -52,7 +53,7 @@ namespace p0
 
 	void statement_code_generator::visit(block_tree const &statement)
 	{
-		local_frame block_symbols(&m_frame);
+		local_frame block_symbols(m_frame);
 
 		for (auto s = begin(statement.body()); s != end(statement.body()); ++s)
 		{

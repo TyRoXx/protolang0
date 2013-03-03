@@ -24,7 +24,7 @@ namespace
 		intermediate::emitter emitter(instructions);
 		intermediate::unit::string_vector strings;
 		create(emitter, strings);
-		functions.push_back(intermediate::function(instructions, arguments.size()));
+		functions.push_back(intermediate::function(instructions, arguments.size(), 0));
 		intermediate::unit program(functions, strings);
 		interpreter interpreter(program, load_module);
 		auto const result = interpreter.call(program.functions()[0], arguments);

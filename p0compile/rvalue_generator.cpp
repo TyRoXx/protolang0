@@ -26,11 +26,19 @@ namespace p0
 
 	void rvalue_generator::visit(name_expression_tree const &expression)
 	{
-		auto const address = m_frame.require_symbol(
-			expression.name()
+		auto const name = expression.name();
+
+		auto const address = m_frame.emit_read_only(
+			source_range_to_string(name),
+			name,
+			m_destination,
+			m_emitter
 			);
 
-		if (m_destination.is_valid())
+		using namespace std::rel_ops;
+
+		if (m_destination.is_valid() &&
+			(m_destination != address))
 		{
 			m_emitter.copy(
 				m_destination.local_address(),
@@ -273,17 +281,24 @@ namespace p0
 	void rvalue_generator::visit(function_tree const &expression)
 	{
 		function_generator function_generator(
-			m_function_generator.unit()
+			m_function_generator, //parent
+			&m_frame //outer_frame
 			);
-		auto const function_id = function_generator.generate_function(
-			expression
-			);
+
+		auto const function_index =
+				function_generator.generate_function(expression);
 
 		if (m_destination.is_valid())
 		{
 			m_emitter.set_function(
 				m_destination.local_address(),
-				function_id
+				function_index
+				);
+
+			function_generator.emit_bindings(
+				m_destination.local_address(),
+				m_frame,
+				m_emitter
 				);
 		}
 	}

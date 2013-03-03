@@ -28,7 +28,7 @@ namespace p0
 			std::string m_content;
 
 
-			virtual void mark_recursively() override;
+			virtual void mark_recursively() PROTOLANG0_FINAL_METHOD;
 		};
 	}
 }

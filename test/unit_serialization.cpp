@@ -62,15 +62,18 @@ BOOST_AUTO_TEST_CASE(load_save_test)
 	unit::function_vector functions;
 	functions.push_back(function(
 		function::instruction_vector(),
+		0,
 		0));
 
 	functions.push_back(function(
 		function::instruction_vector(),
-		4));
+		4,
+		0));
 
 	functions.push_back(function(
 		function::instruction_vector(1, instruction(instruction_type::add, 0, 1)),
-		2));
+		2,
+		0));
 
 	unit::string_vector strings;
 

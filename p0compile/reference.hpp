@@ -22,6 +22,9 @@ namespace p0
 
 		size_t m_local_address;
 	};
+
+
+	bool operator == (reference const &left, reference const &right);
 }
 
 

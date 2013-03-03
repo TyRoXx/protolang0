@@ -1,18 +1,28 @@
 #include "local_frame.hpp"
 #include "compiler_error.hpp"
+#include "function_generator.hpp"
+#include "temporary.hpp"
 #include "p0i/emitter.hpp"
-#include <boost/foreach.hpp>
 
 
 namespace p0
 {
 	local_frame::local_frame(
-		local_frame const *parent
+		local_frame &function_parent
 		)
-		: m_parent(parent)
-		, m_next_local_address(parent ? parent->m_next_local_address : 0)
-		, m_current_loop(parent ? parent->m_current_loop : nullptr)
+		: m_function_parent(&function_parent)
+		, m_function_generator(function_parent.m_function_generator)
 	{
+		init_variables();
+	}
+
+	local_frame::local_frame(
+		function_generator &function_generator
+		)
+		: m_function_parent(nullptr)
+		, m_function_generator(function_generator)
+	{
+		init_variables();
 	}
 
 	reference local_frame::declare_variable(
@@ -42,28 +52,97 @@ namespace p0
 		return variable_address;
 	}
 
-	reference local_frame::require_symbol(
-		source_range name
-		) const
+	reference local_frame::require_writeable(
+		std::string const &name,
+		source_range name_position
+		)
 	{
-		auto const s = m_symbols_by_name.find(
-			source_range_to_string(name)
-			);
-
-		if (s != m_symbols_by_name.end())
+		auto const result = find_function_local_variable(name);
+		if (result.is_valid())
 		{
-			return s->second;
-		}
-
-		if (m_parent)
-		{
-			return m_parent->require_symbol(name);
+			return result;
 		}
 
 		throw compiler_error(
 			"Unknown identifier",
-			name
+			name_position
 			);
+	}
+
+	reference local_frame::emit_read_only(
+		std::string const &name,
+		source_range name_position,
+		reference possible_space,
+		intermediate::emitter &emitter
+		)
+	{
+		//trivial case:
+		//The variable is function-local therefore direcly accessible.
+		auto const function_local = find_function_local_variable(name);
+		if (function_local.is_valid())
+		{
+			return function_local;
+		}
+
+		std::vector<function_generator *> forwarding_functions;
+		size_t current_bound_index = static_cast<size_t>(-1);
+
+		local_frame *outer_frame = this;
+		function_generator *last_function = &outer_frame->m_function_generator;
+		for (;;)
+		{
+			outer_frame = outer_frame->outer_function_inner_frame();
+			if (!outer_frame)
+			{
+				throw compiler_error(
+					"Unknown identifier",
+					name_position
+					);
+			}
+
+			auto &current_function = outer_frame->m_function_generator;
+
+			auto const local =
+				outer_frame->find_function_local_variable(name);
+			if (local.is_valid())
+			{
+				auto const outmost_bound_index =
+					last_function->bind_local(local);
+
+				current_bound_index = outmost_bound_index;
+				break;
+			}
+			else
+			{
+				forwarding_functions.push_back(last_function);
+			}
+
+			last_function = &current_function;
+		}
+
+		std::for_each(forwarding_functions.rbegin(),
+					  forwarding_functions.rend(),
+			[&current_bound_index](function_generator *forwarding)
+		{
+			current_bound_index = forwarding->bind_from_parent(
+				current_bound_index
+				);
+		});
+
+		if (possible_space.is_valid())
+		{
+			temporary const current_function_variable(*this, 1);
+
+			emitter.current_function(
+				current_function_variable.address().local_address()
+				);
+			emitter.get_bound(
+				current_function_variable.address().local_address(),
+				current_bound_index,
+				possible_space.local_address()
+				);
+		}
+		return possible_space;
 	}
 
 	reference local_frame::allocate(size_t count)
@@ -98,40 +177,42 @@ namespace p0
 	}
 
 
-	loop::loop(local_frame &frame,
-			   intermediate::emitter &emitter,
-			   std::size_t continue_destination)
-		: m_frame(frame)
-		, m_emitter(emitter)
-		, m_previous(frame.enter_loop(*this))
-		, m_continue_destination(continue_destination)
+	local_frame *local_frame::outer_function_inner_frame() const
 	{
+		return m_function_generator.outer_frame();
 	}
 
-	loop::~loop()
+	void local_frame::init_variables()
 	{
-		m_frame.leave_loop(m_previous);
-	}
-
-	void loop::emit_break()
-	{
-		auto const break_address = m_emitter.get_current_jump_address();
-		m_emitter.jump(-1);
-		m_breaks.push_back(break_address);
-	}
-
-	void loop::emit_continue()
-	{
-		m_emitter.jump(m_continue_destination);
-	}
-
-	void loop::finish(std::size_t after_loop)
-	{
-		BOOST_FOREACH (auto const break_address, m_breaks)
+		if (m_function_parent)
 		{
-			m_emitter.update_jump_destination(
-						break_address,
-						after_loop);
+			m_next_local_address = m_function_parent->m_next_local_address;
+			m_current_loop = m_function_parent->m_current_loop;
 		}
+		else
+		{
+			m_next_local_address = 0;
+			m_current_loop = nullptr;
+		}
+	}
+
+	reference local_frame::find_function_local_variable(
+			std::string const &name
+			)
+	{
+		{
+			auto const symbol = m_symbols_by_name.find(name);
+			if (symbol != m_symbols_by_name.end())
+			{
+				return symbol->second;
+			}
+		}
+
+		if (m_function_parent)
+		{
+			return m_function_parent->find_function_local_variable(name);
+		}
+
+		return reference();
 	}
 }
