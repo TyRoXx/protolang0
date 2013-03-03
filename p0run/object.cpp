@@ -34,12 +34,12 @@ namespace p0
 			return m_is_marked;
 		}
 
-        boost::optional<value> object::get_element(value const & /*key*/) const
+		boost::optional<value> object::get_element(value const & /*key*/) const
 		{
 			return boost::optional<value>();
 		}
 
-        bool object::set_element(value const & /*key*/, value const & /*value*/)
+		bool object::set_element(value const & /*key*/, value const & /*value*/)
 		{
 			return false;
 		}
@@ -79,12 +79,12 @@ namespace p0
 			out << "object";
 		}
 
-		bool object::bind(size_t index, value const &value)
+		bool object::bind(size_t /*index*/, value const & /*value*/)
 		{
 			return false;
 		}
 
-		boost::optional<value> object::get_bound(size_t index) const
+		boost::optional<value> object::get_bound(size_t /*index*/) const
 		{
 			return boost::optional<value>();
 		}
