@@ -13,7 +13,7 @@ namespace p0
 {
 	namespace
 	{
-		intermediate::unit load_unit(std::string const &file_name)
+		intermediate::unit load_intermediate_code(std::string const &file_name)
 		{
 			std::ifstream unit_file(file_name);
 			if (!unit_file)
@@ -58,30 +58,113 @@ namespace p0
 			return rt::expose(interpreter, result.str());
 		}
 
-		std::unique_ptr<run::object> load_standard_module(
-				run::interpreter &interpreter,
-				std::string const &name)
+		run::value register_standard_module(
+				run::interpreter &interpreter
+				)
 		{
-			std::unique_ptr<run::object> module;
-			if (name == "std")
-			{
-				module.reset(new run::table);
-				rt::inserter(*module, interpreter)
-					.insert_fn("print", &std_print_string)
-					.insert_fn("assert", &std_assert)
-					.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
-					;
-			}
-			return module;
+			std::unique_ptr<run::object> module(new run::table);
+			rt::inserter(*module, interpreter)
+				.insert_fn("print", &std_print_string)
+				.insert_fn("assert", &std_assert)
+				.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
+				;
+			return run::value(interpreter.register_object(std::move(module)));
 		}
 
-		void execute(intermediate::unit const &program,
-					 intermediate::function const &entry_point)
+		struct lazy_module
 		{
-			run::interpreter interpreter(program, load_standard_module);
-			std::vector<run::value> arguments;
-			interpreter.call(entry_point, arguments);
-		}
+			typedef std::function<run::value (run::interpreter &)> loader;
+
+			run::value cached;
+			loader load;
+
+			lazy_module()
+			{
+			}
+
+			explicit lazy_module(run::value const &already_usable)
+				: cached(already_usable)
+			{
+			}
+
+			explicit lazy_module(loader delayed)
+				: load(std::move(delayed))
+			{
+			}
+		};
+
+		typedef std::function<void (std::string, lazy_module)> module_consumer;
+		typedef std::function<bool (std::string const &, module_consumer const &)>
+			module_file_decoder;
+
+		struct module_loader PROTOLANG0_FINAL_CLASS
+		{
+			void register_file_decoder(module_file_decoder decoder)
+			{
+				m_decoders.push_back(std::move(decoder));
+			}
+
+			bool initialize_modules_from_file(
+				std::string const &file_name,
+				module_consumer const &handle_module)
+			{
+				for (auto f = begin(m_decoders); f != end(m_decoders); ++f)
+				{
+					auto const &decode = *f;
+					if (decode(file_name, handle_module))
+					{
+						return true;
+					}
+				}
+				return false;
+			}
+
+		private:
+
+			std::vector<module_file_decoder> m_decoders;
+		};
+
+		struct module_storage PROTOLANG0_FINAL_CLASS
+		{
+			void add_module(
+				std::string name,
+				lazy_module module)
+			{
+				if (m_modules.find(name) != m_modules.end())
+				{
+					throw std::runtime_error(
+						"The module name '" + name + "' is already in use");
+				}
+
+				m_modules.insert(std::make_pair(std::move(name), std::move(module)));
+			}
+
+			run::value get_module(
+				run::interpreter &interpreter,
+				std::string const &name)
+			{
+				auto const m = m_modules.find(name);
+				if (m == m_modules.end())
+				{
+					return run::value();
+				}
+
+				auto &module = m->second;
+				if (module.cached == run::value())
+				{
+					module.cached = module.load(interpreter);
+				}
+
+				return module.cached;
+			}
+
+		private:
+
+			typedef std::map<std::string, lazy_module> modules_by_name;
+
+
+			modules_by_name m_modules;
+		};
 	}
 }
 
@@ -91,13 +174,15 @@ int main(int argc, char **argv)
 
 	std::string file_name;
 	std::size_t entry_point_id = 0;
+	std::vector<std::string> external_module_file_names;
 
 	po::options_description desc("");
 	desc.add_options()
 		("help", "produce help message")
-		("file,f", po::value<std::string>(&file_name), "file name")
+		("file,f", po::value(&file_name), "file name")
 		("compile,c", "")
-		("entry,e", po::value<std::size_t>(&entry_point_id), "entry function id")
+		("entry,e", po::value(&entry_point_id), "entry function id")
+		("library,l", po::value(&external_module_file_names), "")
 		;
 
 	po::positional_options_description p;
@@ -127,14 +212,15 @@ int main(int argc, char **argv)
 	try
 	{
 		bool const do_compile_file = (vm.count("compile") > 0);
-		auto const unit = do_compile_file
+		auto const program = do_compile_file
 				? p0::compile_unit_from_file(file_name)
-				: p0::load_unit(file_name);
+				: p0::load_intermediate_code(file_name)
+				;
 
 		p0::intermediate::function const *entry_point = 0;
-		if (entry_point_id < unit.functions().size())
+		if (entry_point_id < program.functions().size())
 		{
-			entry_point = &unit.functions()[entry_point_id];
+			entry_point = &program.functions()[entry_point_id];
 		}
 		else
 		{
@@ -143,7 +229,32 @@ int main(int argc, char **argv)
 			return 1;
 		}
 
-		p0::execute(unit, *entry_point);
+		p0::module_storage module_storage;
+		p0::module_loader module_loader;
+
+		//TODO: register file decoders to module_loader
+
+		BOOST_FOREACH (auto const &file_name, external_module_file_names)
+		{
+			module_loader.initialize_modules_from_file(
+				file_name,
+				[&module_storage](std::string name, p0::lazy_module module)
+			{
+				module_storage.add_module(
+					std::move(name),
+					std::move(module));
+			});
+		}
+
+		auto const get_module = std::bind(
+			&p0::module_storage::get_module, &module_storage,
+			std::placeholders::_1, std::placeholders::_2);
+
+		p0::run::interpreter interpreter(program, get_module);
+		module_storage.add_module("std", p0::lazy_module(p0::register_standard_module(interpreter)));
+
+		std::vector<p0::run::value> arguments;
+		interpreter.call(*entry_point, arguments);
 	}
 	catch (std::exception const &ex)
 	{

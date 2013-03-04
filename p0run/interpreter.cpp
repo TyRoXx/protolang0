@@ -573,12 +573,8 @@ namespace p0
 					if (m_load_module)
 					{
 						std::string const &name = name_string->content();
-						auto module_object = m_load_module(*this, name);
-						if (module_object)
-						{
-							result = value(*module_object);
-							m_gc.add_object(std::move(module_object));
-						}
+						auto const module_handle = m_load_module(*this, name);
+						result = module_handle;
 					}
 					get(local_frame, result_address) = result;
 					break;

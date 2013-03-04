@@ -740,15 +740,15 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 		BOOST_REQUIRE(result.obj == module_ptr);
 		BOOST_CHECK(result.obj->get_element(value()) == value(static_cast<integer>(456)));
 	},
-		[&module_name, &module_loaded, &module_ptr](interpreter &, std::string const &name)
-			-> std::unique_ptr<p0::run::object>
+		[&module_name, &module_loaded, &module_ptr](interpreter &interpreter, std::string const &name)
+			-> p0::run::value
 	{
 		BOOST_REQUIRE(!module_loaded);
 		BOOST_CHECK(name == module_name);
 		std::unique_ptr<p0::run::object> module(new trivial_module);
-		module_ptr = module.get();
+		p0::run::value const module_handle(interpreter.register_object(std::move(module)));
 		module_loaded = true;
-		return module;
+		return module_handle;
 	});
 
 	BOOST_CHECK(module_loaded);
