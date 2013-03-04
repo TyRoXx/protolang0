@@ -25,6 +25,7 @@ namespace p0
 	struct subscript_expression_tree;
 	struct import_expression_tree;
 	struct statement_tree;
+	struct method_call_expression_tree;
 
 
 	struct expression_tree_visitor
@@ -42,6 +43,7 @@ namespace p0
 		virtual void visit(dot_element_expression_tree const &expression) = 0;
 		virtual void visit(subscript_expression_tree const &expression) = 0;
 		virtual void visit(import_expression_tree const &expression) = 0;
+		virtual void visit(method_call_expression_tree const &expression) = 0;
 	};
 
 
@@ -312,6 +314,30 @@ namespace p0
 
 		std::unique_ptr<expression_tree> const m_name;
 		source_range const m_position;
+	};
+
+
+	struct method_call_expression_tree PROTOLANG0_FINAL_CLASS : expression_tree
+	{
+		typedef std::vector<std::unique_ptr<expression_tree>> expression_vector;
+
+
+		explicit method_call_expression_tree(
+			std::unique_ptr<expression_tree> instance,
+			source_range method_name,
+			expression_vector arguments
+			);
+		virtual void accept(expression_tree_visitor &visitor) const override;
+		virtual source_range position() const override;
+		expression_tree const &instance() const;
+		source_range const &method_name() const;
+		expression_vector const &arguments() const;
+
+	private:
+
+		std::unique_ptr<expression_tree> m_instance;
+		source_range const m_method_name;
+		expression_vector m_arguments;
 	};
 }
 

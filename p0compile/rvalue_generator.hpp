@@ -46,6 +46,7 @@ namespace p0
 		virtual void visit(dot_element_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 		virtual void visit(subscript_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 		virtual void visit(import_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(method_call_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 	};
 }
 

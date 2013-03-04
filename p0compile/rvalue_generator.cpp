@@ -651,4 +651,9 @@ namespace p0
 		}
 		m_emitter.load_module(result_ref.local_address());
 	}
+
+	void rvalue_generator::visit(method_call_expression_tree const &expression)
+	{
+		throw std::runtime_error("Not implemented");
+	}
 }
