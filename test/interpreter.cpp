@@ -746,6 +746,7 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 		BOOST_REQUIRE(!module_loaded);
 		BOOST_CHECK(name == module_name);
 		std::unique_ptr<p0::run::object> module(new trivial_module);
+		module_ptr = module.get();
 		p0::run::value const module_handle(interpreter.register_object(std::move(module)));
 		module_loaded = true;
 		return module_handle;
