@@ -1,5 +1,6 @@
 #include "function.hpp"
 #include "interpreter.hpp"
+#include "p0i/function_ref.hpp"
 #include "p0i/function.hpp"
 
 
@@ -7,9 +8,9 @@ namespace p0
 {
 	namespace run
 	{
-		function::function(intermediate::function const &function)
+		function::function(intermediate::function_ref const &function)
 			: m_function(function)
-			, m_bound_variables(function.bound_variables())
+			, m_bound_variables(function.function().bound_variables())
 		{
 		}
 
@@ -17,7 +18,10 @@ namespace p0
 			std::vector<value> const &arguments,
 			interpreter &interpreter)
 		{
-			return interpreter.call(m_function, value(*this), arguments);
+			return interpreter.call(
+						m_function,
+						value(*this),
+						arguments);
 		}
 
 		void function::print(std::ostream &out) const

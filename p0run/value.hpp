@@ -4,6 +4,7 @@
 
 
 #include "p0common/final.hpp"
+#include "p0i/function_ref.hpp"
 #include <cassert>
 #include <cstdint>
 #include <functional>
@@ -12,12 +13,6 @@
 
 namespace p0
 {
-	namespace intermediate
-	{
-		struct function;
-	}
-
-
 	namespace run
 	{
 		typedef std::int64_t integer;
@@ -47,14 +42,14 @@ namespace p0
 			union
 			{
 				integer i;
-				intermediate::function const *function_ptr;
+				intermediate::function_ref const *function_ptr;
 				object *obj;
 			};
 
 
 			value();
 			explicit value(integer i);
-			explicit value(intermediate::function const &function_ptr);
+			explicit value(intermediate::function_ref const &function_ptr);
 			explicit value(object &obj);
 		};
 
@@ -90,6 +85,9 @@ namespace p0
 			return comparison_result::equal;
 		}
 
+		comparison_result::Enum compare(
+				intermediate::function_ref const &left,
+				intermediate::function_ref const &right);
 		comparison_result::Enum compare(value const &left, value const &right);
 
 		std::ostream &operator << (std::ostream &out, value const &value);

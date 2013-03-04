@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include "interpreter_listener.hpp"
 #include "function.hpp"
+#include "p0i/function_ref.hpp"
 #include <cassert>
 #include <climits>
 #include <stdexcept>
@@ -44,16 +45,14 @@ namespace p0
 		}
 
 
-		interpreter::interpreter(intermediate::unit const &program,
-								 load_module_function load_module)
-			: m_program(program)
-			, m_load_module(std::move(load_module))
+		interpreter::interpreter(load_module_function load_module)
+			: m_load_module(std::move(load_module))
 			, m_listener(nullptr)
 		{
 		}
 
 		value interpreter::call(
-			intermediate::function const &function,
+			intermediate::function_ref const &function,
 			value const &current_function,
 			const std::vector<value> &arguments)
 		{
@@ -66,7 +65,7 @@ namespace p0
 		}
 
 		value interpreter::call(
-			intermediate::function const &function,
+			intermediate::function_ref const &function,
 			const std::vector<value> &arguments
 			)
 		{
@@ -96,7 +95,7 @@ namespace p0
 
 
 		void interpreter::native_call(
-			intermediate::function const &function,
+			intermediate::function_ref const &function,
 			std::size_t arguments_address,
 			std::size_t argument_count)
 		{
@@ -114,12 +113,13 @@ namespace p0
 				);
 
 			//set missing arguments to null
-			for (size_t i = argument_count; i < function.parameters(); ++i)
+			for (size_t i = argument_count; i < function.function().parameters(); ++i)
 			{
 				get(local_frame, 1 + i) = value();
 			}
 
-			auto const &code = function.body();
+			auto &program = function.origin();
+			auto const &code = function.function().body();
 			auto current_instr = code.begin();
 			while (current_instr != code.end())
 			{
@@ -161,12 +161,13 @@ namespace p0
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 						auto const function_index = static_cast<size_t>(instr_arguments[1]);
-						if (function_index >= m_program.functions().size())
+						if (function_index >= program.functions().size())
 						{
 							throw std::runtime_error("Invalid function id");
 						}
-						auto const &function_ptr = m_program.functions()[function_index];
-						get(local_frame, dest_address) = value(function_ptr);
+						auto const &function_ptr = program.functions()[function_index];
+						intermediate::function_ref const ref(program, function_ptr);
+						get(local_frame, dest_address) = value(require_function_ref(ref));
 						break;
 					}
 
@@ -174,11 +175,11 @@ namespace p0
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 						auto const string_id = static_cast<size_t>(instr_arguments[1]);
-						if (string_id >= m_program.strings().size())
+						if (string_id >= program.strings().size())
 						{
 							throw std::runtime_error("Invalid string id");
 						}
-						auto const &content = m_program.strings()[string_id];
+						auto const &content = program.strings()[string_id];
 						std::unique_ptr<object> new_string(new string(content));
 						value const new_string_ptr(*new_string);
 						m_gc.add_object(std::move(new_string));
@@ -605,6 +606,12 @@ namespace p0
 				m_locals.resize(absolute_address + 1);
 			}
 			return m_locals[absolute_address];
+		}
+
+		intermediate::function_ref const &interpreter::require_function_ref(
+				intermediate::function_ref const &function)
+		{
+			return *m_function_refs.insert(function).first;
 		}
 
 		void interpreter::mark_values(std::vector<value> const &values)

@@ -263,11 +263,14 @@ int main(int argc, char **argv)
 			&p0::module_storage::get_module, &module_storage,
 			std::placeholders::_1, std::placeholders::_2);
 
-		p0::run::interpreter interpreter(program, get_module);
-		module_storage.add_module("std", p0::lazy_module(p0::register_standard_module(interpreter)));
+		p0::run::interpreter interpreter(get_module);
+		module_storage.add_module("std",
+								  p0::lazy_module(p0::register_standard_module(interpreter)));
 
 		std::vector<p0::run::value> arguments;
-		interpreter.call(*entry_point, arguments);
+		interpreter.call(
+					p0::intermediate::function_ref(program, *entry_point),
+					arguments);
 	}
 	catch (std::exception const &ex)
 	{

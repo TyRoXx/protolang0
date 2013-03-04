@@ -29,8 +29,9 @@ namespace
 		p0::compiler compiler(source_range, expect_no_error);
 		auto const program = compiler.compile();
 
-		p0::run::interpreter interpreter(program, nullptr);
-		auto const &main_function = program.functions().front();
+		p0::run::interpreter interpreter(nullptr);
+		p0::intermediate::function_ref const main_function(
+					program, program.functions().front());
 		auto const result = interpreter.call(main_function, arguments);
 		check_result(result, program);
 	}
@@ -43,7 +44,9 @@ BOOST_AUTO_TEST_CASE(empty_function_compile_test)
 	run_valid_source(source, arguments,
 		[](p0::run::value const &result, p0::intermediate::unit const &program)
 	{
-		auto const &main_function = program.functions().front();
+		p0::intermediate::function_ref const main_function(
+					program,
+					program.functions().front());
 		BOOST_CHECK(result == value(main_function));
 	});
 }

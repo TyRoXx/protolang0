@@ -20,7 +20,7 @@ namespace p0
 			this->i = i;
 		}
 
-		value::value(intermediate::function const &function_ptr)
+		value::value(intermediate::function_ref const &function_ptr)
 			: type(value_type::function_ptr)
 		{
 			this->function_ptr = &function_ptr;
@@ -94,7 +94,7 @@ namespace p0
 			}
 
 			comparison_result::Enum compare_impl(
-					intermediate::function const &left, value const &right)
+					intermediate::function_ref const &left, value const &right)
 			{
 				switch (right.type)
 				{
@@ -105,7 +105,7 @@ namespace p0
 					return comparison_result::greater;
 
 				case value_type::function_ptr:
-					return compare(&left, right.function_ptr);
+					return compare(left, *right.function_ptr);
 
 				case value_type::object:
 					return comparison_result::less;
@@ -135,6 +135,23 @@ namespace p0
 				assert(nullptr == "Invalid value type");
 				return comparison_result::equal;
 			}
+		}
+
+		comparison_result::Enum compare(
+				intermediate::function_ref const &left,
+				intermediate::function_ref const &right)
+		{
+			auto const left_pair = to_pair(left);
+			auto const right_pair = to_pair(right);
+			if (left_pair < right_pair)
+			{
+				return comparison_result::less;
+			}
+			else if (left_pair > right_pair)
+			{
+				return comparison_result::greater;
+			}
+			return comparison_result::equal;
 		}
 
 		comparison_result::Enum compare(value const &left, value const &right)
@@ -208,7 +225,7 @@ std::size_t std::hash<p0::run::value>::operator()(const p0::run::value &value) c
 		return std::hash<p0::run::integer>()(value.i);
 
 	case function_ptr:
-		return std::hash<p0::intermediate::function const *>()
+		return std::hash<p0::intermediate::function_ref const *>()
 			(value.function_ptr);
 
 	case object:

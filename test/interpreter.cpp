@@ -26,8 +26,10 @@ namespace
 		create(emitter, strings);
 		functions.push_back(intermediate::function(instructions, arguments.size(), 0));
 		intermediate::unit program(functions, strings);
-		interpreter interpreter(program, load_module);
-		auto const result = interpreter.call(program.functions()[0], arguments);
+		interpreter interpreter(load_module);
+		auto const result = interpreter.call(
+				intermediate::function_ref(program, program.functions()[0]),
+				arguments);
 		handle_result(result);
 	}
 

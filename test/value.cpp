@@ -1,6 +1,7 @@
 #include "p0run/value.hpp"
 #include "p0run/object.hpp"
-#include "p0i/function.hpp"
+#include "p0i/unit.hpp"
+#include "p0i/function_ref.hpp"
 #include <boost/test/unit_test.hpp>
 using namespace p0::run;
 using namespace std::rel_ops;
@@ -50,7 +51,7 @@ BOOST_AUTO_TEST_CASE(equal_value_test)
 	check_equal(value(0), value(0));
 	check_equal(value(123), value(123));
 
-	p0::intermediate::function function_a;
+	p0::intermediate::function_ref function_a;
 	check_equal(value(function_a), value(function_a));
 
 	dummy_object object_a;
@@ -81,16 +82,23 @@ BOOST_AUTO_TEST_CASE(unequal_value_test)
 	check_unequal(value(-1), value(1));
 	check_unequal(value(0), value(1));
 
-	p0::intermediate::function function_a, function_b;
-	check_unequal(value(function_a), value(function_b));
-	check_unequal(value(function_a), value());
-	check_unequal(value(function_a), value(123));
+	p0::intermediate::unit const program(
+				(p0::intermediate::unit::function_vector()),
+				p0::intermediate::unit::string_vector());
+	p0::intermediate::function const function_a, function_b;
+	p0::intermediate::function_ref const
+			ref_a(program, function_a),
+			ref_b(program, function_b);
+
+	check_unequal(value(ref_a), value(ref_b));
+	check_unequal(value(ref_a), value());
+	check_unequal(value(ref_a), value(123));
 
 	dummy_object object_a, object_b;
 	check_unequal(value(object_a), value(object_b));
 	check_unequal(value(object_a), value());
 	check_unequal(value(object_a), value(123));
-	check_unequal(value(object_a), value(function_a));
+	check_unequal(value(object_a), value(ref_a));
 }
 
 
@@ -111,24 +119,30 @@ BOOST_AUTO_TEST_CASE(less_value_test)
 	check_less(value(-1), value(1));
 	check_less(value(), value(-1));
 
-	p0::intermediate::function function_a, function_b;
-	check_less(value(), value(function_b));
-	check_less(value(function_a), value(0));
-	check_less(value(function_b), value(0));
+	p0::intermediate::unit const program(
+				(p0::intermediate::unit::function_vector()),
+				p0::intermediate::unit::string_vector());
+	p0::intermediate::function const function_a, function_b;
+	p0::intermediate::function_ref const
+			ref_a(program, function_a),
+			ref_b(program, function_b);
+	check_less(value(), value(ref_b));
+	check_less(value(ref_a), value(0));
+	check_less(value(ref_b), value(0));
 
 	if (&function_a < &function_b)
 	{
-		check_less(value(function_a), value(function_b));
+		check_less(value(ref_a), value(ref_b));
 	}
 	else
 	{
-		check_less(value(function_b), value(function_a));
+		check_less(value(ref_b), value(ref_a));
 	}
 
 	dummy_object object_a, object_b;
 	check_less(value(), value(object_a));
 	check_less(value(object_a), value(123));
-	check_less(value(function_a), value(object_a));
+	check_less(value(ref_a), value(object_a));
 
 	if (&object_a < &object_b)
 	{
@@ -142,7 +156,7 @@ BOOST_AUTO_TEST_CASE(less_value_test)
 
 BOOST_AUTO_TEST_CASE(value_is_null_test)
 {
-	p0::intermediate::function function;
+	p0::intermediate::function_ref function;
 	dummy_object object;
 
 	BOOST_CHECK(is_null(value()));

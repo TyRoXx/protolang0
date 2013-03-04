@@ -10,11 +10,16 @@
 
 namespace p0
 {
+	namespace intermediate
+	{
+		struct unit;
+	}
+
 	namespace run
 	{
 		struct function PROTOLANG0_FINAL_CLASS : object
 		{
-			explicit function(intermediate::function const &function);
+			explicit function(intermediate::function_ref const &function);
 			virtual boost::optional<value> call(
 				std::vector<value> const &arguments,
 				interpreter &interpreter
@@ -25,7 +30,7 @@ namespace p0
 
 		private:
 
-			intermediate::function const &m_function;
+			intermediate::function_ref const &m_function;
 			std::vector<value> m_bound_variables;
 
 
