@@ -199,3 +199,22 @@ BOOST_AUTO_TEST_CASE(bind_many_variables_test)
 					static_cast<integer>(2 + 3 / 5 - 7 * 11)));
 	});
 }
+
+BOOST_AUTO_TEST_CASE(method_test)
+{
+	std::string const source =
+			"var std = import \"std\"\n"
+			"var class = std.class(\n"
+			"[get_value = function (this) {\n"
+			"	return 11\n"
+			"}])\n"
+			"var instance = std.new(class)\n"
+			"return instance:get_value()\n"
+			;
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(11)));
+	});
+}
