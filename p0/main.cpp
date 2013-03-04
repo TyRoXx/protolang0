@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 			vm);
 		po::notify(vm);
 	}
-	catch (const boost::program_options::error &e)
+	catch (po::error const &e)
 	{
 		std::cerr << e.what() << "\n";
 		return 1;
