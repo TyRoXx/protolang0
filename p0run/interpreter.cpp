@@ -170,6 +170,22 @@ namespace p0
 						break;
 					}
 
+				case set_string:
+					{
+						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
+						auto const string_id = static_cast<size_t>(instr_arguments[1]);
+						if (string_id >= m_program.strings().size())
+						{
+							throw std::runtime_error("Invalid string id");
+						}
+						auto const &content = m_program.strings()[string_id];
+						std::unique_ptr<object> new_string(new string(content));
+						value const new_string_ptr(*new_string);
+						m_gc.add_object(std::move(new_string));
+						get(local_frame, dest_address) = new_string_ptr;
+						break;
+					}
+
 				case bind:
 					{
 						auto const closure_address = static_cast<size_t>(instr_arguments[0]);
@@ -227,22 +243,6 @@ namespace p0
 					{
 						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
 						get(local_frame, dest_address) = m_current_function_stack.back();
-						break;
-					}
-
-				case set_string:
-					{
-						auto const dest_address = static_cast<size_t>(instr_arguments[0]);
-						auto const string_id = static_cast<size_t>(instr_arguments[1]);
-						if (string_id >= m_program.strings().size())
-						{
-							throw std::runtime_error("Invalid string id");
-						}
-						auto const &content = m_program.strings()[string_id];
-						std::unique_ptr<object> new_string(new string(content));
-						value const new_string_ptr(*new_string);
-						m_gc.add_object(std::move(new_string));
-						get(local_frame, dest_address) = new_string_ptr;
 						break;
 					}
 
