@@ -24,6 +24,40 @@ namespace p0
 	}
 
 
+	void rvalue_generator::with_arguments(
+			std::vector<std::unique_ptr<expression_tree>> const &arguments,
+			std::function<void ()> const &handle_result
+			)
+	{
+		auto const argument_count = arguments.size();
+		temporary const argument_variables(
+			m_frame,
+			argument_count
+			);
+		size_t current_argument_address = argument_variables.address().local_address();
+
+		for (auto arg = arguments.begin(), end = arguments.end();
+			arg != end; ++arg, ++current_argument_address)
+		{
+			try
+			{
+				rvalue_generator argument(
+					m_function_generator,
+					m_emitter,
+					m_frame,
+					reference(current_argument_address)
+					);
+				(*arg)->accept(argument);
+			}
+			catch (compiler_error const &e)
+			{
+				m_function_generator.handle_error(e);
+			}
+		}
+
+		handle_result();
+	}
+
 	void rvalue_generator::visit(name_expression_tree const &expression)
 	{
 		auto const name = expression.name();
@@ -238,44 +272,22 @@ namespace p0
 			m_function_generator.handle_error(e);
 		}
 
-		auto const argument_count = expression.arguments().size();
-		temporary const argument_variables(
-			m_frame,
-			argument_count
-			);
-		size_t current_argument_address = argument_variables.address().local_address();
-
-		for (auto arg = expression.arguments().begin(), end = expression.arguments().end();
-			arg != end; ++arg, ++current_argument_address)
+		with_arguments(expression.arguments(),
+					   [&]()
 		{
-			try
-			{
-				rvalue_generator argument(
-					m_function_generator,
-					m_emitter,
-					m_frame,
-					reference(current_argument_address)
-					);
-				(*arg)->accept(argument);
-			}
-			catch (compiler_error const &e)
-			{
-				m_function_generator.handle_error(e);
-			}
-		}
-
-		m_emitter.call(
-			result_variable.address().local_address(),
-			argument_count
-			);
-
-		if (m_destination.is_valid())
-		{
-			m_emitter.copy(
-				m_destination.local_address(),
-				result_variable.address().local_address()
+			m_emitter.call(
+				result_variable.address().local_address(),
+				expression.arguments().size()
 				);
-		}
+
+			if (m_destination.is_valid())
+			{
+				m_emitter.copy(
+					m_destination.local_address(),
+					result_variable.address().local_address()
+					);
+			}
+		});
 	}
 
 	void rvalue_generator::visit(function_tree const &expression)
@@ -654,6 +666,42 @@ namespace p0
 
 	void rvalue_generator::visit(method_call_expression_tree const &expression)
 	{
-		throw std::runtime_error("Not implemented");
+		temporary const instance_variable(m_frame, 1);
+		{
+			rvalue_generator instance_generator(
+						m_function_generator,
+						m_emitter,
+						m_frame,
+						instance_variable.address());
+			expression.instance().accept(instance_generator);
+		}
+
+		temporary const method_name_variable(m_frame, 1);
+		{
+			auto const method_name_id = m_function_generator.unit().get_string_id(
+						source_range_to_string(expression.method_name()));
+			m_emitter.set_string(
+						method_name_variable.address().local_address(),
+						method_name_id);
+		}
+
+		auto const result_address = method_name_variable.address().local_address();
+
+		with_arguments(expression.arguments(),
+					   [&]()
+		{
+			m_emitter.call_method(
+						instance_variable.address().local_address(),
+						method_name_variable.address().local_address(),
+						result_address);
+
+			if (m_destination.is_valid())
+			{
+				m_emitter.copy(
+					m_destination.local_address(),
+					result_address
+					);
+			}
+		});
 	}
 }
