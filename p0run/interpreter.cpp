@@ -131,7 +131,7 @@ namespace p0
 
 				using namespace intermediate::instruction_type;
 
-				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 37);
+				BOOST_STATIC_ASSERT(intermediate::instruction_type::count_ == 38);
 
 				switch (operation)
 				{
@@ -468,6 +468,11 @@ namespace p0
 								"Cannot call that value as a function");
 						}
 						break;
+					}
+
+				case call_method:
+					{
+						throw std::runtime_error("Not implemented");
 					}
 
 				case jump:

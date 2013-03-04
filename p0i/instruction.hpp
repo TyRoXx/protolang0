@@ -48,6 +48,7 @@ namespace p0
 				greater,
 				greater_equal,
 				call,
+				call_method,
 				jump,
 				jump_if,
 				jump_if_not,

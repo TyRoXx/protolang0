@@ -94,6 +94,11 @@ namespace p0
 				instruction_argument arguments_address,
 				instruction_argument argument_count
 				);
+			void call_method(
+				instruction_argument arguments_address,
+				instruction_argument method_name_address,
+				instruction_argument argument_count
+				);
 			void jump(
 				instruction_argument destination
 				);

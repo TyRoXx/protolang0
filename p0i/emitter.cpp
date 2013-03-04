@@ -254,6 +254,20 @@ namespace p0
 				));
 		}
 
+		void emitter::call_method(
+			instruction_argument arguments_address,
+			instruction_argument method_name_address,
+			instruction_argument argument_count
+			)
+		{
+			push_instruction(instruction(
+				instruction_type::call_method,
+				arguments_address,
+				method_name_address,
+				argument_count
+				));
+		}
+
 		void emitter::jump(
 			instruction_argument destination
 			)
