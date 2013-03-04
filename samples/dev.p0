@@ -1,0 +1,3 @@
+var std = import "std"
+var input = std.read_line()
+std.print(input, "\n")

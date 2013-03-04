@@ -36,6 +36,18 @@ namespace p0
 			return run::value();
 		}
 
+		run::value std_read_line(
+			run::interpreter &interpreter,
+			std::vector<run::value> const &arguments)
+		{
+			auto &in = std::cin;
+			std::string line;
+			getline(in, line);
+			return run::value(
+				interpreter.register_object(std::unique_ptr<run::object>(
+				new run::string(std::move(line)))));
+		}
+
 		run::value std_assert(std::vector<run::value> const &arguments)
 		{
 			if (arguments.empty() ||
@@ -65,6 +77,7 @@ namespace p0
 			std::unique_ptr<run::object> module(new run::table);
 			rt::inserter(*module, interpreter)
 				.insert_fn("print", &std_print_string)
+				.insert_fn("read_line", std::bind(std_read_line, std::ref(interpreter), std::placeholders::_1))
 				.insert_fn("assert", &std_assert)
 				.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
 				;
