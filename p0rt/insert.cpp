@@ -62,6 +62,5 @@ namespace p0
 			rt::insert(m_object, m_gc, std::move(key), element);
 			return *this;
 		}
-
 	}
 }

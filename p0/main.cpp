@@ -3,7 +3,7 @@
 #include "p0run/interpreter.hpp"
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/table.hpp"
-#include "p0rt/insert.hpp"
+#include "p0rt/std_module.hpp"
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
@@ -27,66 +27,9 @@ namespace p0
 			throw std::runtime_error("Not implemented");
 		}
 
-		run::value std_print_string(std::vector<run::value> const &arguments)
-		{
-			auto &out = std::cout;
-			BOOST_FOREACH (auto &argument, arguments)
-			{
-				out << argument;
-			}
-			return run::value();
-		}
-
-		run::value std_read_line(
-			run::interpreter &interpreter,
-			std::vector<run::value> const & /*arguments*/)
-		{
-			auto &in = std::cin;
-			std::string line;
-			getline(in, line);
-			return rt::expose(interpreter.garbage_collector(), std::move(line));
-		}
-
-		run::value std_assert(std::vector<run::value> const &arguments)
-		{
-			if (arguments.empty() ||
-				!run::to_boolean(arguments.front()))
-			{
-				//TODO better handling
-				throw std::runtime_error("Assertion failed");
-			}
-			return run::value();
-		}
-
-		run::value std_to_string(run::interpreter &interpreter,
-								 std::vector<run::value> const &arguments)
-		{
-			std::ostringstream result;
-			BOOST_FOREACH (auto &argument, arguments)
-			{
-				result << argument;
-			}
-			return rt::expose(interpreter.garbage_collector(), result.str());
-		}
-
-		run::value register_standard_module(
-				run::interpreter &interpreter
-				)
-		{
-			auto &module = run::construct_object<run::table>(
-						interpreter.garbage_collector());
-			rt::inserter(module, interpreter.garbage_collector())
-				.insert_fn("print", &std_print_string)
-				.insert_fn("read_line", std::bind(std_read_line, std::ref(interpreter), std::placeholders::_1))
-				.insert_fn("assert", &std_assert)
-				.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
-				;
-			return run::value(module);
-		}
-
 		struct lazy_module
 		{
-			typedef std::function<run::value (run::interpreter &)> loader;
+			typedef std::function<run::value (run::garbage_collector &)> loader;
 
 			run::value cached;
 			loader load;
@@ -153,7 +96,7 @@ namespace p0
 			}
 
 			run::value get_module(
-				run::interpreter &interpreter,
+				run::garbage_collector &gc,
 				std::string const &name)
 			{
 				auto const m = m_modules.find(name);
@@ -165,7 +108,7 @@ namespace p0
 				auto &module = m->second;
 				if (module.cached == run::value())
 				{
-					module.cached = module.load(interpreter);
+					module.cached = module.load(gc);
 				}
 
 				return module.cached;
@@ -259,14 +202,18 @@ int main(int argc, char **argv)
 			});
 		}
 
-		auto const get_module = std::bind(
-			&p0::module_storage::get_module, &module_storage,
-			std::placeholders::_1, std::placeholders::_2);
-
 		p0::run::default_garbage_collector gc;
+
+		auto const get_module =
+			[&module_storage, &gc](p0::run::interpreter &,
+								   std::string const &name) -> p0::run::value
+		{
+			return module_storage.get_module(gc, name);
+		};
+
 		p0::run::interpreter interpreter(gc, get_module);
 		module_storage.add_module("std",
-								  p0::lazy_module(p0::register_standard_module(interpreter)));
+								  p0::lazy_module(p0::rt::register_standard_module(gc)));
 
 		std::vector<p0::run::value> arguments;
 		interpreter.call(
