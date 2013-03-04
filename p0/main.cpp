@@ -38,7 +38,7 @@ namespace p0
 
 		run::value std_read_line(
 			run::interpreter &interpreter,
-			std::vector<run::value> const &arguments)
+			std::vector<run::value> const & /*arguments*/)
 		{
 			auto &in = std::cin;
 			std::string line;
