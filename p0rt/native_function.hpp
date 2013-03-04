@@ -36,14 +36,6 @@ namespace p0
 			{
 			}
 		};
-
-
-		template <class F>
-		std::unique_ptr<run::object> make_function(F &&functor)
-		{
-			return std::unique_ptr<run::object>(
-						new native_function<F>(std::forward<F>(functor)));
-		}
 	}
 }
 

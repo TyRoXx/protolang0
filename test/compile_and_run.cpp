@@ -1,9 +1,11 @@
 #include "p0run/interpreter.hpp"
+#include "p0run/default_garbage_collector.hpp"
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
 #include "p0compile/compiler.hpp"
 #include "p0compile/compiler_error.hpp"
 #include <boost/test/unit_test.hpp>
+#include <boost/foreach.hpp>
 using namespace p0::run;
 
 
@@ -29,7 +31,8 @@ namespace
 		p0::compiler compiler(source_range, expect_no_error);
 		auto const program = compiler.compile();
 
-		p0::run::interpreter interpreter(nullptr);
+		p0::run::default_garbage_collector gc;
+		p0::run::interpreter interpreter(gc, nullptr);
 		p0::intermediate::function_ref const main_function(
 					program, program.functions().front());
 		auto const result = interpreter.call(main_function, arguments);

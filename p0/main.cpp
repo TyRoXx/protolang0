@@ -1,6 +1,7 @@
 #include "p0i/unit.hpp"
 #include "p0compile/compile_unit.hpp"
 #include "p0run/interpreter.hpp"
+#include "p0run/default_garbage_collector.hpp"
 #include "p0run/table.hpp"
 #include "p0rt/insert.hpp"
 #include <iostream>
@@ -43,9 +44,7 @@ namespace p0
 			auto &in = std::cin;
 			std::string line;
 			getline(in, line);
-			return run::value(
-				interpreter.register_object(std::unique_ptr<run::object>(
-				new run::string(std::move(line)))));
+			return rt::expose(interpreter.garbage_collector(), std::move(line));
 		}
 
 		run::value std_assert(std::vector<run::value> const &arguments)
@@ -67,21 +66,22 @@ namespace p0
 			{
 				result << argument;
 			}
-			return rt::expose(interpreter, result.str());
+			return rt::expose(interpreter.garbage_collector(), result.str());
 		}
 
 		run::value register_standard_module(
 				run::interpreter &interpreter
 				)
 		{
-			std::unique_ptr<run::object> module(new run::table);
-			rt::inserter(*module, interpreter)
+			auto &module = run::construct_object<run::table>(
+						interpreter.garbage_collector());
+			rt::inserter(module, interpreter.garbage_collector())
 				.insert_fn("print", &std_print_string)
 				.insert_fn("read_line", std::bind(std_read_line, std::ref(interpreter), std::placeholders::_1))
 				.insert_fn("assert", &std_assert)
 				.insert_fn("to_string", std::bind(std_to_string, std::ref(interpreter), std::placeholders::_1))
 				;
-			return run::value(interpreter.register_object(std::move(module)));
+			return run::value(module);
 		}
 
 		struct lazy_module
@@ -263,7 +263,8 @@ int main(int argc, char **argv)
 			&p0::module_storage::get_module, &module_storage,
 			std::placeholders::_1, std::placeholders::_2);
 
-		p0::run::interpreter interpreter(get_module);
+		p0::run::default_garbage_collector gc;
+		p0::run::interpreter interpreter(gc, get_module);
 		module_storage.add_module("std",
 								  p0::lazy_module(p0::register_standard_module(interpreter)));
 

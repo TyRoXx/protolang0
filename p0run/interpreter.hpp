@@ -5,7 +5,6 @@
 
 #include "p0i/unit.hpp"
 #include "value.hpp"
-#include "garbage_collector.hpp"
 #include <set>
 
 
@@ -14,6 +13,7 @@ namespace p0
 	namespace run
 	{
 		struct interpreter_listener;
+		struct garbage_collector;
 
 
 		struct interpreter PROTOLANG0_FINAL_CLASS
@@ -22,7 +22,8 @@ namespace p0
 				load_module_function;
 
 
-			explicit interpreter(load_module_function load_module);
+			explicit interpreter(run::garbage_collector &gc,
+								 load_module_function load_module);
 			value call(
 				intermediate::function_ref const &function,
 				value const &current_function,
@@ -32,14 +33,14 @@ namespace p0
 				intermediate::function_ref const &function,
 				const std::vector<value> &arguments
 				);
-			void collect_garbage();
+			void mark_required_objects();
+			run::garbage_collector &garbage_collector() const;
 			void set_listener(interpreter_listener *listener);
-			object &register_object(std::unique_ptr<object> object);
 
 		private:
 
 			load_module_function const m_load_module;
-			garbage_collector m_gc;
+			run::garbage_collector &m_gc;
 			std::vector<value> m_locals;
 			std::vector<value> m_current_function_stack;
 			interpreter_listener *m_listener;

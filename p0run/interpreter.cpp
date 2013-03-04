@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include "interpreter_listener.hpp"
 #include "function.hpp"
+#include "garbage_collector.hpp"
 #include "p0i/function_ref.hpp"
 #include <cassert>
 #include <climits>
@@ -45,8 +46,10 @@ namespace p0
 		}
 
 
-		interpreter::interpreter(load_module_function load_module)
+		interpreter::interpreter(run::garbage_collector &gc,
+								 load_module_function load_module)
 			: m_load_module(std::move(load_module))
+			, m_gc(gc)
 			, m_listener(nullptr)
 		{
 		}
@@ -72,25 +75,20 @@ namespace p0
 			return call(function, value(function), arguments);
 		}
 
-		void interpreter::collect_garbage()
+		void interpreter::mark_required_objects()
 		{
-			m_gc.unmark();
 			mark_values(m_locals);
 			mark_values(m_current_function_stack);
-			m_gc.sweep();
+		}
+
+		run::garbage_collector &interpreter::garbage_collector() const
+		{
+			return m_gc;
 		}
 
 		void interpreter::set_listener(interpreter_listener *listener)
 		{
 			m_listener = listener;
-		}
-
-		object &interpreter::register_object(std::unique_ptr<object> object)
-		{
-			assert(object);
-			auto &ref = *object;
-			m_gc.add_object(std::move(object));
-			return ref;
 		}
 
 
@@ -180,9 +178,8 @@ namespace p0
 							throw std::runtime_error("Invalid string id");
 						}
 						auto const &content = program.strings()[string_id];
-						std::unique_ptr<object> new_string(new string(content));
-						value const new_string_ptr(*new_string);
-						m_gc.add_object(std::move(new_string));
+						value const new_string_ptr(
+									construct_object<string>(m_gc, content));
 						get(local_frame, dest_address) = new_string_ptr;
 						break;
 					}
@@ -196,10 +193,8 @@ namespace p0
 						auto &closure = get(local_frame, closure_address);
 						if (closure.type == value_type::function_ptr)
 						{
-							std::unique_ptr<object> function_object(new run::function(
-								*closure.function_ptr));
-							value const new_closure(*function_object);
-							m_gc.add_object(std::move(function_object));
+							value const new_closure(
+								construct_object<run::function>(m_gc, *closure.function_ptr));
 							closure = new_closure;
 						}
 
@@ -509,9 +504,8 @@ namespace p0
 					{
 						auto const table_address = static_cast<size_t>(instr_arguments[0]);
 						auto &destination = get(local_frame, table_address);
-						std::unique_ptr<object> created_table(new table);
-						value const created_table_ptr(*created_table);
-						m_gc.add_object(std::move(created_table));
+						value const created_table_ptr(
+									construct_object<table>(m_gc));
 						destination = created_table_ptr;
 						break;
 					}

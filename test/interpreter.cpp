@@ -1,7 +1,9 @@
 #include "p0run/interpreter.hpp"
+#include "p0run/garbage_collector.hpp"
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
 #include "p0i/function.hpp"
+#include "p0run/default_garbage_collector.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
@@ -26,7 +28,8 @@ namespace
 		create(emitter, strings);
 		functions.push_back(intermediate::function(instructions, arguments.size(), 0));
 		intermediate::unit program(functions, strings);
-		interpreter interpreter(load_module);
+		run::default_garbage_collector gc;
+		run::interpreter interpreter(gc, load_module);
 		auto const result = interpreter.call(
 				intermediate::function_ref(program, program.functions()[0]),
 				arguments);
@@ -747,9 +750,9 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 	{
 		BOOST_REQUIRE(!module_loaded);
 		BOOST_CHECK(name == module_name);
-		std::unique_ptr<p0::run::object> module(new trivial_module);
-		module_ptr = module.get();
-		p0::run::value const module_handle(interpreter.register_object(std::move(module)));
+
+		module_ptr = &p0::run::construct_object<trivial_module>(interpreter.garbage_collector());
+		p0::run::value const module_handle(*module_ptr);
 		module_loaded = true;
 		return module_handle;
 	});
