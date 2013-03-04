@@ -428,29 +428,7 @@ namespace p0
 				//left = f
 				//arguments = {a, b, c}
 
-				call_expression_tree::expression_vector arguments;
-
-				for (;;)
-				{
-					if (try_skip_token(token_type::parenthesis_right))
-					{
-						break;
-					}
-
-					auto argument = parse_expression();
-					arguments.push_back(
-						std::move(argument)
-						);
-
-					if (!try_skip_token(token_type::comma))
-					{
-						skip_token(
-							token_type::parenthesis_right,
-							"Comma or closing parenthesis expected"
-							);
-						break;
-					}
-				}
+				auto arguments = parse_argument_list();
 
 				std::unique_ptr<expression_tree> call(new call_expression_tree(
 					std::move(left),
@@ -494,6 +472,26 @@ namespace p0
 					));
 
 				left = std::move(access);
+			}
+
+			else if (try_skip_token(token_type::colon))
+			{
+				auto const method_name = pop_token();
+				expect_token_type(
+					method_name,
+					token_type::identifier,
+					"Method name expected"
+					);
+
+				skip_token(token_type::parenthesis_left, "Argument list expected");
+
+				auto arguments = parse_argument_list();
+				std::unique_ptr<expression_tree> call(new method_call_expression_tree(
+					  std::move(left),
+					  method_name.content,
+					  std::move(arguments)));
+
+				left = std::move(call);
 			}
 
 			else
@@ -724,6 +722,35 @@ namespace p0
 			std::move(parameters),
 			source_range(function_begin, function_begin) //TODO: end should point after '}'
 			));
+	}
+
+	std::vector<std::unique_ptr<expression_tree>> parser::parse_argument_list()
+	{
+		std::vector<std::unique_ptr<expression_tree>> arguments;
+
+		for (;;)
+		{
+			if (try_skip_token(token_type::parenthesis_right))
+			{
+				break;
+			}
+
+			auto argument = parse_expression();
+			arguments.push_back(
+			  std::move(argument)
+			  );
+
+			if (!try_skip_token(token_type::comma))
+			{
+				skip_token(
+					token_type::parenthesis_right,
+					"Comma or closing parenthesis expected"
+					);
+				break;
+			}
+		}
+
+		return arguments;
 	}
 
 	void parser::expect_token_type(token const &token, token_type::Enum type, std::string const &message) const
