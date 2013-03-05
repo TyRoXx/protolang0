@@ -124,12 +124,8 @@ namespace p0
 			statement.condition().accept(condition);
 		}
 
-		m_emitter.not_(
-			condition_variable.address().local_address()
-			);
-
 		auto const jump_if_address = m_emitter.get_current_jump_address();
-		m_emitter.jump_if(
+		m_emitter.jump_if_not(
 			-1,
 			condition_variable.address().local_address()
 			);
