@@ -53,6 +53,62 @@ namespace p0
 				}
 				return rt::expose(gc, result.str());
 			}
+
+			run::value std_class(std::vector<run::value> const &arguments)
+			{
+				if (arguments.empty())
+				{
+					return run::value();
+				}
+
+				return arguments.front();
+			}
+
+			struct class_instance PROTOLANG0_FINAL_CLASS : run::object
+			{
+				explicit class_instance(run::value const &definition)
+					: m_definition(definition)
+				{
+				}
+
+				virtual boost::optional<run::value> get_element(run::value const &key) const PROTOLANG0_FINAL_METHOD
+				{
+					return m_fields.get_element(key);
+				}
+
+				virtual bool set_element(run::value const &key, run::value const &value) PROTOLANG0_FINAL_METHOD
+				{
+					return m_fields.set_element(key, value);
+				}
+
+			private:
+
+				run::value const m_definition;
+				run::table m_fields;
+
+
+				virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
+				{
+					if (m_definition.type == run::value_type::object)
+					{
+						m_definition.obj->mark();
+					}
+
+					m_fields.mark();
+				}
+			};
+
+			run::value std_new(run::garbage_collector &gc,
+							   std::vector<run::value> const &arguments)
+			{
+				if (arguments.empty())
+				{
+					return run::value();
+				}
+				auto const definition = arguments.front();
+				return run::value(
+							run::construct_object<class_instance>(gc, definition));
+			}
 		}
 
 		run::value register_standard_module(run::garbage_collector &gc)
@@ -63,6 +119,8 @@ namespace p0
 				.insert_fn("read_line", std::bind(std_read_line, std::ref(gc), std::placeholders::_1))
 				.insert_fn("assert", &std_assert)
 				.insert_fn("to_string", std::bind(std_to_string, std::ref(gc), std::placeholders::_1))
+				.insert_fn("class", &std_class)
+				.insert_fn("new", std::bind(std_new, std::ref(gc), std::placeholders::_1))
 				;
 			return run::value(module);
 		}
