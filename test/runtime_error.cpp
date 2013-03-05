@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(call_non_function_test)
 {
 	test_call_non_function([](intermediate::emitter &emitter)
 	{
-		emitter.set_from_constant(1, 123);
+		emitter.set_constant(1, 123);
 	});
 	test_call_non_function([](intermediate::emitter &emitter)
 	{
@@ -117,8 +117,8 @@ BOOST_AUTO_TEST_CASE(divide_by_zero_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(1, 42);
-		emitter.set_from_constant(2, 0);
+		emitter.set_constant(1, 42);
+		emitter.set_constant(2, 0);
 		emitter.div(1, 2);
 	});
 
@@ -127,8 +127,8 @@ BOOST_AUTO_TEST_CASE(divide_by_zero_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(1, 42);
-		emitter.set_from_constant(2, 0);
+		emitter.set_constant(1, 42);
+		emitter.set_constant(2, 0);
 		emitter.mod(1, 2);
 	});
 }
@@ -139,8 +139,8 @@ BOOST_AUTO_TEST_CASE(division_overflow_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
-		emitter.set_from_constant(2, -1);
+		emitter.set_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_constant(2, -1);
 		emitter.div(1, 2);
 	});
 
@@ -149,8 +149,8 @@ BOOST_AUTO_TEST_CASE(division_overflow_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
-		emitter.set_from_constant(2, -1);
+		emitter.set_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_constant(2, -1);
 		emitter.mod(1, 2);
 	});
 }
@@ -164,8 +164,8 @@ namespace
 			intermediate::emitter &emitter,
 			intermediate::unit::string_vector &)
 		{
-			emitter.set_from_constant(1, 123);
-			emitter.set_from_constant(2, amount);
+			emitter.set_constant(1, 123);
+			emitter.set_constant(2, amount);
 			emitter.push_instruction(intermediate::instruction(shift, 1, 2));
 		});
 	}
@@ -219,8 +219,8 @@ namespace
 			intermediate::emitter &emitter,
 			intermediate::unit::string_vector &)
 		{
-			emitter.set_from_constant(1, left);
-			emitter.set_from_constant(2, right);
+			emitter.set_constant(1, left);
+			emitter.set_constant(2, right);
 			emitter.push_instruction(intermediate::instruction(add, 1, 2));
 		});
 	}
@@ -254,7 +254,7 @@ BOOST_AUTO_TEST_CASE(negation_overflow_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_constant(1, std::numeric_limits<integer>::min());
 		emitter.negate(1);
 	});
 }
@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(load_module_invalid_argument_test)
 	expect_runtime_error([](intermediate::emitter &emitter,
 							intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(0, 123);
+		emitter.set_constant(0, 123);
 		emitter.load_module(0);
 	});
 
@@ -280,5 +280,33 @@ BOOST_AUTO_TEST_CASE(load_module_invalid_argument_test)
 	{
 		emitter.new_table(0);
 		emitter.load_module(0);
+	});
+}
+
+BOOST_AUTO_TEST_CASE(call_method_misuse_test)
+{
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.set_null(3); //name
+		emitter.set_null(1); //instance
+		emitter.call_method(1, 0, 3);
+	});
+
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &strings)
+	{
+		strings.push_back("not a class instance");
+		emitter.set_null(3); //name
+		emitter.set_string(1, 0); //instance
+		emitter.call_method(1, 0, 3);
+	});
+
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.set_null(3); //name
+		emitter.set_constant(1, 123); //instance
+		emitter.call_method(1, 0, 3);
 	});
 }

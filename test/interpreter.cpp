@@ -83,7 +83,7 @@ BOOST_AUTO_TEST_CASE(set_from_constant_operation_test)
 		run_single_function(
 			[number](intermediate::emitter &emitter, intermediate::unit::string_vector &)
 		{
-			emitter.set_from_constant(0, number);
+			emitter.set_constant(0, number);
 		},
 			std::vector<value>(),
 			[number](value const &result)
@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(set_null_operation_test)
 	run_single_function(
 		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(1, 123);
+		emitter.set_constant(1, 123);
 
 		//overwrite the "123" with null
 		emitter.set_null(1);
@@ -288,16 +288,16 @@ BOOST_AUTO_TEST_CASE(recursion_test)
 		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
 	{
 		//0
-		emitter.set_from_constant(3, 0);
+		emitter.set_constant(3, 0);
 		emitter.less(3, 1);
 		emitter.jump_if_not(12, 3);
 		emitter.copy(3, 0);
 		emitter.copy(4, 1);
 		//5
-		emitter.set_from_constant(6, 1);
+		emitter.set_constant(6, 1);
 		emitter.sub(4, 6);
 		emitter.copy(5, 2);
-		emitter.set_from_constant(6, 3);
+		emitter.set_constant(6, 3);
 		emitter.add(5, 6);
 		//10
 		emitter.call(3, 2);
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(string_get_element_operation_test)
 	{
 		strings.push_back(test_string);
 		emitter.set_string(1, 0);
-		emitter.set_from_constant(2, 12);
+		emitter.set_constant(2, 12);
 		emitter.get_element(1, 2, 0);
 	},
 		std::vector<value>(),
@@ -378,7 +378,7 @@ BOOST_AUTO_TEST_CASE(table_get_element_operation_test)
 		intermediate::unit::string_vector &)
 	{
 		emitter.new_table(1);
-		emitter.set_from_constant(2, 123);
+		emitter.set_constant(2, 123);
 		emitter.get_element(1, 2, 0);
 	},
 		std::vector<value>(),
@@ -397,15 +397,15 @@ BOOST_AUTO_TEST_CASE(table_set_element_operation_test)
 	{
 		emitter.new_table(1);
 
-		emitter.set_from_constant(2, 123);
-		emitter.set_from_constant(3, 456);
+		emitter.set_constant(2, 123);
+		emitter.set_constant(3, 456);
 		emitter.set_element(1, 2, 3);
 
-		emitter.set_from_constant(2, 124);
-		emitter.set_from_constant(3, -7);
+		emitter.set_constant(2, 124);
+		emitter.set_constant(3, -7);
 		emitter.set_element(1, 2, 3);
 
-		emitter.set_from_constant(2, 123);
+		emitter.set_constant(2, 123);
 		emitter.get_element(1, 2, 0);
 	},
 		std::vector<value>(),
@@ -422,7 +422,7 @@ BOOST_AUTO_TEST_CASE(missing_argument_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_from_constant(2, 44);
+		emitter.set_constant(2, 44);
 		emitter.equal(1, 2);
 		emitter.jump_if_not(6, 1);
 		emitter.copy(3, 0);

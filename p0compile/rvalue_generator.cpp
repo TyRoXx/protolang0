@@ -121,7 +121,7 @@ namespace p0
 
 		if (m_destination.is_valid())
 		{
-			m_emitter.set_from_constant(
+			m_emitter.set_constant(
 				m_destination.local_address(),
 				value
 			);

@@ -25,7 +25,7 @@ namespace p0
 				));
 		}
 
-		void emitter::set_from_constant(
+		void emitter::set_constant(
 			instruction_argument destination,
 			instruction_argument constant
 			)
@@ -256,15 +256,15 @@ namespace p0
 
 		void emitter::call_method(
 			instruction_argument arguments_address,
-			instruction_argument method_name_address,
-			instruction_argument argument_count
+				instruction_argument argument_count,
+			instruction_argument method_name_address
 			)
 		{
 			push_instruction(instruction(
 				instruction_type::call_method,
 				arguments_address,
-				method_name_address,
-				argument_count
+				argument_count,
+				method_name_address
 				));
 		}
 
