@@ -21,3 +21,55 @@ v:add(w)
 
 std.assert(v.x == 6)
 std.assert(v.y == -3)
+
+std.print(v, " ", v.x, " ", v.y, "\n")
+
+var list = std.class([
+	push_back = function (this, element)
+	{
+		var last = this.last
+		var next = [element = element, previous = last]
+		if (last)
+		{
+			last.next = next
+		}
+		else
+		{
+			this.first = next
+		}
+		this.last = next
+	},
+	pop_back = function (this)
+	{
+		std.assert(this.last)
+		this.last = this.last.previous
+		if (this.last)
+		{
+			this.last.next = null
+		}
+		else
+		{
+			this.first = null
+		}
+	},
+	back = function (this)
+	{
+		std.assert(this.last)
+		return this.last.element
+	},
+	empty = function (this)
+	{
+		return (this.first == null)
+	}
+])
+
+var k = std.new(list)
+std.assert(k:empty())
+k:push_back(2)
+std.assert(k:back() == 2)
+k:push_back(3)
+std.assert(k:back() == 3)
+k:pop_back()
+std.assert(k:back() == 2)
+k:pop_back()
+std.assert(k:empty())

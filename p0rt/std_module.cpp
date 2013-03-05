@@ -107,7 +107,9 @@ namespace p0
 									arguments_with_this);
 
 					case run::value_type::object:
-						return method->obj->call(arguments, interpreter);
+						return method->obj->call(
+									arguments_with_this,
+									interpreter);
 
 					default:
 						P0_NOT_IMPLEMENTED();
