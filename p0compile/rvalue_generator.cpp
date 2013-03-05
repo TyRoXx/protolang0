@@ -666,6 +666,8 @@ namespace p0
 
 	void rvalue_generator::visit(method_call_expression_tree const &expression)
 	{
+		temporary const method_name_variable(m_frame, 1);
+
 		temporary const instance_variable(m_frame, 1);
 		{
 			rvalue_generator instance_generator(
@@ -676,7 +678,6 @@ namespace p0
 			expression.instance().accept(instance_generator);
 		}
 
-		temporary const method_name_variable(m_frame, 1);
 		{
 			auto const method_name_id = m_function_generator.unit().get_string_id(
 						source_range_to_string(expression.method_name()));
@@ -685,15 +686,16 @@ namespace p0
 						method_name_id);
 		}
 
-		auto const result_address = method_name_variable.address().local_address();
+		auto const result_address = instance_variable.address().local_address();
 
 		with_arguments(expression.arguments(),
 					   [&]()
 		{
 			m_emitter.call_method(
-						instance_variable.address().local_address(),
-						method_name_variable.address().local_address(),
-						result_address);
+						result_address,
+						expression.arguments().size(),
+						method_name_variable.address().local_address()
+						);
 
 			if (m_destination.is_valid())
 			{
