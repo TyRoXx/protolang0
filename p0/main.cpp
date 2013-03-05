@@ -3,6 +3,7 @@
 #include "p0run/interpreter.hpp"
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/table.hpp"
+#include "p0run/runtime_error.hpp"
 #include "p0rt/std_module.hpp"
 #include <iostream>
 #include <fstream>
@@ -216,9 +217,26 @@ int main(int argc, char **argv)
 								  p0::lazy_module(p0::rt::register_standard_module(gc)));
 
 		std::vector<p0::run::value> arguments;
-		interpreter.call(
-					p0::intermediate::function_ref(program, *entry_point),
-					arguments);
+		try
+		{
+			interpreter.call(
+						p0::intermediate::function_ref(program, *entry_point),
+						arguments);
+		}
+		catch (p0::run::runtime_error const &error)
+		{
+			auto const function_id =
+					std::distance(&error.function().function(),
+								  &error.function().origin().functions().front());
+
+			std::cerr
+					<< "Error "
+					<< error.type()
+					<< " (" << p0::run::runtime_error_code::to_string(error.type()) << ")\n"
+					<< "Function id " << function_id << '\n'
+					<< "Instruction index " << error.instruction() << '\n';
+			return 1;
+		}
 	}
 	catch (std::exception const &ex)
 	{
