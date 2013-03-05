@@ -1,3 +1,23 @@
 var std = import "std"
-var input = std.read_line()
-std.print(input, "\n")
+
+var vector2 = std.class([
+	assign = function (this, x, y)
+	{
+		this.x = x
+		this.y = y
+	},
+	add = function (this, other)
+	{
+		this.x = this.x + other.x
+		this.y = this.y + other.y
+	}
+])
+
+var v = std.new(vector2)
+v:assign(1, 2)
+var w = std.new(vector2)
+w:assign(5, -5)
+v:add(w)
+
+std.assert(v.x == 6)
+std.assert(v.y == -3)

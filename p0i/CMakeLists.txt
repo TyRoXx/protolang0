@@ -3,3 +3,4 @@ file(GLOB files
 	"*.cpp")
 
 add_library(p0i ${files})
+

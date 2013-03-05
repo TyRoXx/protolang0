@@ -129,6 +129,8 @@ int main(int argc, char **argv)
 {
 	namespace po = boost::program_options;
 
+	auto &err = std::cerr;
+
 	std::string file_name;
 	std::size_t entry_point_id = 0;
 	std::vector<std::string> external_module_file_names;
@@ -155,14 +157,14 @@ int main(int argc, char **argv)
 	}
 	catch (po::error const &e)
 	{
-		std::cerr << e.what() << "\n";
+		err << e.what() << "\n";
 		return 1;
 	}
 
 	if ((argc == 1) ||
 		vm.count("help"))
 	{
-		std::cerr << desc << "\n";
+		err << desc << "\n";
 		return 0;
 	}
 
@@ -181,8 +183,8 @@ int main(int argc, char **argv)
 		}
 		else
 		{
-			std::cerr << "Entry function " << entry_point_id
-					  << " does not exist\n";
+			err << "Entry function " << entry_point_id
+				<< " does not exist\n";
 			return 1;
 		}
 
@@ -225,16 +227,36 @@ int main(int argc, char **argv)
 		}
 		catch (p0::run::runtime_error const &error)
 		{
+			auto &program = error.function().origin();
+			auto * const info = program.info();
+
 			auto const function_id =
 					std::distance(&error.function().function(),
-								  &error.function().origin().functions().front());
+								  &program.functions().front());
 
-			std::cerr
-					<< "Error "
-					<< error.type()
-					<< " (" << p0::run::runtime_error_code::to_string(error.type()) << ")\n"
-					<< "Function id " << function_id << '\n'
-					<< "Instruction index " << error.instruction() << '\n';
+			err << "Error ";
+			if (info)
+			{
+				err << "In unit " << info->name << '\n';
+			}
+			err	<< error.type()
+				<< " (" << p0::run::runtime_error_code::to_string(error.type()) << ")\n";
+
+			err << "Function id " << function_id << '\n';
+			if (info)
+			{
+				err << "Function name "
+					<< info->functions[function_id].name << '\n';
+			}
+
+			err << "Instruction index " << error.instruction() << '\n';
+			if (info)
+			{
+				auto const position =
+					info->functions[function_id].instructions[error.instruction()];
+				err << "Line " << (1 + position.row)
+					<< ", column " << (1 + position.column) << '\n';
+			}
 			return 1;
 		}
 	}
