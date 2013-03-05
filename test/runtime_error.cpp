@@ -310,3 +310,27 @@ BOOST_AUTO_TEST_CASE(call_method_misuse_test)
 		emitter.call_method(1, 0, 3);
 	});
 }
+
+BOOST_AUTO_TEST_CASE(jump_misuse_test)
+{
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.jump(9001);
+	});
+
+	//we except an error even if the branch is not taken
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.set_constant(0, 0);
+		emitter.jump_if(9001, 0);
+	});
+
+	expect_runtime_error([](intermediate::emitter &emitter,
+							intermediate::unit::string_vector &)
+	{
+		emitter.set_constant(0, 1);
+		emitter.jump_if_not(9001, 0);
+	});
+}
