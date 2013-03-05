@@ -1,4 +1,5 @@
 #include "p0i/unit.hpp"
+#include "p0i/save_unit.hpp"
 #include "p0compile/compile_unit.hpp"
 #include "p0run/interpreter.hpp"
 #include "p0run/default_garbage_collector.hpp"
@@ -134,6 +135,7 @@ int main(int argc, char **argv)
 	std::string file_name;
 	std::size_t entry_point_id = 0;
 	std::vector<std::string> external_module_file_names;
+	std::string intermediate_output_file;
 
 	po::options_description desc("");
 	desc.add_options()
@@ -142,6 +144,7 @@ int main(int argc, char **argv)
 		("compile,c", "")
 		("entry,e", po::value(&entry_point_id), "entry function id")
 		("library,l", po::value(&external_module_file_names), "")
+		("intermediate,i", po::value(&intermediate_output_file), "")
 		;
 
 	po::positional_options_description p;
@@ -175,6 +178,18 @@ int main(int argc, char **argv)
 				? p0::compile_unit_from_file(file_name)
 				: p0::load_intermediate_code(file_name)
 				;
+
+		if (!intermediate_output_file.empty())
+		{
+			std::ofstream out_file(intermediate_output_file);
+			if (!out_file)
+			{
+				err << "Could not open intermediate output file "
+					<< intermediate_output_file << '\n';
+				return 1;
+			}
+			p0::intermediate::save_unit(out_file, program);
+		}
 
 		p0::intermediate::function const *entry_point = 0;
 		if (entry_point_id < program.functions().size())
