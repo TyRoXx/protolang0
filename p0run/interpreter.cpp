@@ -5,6 +5,7 @@
 #include "function.hpp"
 #include "garbage_collector.hpp"
 #include "p0i/function_ref.hpp"
+#include "p0common/not_implemented.hpp"
 #include <cassert>
 #include <climits>
 #include <stdexcept>
@@ -472,7 +473,7 @@ namespace p0
 
 				case call_method:
 					{
-						throw std::runtime_error("Not implemented");
+						P0_NOT_IMPLEMENTED();
 					}
 
 				case jump:

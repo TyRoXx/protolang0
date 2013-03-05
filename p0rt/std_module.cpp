@@ -1,6 +1,8 @@
 #include "std_module.hpp"
 #include "insert.hpp"
 #include "p0run/garbage_collector.hpp"
+#include "p0run/interpreter.hpp"
+#include "p0common/not_implemented.hpp"
 #include <boost/foreach.hpp>
 #include <vector>
 #include <sstream>
@@ -66,7 +68,7 @@ namespace p0
 
 			struct class_instance PROTOLANG0_FINAL_CLASS : run::object
 			{
-				explicit class_instance(run::value const &definition)
+				explicit class_instance(run::object &definition)
 					: m_definition(definition)
 				{
 				}
@@ -81,19 +83,46 @@ namespace p0
 					return m_fields.set_element(key, value);
 				}
 
+				virtual boost::optional<run::value> call_method(
+						run::value const &method_name,
+						std::vector<run::value> const &arguments,
+						run::interpreter &interpreter
+						) PROTOLANG0_FINAL_METHOD
+				{
+					auto const method = m_definition.get_element(method_name);
+					if (!method)
+					{
+						P0_NOT_IMPLEMENTED();
+					}
+					std::vector<run::value> arguments_with_this;
+					arguments_with_this.push_back(run::value(*this));
+					arguments_with_this.insert(arguments_with_this.end(),
+											   arguments.begin(),
+											   arguments.end());
+					switch (method->type)
+					{
+					case run::value_type::function_ptr:
+						return interpreter.call(
+									*method->function_ptr,
+									arguments_with_this);
+
+					case run::value_type::object:
+						return method->obj->call(arguments, interpreter);
+
+					default:
+						P0_NOT_IMPLEMENTED();
+					}
+				}
+
 			private:
 
-				run::value const m_definition;
+				run::object &m_definition;
 				run::table m_fields;
 
 
 				virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
 				{
-					if (m_definition.type == run::value_type::object)
-					{
-						m_definition.obj->mark();
-					}
-
+					m_definition.mark();
 					m_fields.mark();
 				}
 			};
@@ -106,8 +135,13 @@ namespace p0
 					return run::value();
 				}
 				auto const definition = arguments.front();
-				return run::value(
-							run::construct_object<class_instance>(gc, definition));
+				if (definition.type != run::value_type::object)
+				{
+					P0_NOT_IMPLEMENTED();
+				}
+				return run::value(run::construct_object<class_instance>(
+									  gc,
+									  *definition.obj));
 			}
 		}
 
