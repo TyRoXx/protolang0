@@ -44,6 +44,29 @@ namespace p0
 
 				Container &m_container;
 			};
+
+			template <class T>
+			struct auto_swapper
+			{
+				auto_swapper(T &variable, T const &temporary_value)
+					: m_variable(variable)
+					, m_previous_value(temporary_value)
+				{
+					using std::swap;
+					swap(m_variable, m_previous_value);
+				}
+
+				~auto_swapper()
+				{
+					using std::swap;
+					swap(m_variable, m_previous_value);
+				}
+
+			private:
+
+				T &m_variable;
+				T m_previous_value;
+			};
 		}
 
 
@@ -52,6 +75,7 @@ namespace p0
 			: m_load_module(std::move(load_module))
 			, m_gc(gc)
 			, m_listener(nullptr)
+			, m_next_call_frame(0)
 		{
 		}
 
@@ -60,12 +84,14 @@ namespace p0
 			value const &current_function,
 			const std::vector<value> &arguments)
 		{
-			m_locals.clear();
-			m_locals.push_back(current_function);
-			m_locals.insert(m_locals.end(), arguments.begin(), arguments.end());
-			native_call(function, 0, arguments.size());
-			assert(!m_locals.empty());
-			return m_locals.front();
+			get(m_next_call_frame, 0) = current_function;
+			for (size_t i = 0; i < arguments.size(); ++i)
+			{
+				get(m_next_call_frame, 1 + i) = arguments[i];
+			}
+			native_call(function, m_next_call_frame, arguments.size());
+			assert(m_locals.size() > m_next_call_frame);
+			return get(m_next_call_frame, 0);
 		}
 
 		value interpreter::call(
@@ -455,6 +481,9 @@ namespace p0
 									get(local_frame, arguments_address + 1 + i));
 							}
 
+							auto_swapper<size_t> const call_frame_guard(
+										m_next_call_frame, arguments_address);
+
 							auto const result = callee.obj->call(arguments, *this);
 							if (!result)
 							{
@@ -499,6 +528,10 @@ namespace p0
 						}
 
 						auto const method_name = get(local_frame, method_name_address);
+
+						auto_swapper<size_t> const call_frame_guard(
+									m_next_call_frame, arguments_address);
+
 						auto const result = instance.obj->call_method(
 									method_name, arguments, *this);
 						if (!result)

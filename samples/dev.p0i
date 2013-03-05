@@ -1,0 +1,109 @@
+function 0
+00: set_string                 1         0
+01: load_module                1
+02: copy                       3         1
+03: set_string                 4         1
+04: get_element                3         4         3
+05: new_table                  4
+06: set_string                 5         2
+07: set_function               6         1
+08: set_element                4         5         6
+09: set_string                 5         5
+10: set_function               6         2
+11: set_element                4         5         6
+12: call                       3         1
+13: copy                       2         3
+14: copy                       4         1
+15: set_string                 5         6
+16: get_element                4         5         4
+17: copy                       5         2
+18: call                       4         1
+19: copy                       3         4
+20: copy                       5         3
+21: set_string                 4         2
+22: set_from_constant          6         1
+23: set_from_constant          7         2
+24: call_method                5         2         4
+25: copy                       5         1
+26: set_string                 6         6
+27: get_element                5         6         5
+28: copy                       6         2
+29: call                       5         1
+30: copy                       4         5
+31: copy                       6         4
+32: set_string                 5         2
+33: set_from_constant          7         5
+34: set_from_constant          8         5
+35: negate                     8
+36: call_method                6         2         5
+37: copy                       6         3
+38: set_string                 5         5
+39: copy                       7         4
+40: call_method                6         1         5
+41: copy                       5         1
+42: set_string                 6         7
+43: get_element                5         6         5
+44: copy                       7         3
+45: set_string                 8         3
+46: get_element                7         8         7
+47: set_from_constant          8         6
+48: equal                      7         8
+49: copy                       6         7
+50: call                       5         1
+51: copy                       5         1
+52: set_string                 6         7
+53: get_element                5         6         5
+54: copy                       7         3
+55: set_string                 8         4
+56: get_element                7         8         7
+57: set_from_constant          8         3
+58: negate                     8
+59: equal                      7         8
+60: copy                       6         7
+61: call                       5         1
+end
+
+function 1
+0: copy                       4         2
+1: copy                       5         1
+2: set_string                 6         3
+3: set_element                5         6         4
+4: copy                       4         3
+5: copy                       5         1
+6: set_string                 6         4
+7: set_element                5         6         4
+end
+
+function 2
+00: copy                       4         1
+01: set_string                 5         3
+02: get_element                4         5         4
+03: copy                       5         2
+04: set_string                 6         3
+05: get_element                5         6         5
+06: add                        4         5
+07: copy                       3         4
+08: copy                       4         1
+09: set_string                 5         3
+10: set_element                4         5         3
+11: copy                       4         1
+12: set_string                 5         4
+13: get_element                4         5         4
+14: copy                       5         2
+15: set_string                 6         4
+16: get_element                5         6         5
+17: add                        4         5
+18: copy                       3         4
+19: copy                       4         1
+20: set_string                 5         4
+21: set_element                4         5         3
+end
+
+0: std
+1: class
+2: assign
+3: x
+4: y
+5: add
+6: new
+7: assert

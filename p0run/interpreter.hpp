@@ -45,6 +45,7 @@ namespace p0
 			std::vector<value> m_current_function_stack;
 			interpreter_listener *m_listener;
 			std::set<intermediate::function_ref> m_function_refs;
+			std::size_t m_next_call_frame;
 
 
 			void native_call(
