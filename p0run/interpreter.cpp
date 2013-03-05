@@ -5,7 +5,6 @@
 #include "function.hpp"
 #include "garbage_collector.hpp"
 #include "p0i/function_ref.hpp"
-#include "p0common/not_implemented.hpp"
 #include <cassert>
 #include <climits>
 #include <stdexcept>
@@ -446,12 +445,15 @@ namespace p0
 							std::vector<value> arguments;
 							for (size_t i = 0; i < argument_count; ++i)
 							{
-								arguments.push_back(get(local_frame, arguments_address + 1 + i));
+								arguments.push_back(
+									get(local_frame, arguments_address + 1 + i));
 							}
+
 							auto const result = callee.obj->call(arguments, *this);
 							if (!result)
 							{
-								throw std::runtime_error("Called object does not support the call operation");
+								throw std::runtime_error(
+									"Called object does not support the call operation");
 							}
 							get(local_frame, arguments_address) = *result;
 							break;
@@ -473,7 +475,33 @@ namespace p0
 
 				case call_method:
 					{
-						P0_NOT_IMPLEMENTED();
+						auto const arguments_address = static_cast<size_t>(instr_arguments[0]);
+						auto const argument_count = static_cast<size_t>(instr_arguments[1]);
+						auto const method_name_address = static_cast<size_t>(instr_arguments[2]);
+						auto const instance = get(local_frame, arguments_address);
+						if (instance.type != value_type::object)
+						{
+							throw std::runtime_error(
+								"Cannot call method on non-object");
+						}
+
+						std::vector<value> arguments;
+						for (size_t i = 0; i < argument_count; ++i)
+						{
+							arguments.push_back(
+								get(local_frame, arguments_address + 1 + i));
+						}
+
+						auto const method_name = get(local_frame, method_name_address);
+						auto const result = instance.obj->call_method(
+									method_name, arguments, *this);
+						if (!result)
+						{
+							throw std::runtime_error(
+								"Called object does not support the call_method operation");
+						}
+						get(local_frame, arguments_address) = *result;
+						break;
 					}
 
 				case jump:
