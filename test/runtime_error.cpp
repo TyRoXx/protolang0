@@ -1,5 +1,6 @@
 #include "p0run/interpreter.hpp"
 #include "p0run/default_garbage_collector.hpp"
+#include "p0run/runtime_error.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
 using namespace p0::run;
@@ -108,6 +109,26 @@ namespace
 	void expect_arithmetic_error(Emit const &emit)
 	{
 		expect_runtime_error(emit);
+	}
+
+	template <class Emit>
+	void expect_runtime_error(p0::run::runtime_error_code::type expected_error,
+							  Emit const &emit)
+	{
+		BOOST_CHECK_EXCEPTION((
+		run_single_function(
+			emit,
+			std::vector<value>(),
+			[](value const &) -> void
+		{
+			BOOST_CHECK(nullptr == "No result expected");
+		})),
+			p0::run::runtime_error,
+			([expected_error](p0::run::runtime_error const &ex) -> bool
+		{
+			BOOST_REQUIRE(ex.type() == expected_error);
+			return true;
+		}));
 	}
 }
 
@@ -313,22 +334,28 @@ BOOST_AUTO_TEST_CASE(call_method_misuse_test)
 
 BOOST_AUTO_TEST_CASE(jump_misuse_test)
 {
-	expect_runtime_error([](intermediate::emitter &emitter,
-							intermediate::unit::string_vector &)
+	expect_runtime_error(
+				p0::run::runtime_error_code::jump_out_of_range,
+				[](intermediate::emitter &emitter,
+				   intermediate::unit::string_vector &)
 	{
 		emitter.jump(9001);
 	});
 
 	//we except an error even if the branch is not taken
-	expect_runtime_error([](intermediate::emitter &emitter,
-							intermediate::unit::string_vector &)
+	expect_runtime_error(
+				p0::run::runtime_error_code::jump_out_of_range,
+				[](intermediate::emitter &emitter,
+				   intermediate::unit::string_vector &)
 	{
 		emitter.set_constant(0, 0);
 		emitter.jump_if(9001, 0);
 	});
 
-	expect_runtime_error([](intermediate::emitter &emitter,
-							intermediate::unit::string_vector &)
+	expect_runtime_error(
+				p0::run::runtime_error_code::jump_out_of_range,
+				[](intermediate::emitter &emitter,
+				   intermediate::unit::string_vector &)
 	{
 		emitter.set_constant(0, 1);
 		emitter.jump_if_not(9001, 0);

@@ -3,6 +3,7 @@
 #include "string.hpp"
 #include "interpreter_listener.hpp"
 #include "function.hpp"
+#include "runtime_error.hpp"
 #include "garbage_collector.hpp"
 #include "p0i/function_ref.hpp"
 #include <cassert>
@@ -119,6 +120,14 @@ namespace p0
 			auto &program = function.origin();
 			auto const &code = function.function().body();
 			auto current_instr = code.begin();
+
+			auto const raise_error = [&](runtime_error_code::type type)
+			{
+				throw run::runtime_error(type,
+										 function,
+										 static_cast<size_t>(current_instr - code.begin()));
+			};
+
 			while (current_instr != code.end())
 			{
 				auto const operation = current_instr->type();
@@ -271,22 +280,19 @@ namespace p0
 						if ((dest.type == value_type::integer) &&
 							(source.type == value_type::integer))
 						{
-							static auto const check_divisor =
-								[](integer dividend, integer divisor)
+							auto const check_divisor =
+								[&](integer dividend, integer divisor)
 							{
 								if (divisor == 0)
 								{
-									throw std::runtime_error("Division by zero");
+									raise_error(runtime_error_code::division_by_zero);
 								}
 								if (dividend == std::numeric_limits<integer>::min() &&
 									divisor == -1)
 								{
-									throw std::runtime_error("Quotient out of range");
+									raise_error(runtime_error_code::integer_overflow);
 								}
 							};
-#ifndef _MSC_VER
-							static //VC++ 10 crashes here with static
-#endif
 							auto const check_shift_amount = [](integer shift)
 							{
 								integer const integer_size_bits = sizeof(integer) * CHAR_BIT;
@@ -299,17 +305,17 @@ namespace p0
 									throw std::runtime_error("Shift beyond bounds");
 								}
 							};
-							static auto const checked_add = [](integer &left, integer right)
+							auto const checked_add = [&](integer &left, integer right)
 							{
 								if (left > 0 &&
 									std::numeric_limits<integer>::max() - left < right)
 								{
-									throw std::runtime_error("Add overflow");
+									raise_error(runtime_error_code::integer_overflow);
 								}
 								if (left < 0 &&
 									std::numeric_limits<integer>::min() - left > right)
 								{
-									throw std::runtime_error("Add overflow");
+									raise_error(runtime_error_code::integer_overflow);
 								}
 								left += right;
 							};
@@ -399,7 +405,7 @@ namespace p0
 						{
 							if (operand.i == std::numeric_limits<integer>::min())
 							{
-								throw std::runtime_error("Negation overflow");
+								raise_error(runtime_error_code::integer_overflow);
 							}
 							operand.i = -operand.i;
 						}
@@ -509,7 +515,7 @@ namespace p0
 						auto const destination = static_cast<size_t>(instr_arguments[0]);
 						if (destination > code.size())
 						{
-							throw std::runtime_error("Invalid jump destination");
+							raise_error(runtime_error_code::jump_out_of_range);
 						}
 						current_instr = (code.begin() + static_cast<ptrdiff_t>(destination));
 						--current_instr;
@@ -522,7 +528,7 @@ namespace p0
 						auto const destination = static_cast<size_t>(instr_arguments[0]);
 						if (destination > code.size())
 						{
-							throw std::runtime_error("Invalid jump destination");
+							raise_error(runtime_error_code::jump_out_of_range);
 						}
 						auto const condition_address = static_cast<size_t>(instr_arguments[1]);
 						auto const &condition = get(local_frame, condition_address);
@@ -554,11 +560,11 @@ namespace p0
 						auto const value = get(local_frame, value_address);
 						if (table.type != value_type::object)
 						{
-							throw std::runtime_error("Cannot set element of non-object");
+							raise_error(runtime_error_code::set_on_non_object);
 						}
 						if (!table.obj->set_element(key, value))
 						{
-							throw std::runtime_error("Cannot set element of this object");
+							raise_error(runtime_error_code::set_not_supported);
 						}
 						break;
 					}
@@ -572,12 +578,12 @@ namespace p0
 						auto const key = get(local_frame, key_address);
 						if (table.type != value_type::object)
 						{
-							throw std::runtime_error("Cannot get element of non-object");
+							raise_error(runtime_error_code::get_from_non_object);
 						}
 						auto const result = table.obj->get_element(key);
 						if (!result)
 						{
-							throw std::runtime_error("Cannot get element of this object");
+							raise_error(runtime_error_code::get_not_supported);
 						}
 						get(local_frame, value_address) = *result;
 						break;
