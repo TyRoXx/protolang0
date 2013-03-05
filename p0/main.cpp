@@ -246,8 +246,9 @@ int main(int argc, char **argv)
 			auto * const info = program.info();
 
 			auto const function_id =
-					std::distance(&error.function().function(),
-								  &program.functions().front());
+					std::distance(
+						&program.functions().front(),
+						&error.function().function());
 
 			err << "Error ";
 			if (info)
