@@ -99,7 +99,9 @@ namespace p0
 			const std::vector<value> &arguments
 			)
 		{
-			return call(function, value(function), arguments);
+			return call(function,
+						value(require_function_ref(function)),
+						arguments);
 		}
 
 		void interpreter::mark_required_objects()
