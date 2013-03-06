@@ -35,15 +35,15 @@ namespace
 
 		p0::run::default_garbage_collector gc;
 
-		auto const load_module =
-				[](p0::run::interpreter &interpreter, std::string const &name)
+		p0::run::interpreter::load_module_function const load_module =
+			[](p0::run::interpreter &interpreter, std::string const &name) -> p0::run::value
 		{
 			BOOST_REQUIRE(name == "std");
 			return p0::rt::register_standard_module(
 						interpreter.garbage_collector());
 		};
 
-		auto const deny_module =
+		p0::run::interpreter::load_module_function const deny_module =
 				[](p0::run::interpreter &, std::string const &)
 		{
 			return p0::run::value();

@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(default_gc_test)
 			m_is_alive = true;
 		}
 
-		virtual ~gc_tester() PROTOLANG0_FINAL_METHOD
+		virtual ~gc_tester()
 		{
 			m_is_alive = false;
 		}

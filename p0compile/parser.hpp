@@ -6,6 +6,7 @@
 #include "token.hpp"
 #include <functional>
 #include <memory>
+#include <vector>
 
 
 namespace p0
