@@ -7,12 +7,10 @@ namespace p0
 	{
 		unit::unit(
 			function_vector functions,
-			string_vector strings,
-			std::unique_ptr<unit_info> info
+			string_vector strings
 			)
 			: m_functions(std::move(functions))
 			, m_strings(std::move(strings))
-			, m_info(std::move(info))
 		{
 		}
 
@@ -24,11 +22,6 @@ namespace p0
 		unit::string_vector const &unit::strings() const
 		{
 			return m_strings;
-		}
-
-		unit_info const *unit::info() const
-		{
-			return m_info.get();
 		}
 	}
 }

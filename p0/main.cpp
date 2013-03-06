@@ -1,5 +1,6 @@
 #include "p0i/unit.hpp"
 #include "p0i/save_unit.hpp"
+#include "p0i/unit_info.hpp"
 #include "p0compile/compile_unit.hpp"
 #include "p0run/interpreter.hpp"
 #include "p0run/default_garbage_collector.hpp"
@@ -243,7 +244,9 @@ int main(int argc, char **argv)
 		catch (p0::run::runtime_error const &error)
 		{
 			auto &program = error.function().origin();
-			auto * const info = program.info();
+
+			//TODO: generate/load debug info
+			p0::intermediate::unit_info * const info = nullptr;
 
 			auto const function_id =
 					std::distance(
