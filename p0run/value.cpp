@@ -210,6 +210,15 @@ namespace p0
 			}
 			return out;
 		}
+
+
+		void mark_value(value const &value)
+		{
+			if (value.type == value_type::object)
+			{
+				value.obj->mark();
+			}
+		}
 	}
 }
 
