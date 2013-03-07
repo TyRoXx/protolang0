@@ -24,8 +24,17 @@ namespace p0
 
 		void default_garbage_collector::commit_object(object &constructed)
 		{
-			m_objects.push_back(remove_storage(
+			try
+			{
+				m_objects.push_back(remove_storage(
 									reinterpret_cast<char *>(&constructed)));
+			}
+			catch (...)
+			{
+				//TODO: make this responsibility explicit in constructed's type
+				constructed.~object();
+				throw;
+			}
 		}
 
 		void default_garbage_collector::unmark()
