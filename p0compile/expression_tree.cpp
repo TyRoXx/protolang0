@@ -355,4 +355,41 @@ namespace p0
 		assert(m_name);
 		return *m_name;
 	}
+
+
+	method_call_expression_tree::method_call_expression_tree(
+		std::unique_ptr<expression_tree> instance,
+		source_range method_name,
+		expression_vector arguments
+		)
+		: m_instance(std::move(instance))
+		, m_method_name(method_name)
+		, m_arguments(std::move(arguments))
+	{
+	}
+
+	void method_call_expression_tree::accept(expression_tree_visitor &visitor) const
+	{
+		visitor.visit(*this);
+	}
+
+	source_range method_call_expression_tree::position() const
+	{
+		return m_instance->position();
+	}
+
+	expression_tree const &method_call_expression_tree::instance() const
+	{
+		return *m_instance;
+	}
+
+	source_range const &method_call_expression_tree::method_name() const
+	{
+		return m_method_name;
+	}
+
+	method_call_expression_tree::expression_vector const &method_call_expression_tree::arguments() const
+	{
+		return m_arguments;
+	}
 }

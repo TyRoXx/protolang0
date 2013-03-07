@@ -17,12 +17,17 @@ namespace p0
 				: garbage_collector
 		{
 			virtual char *allocate(std::size_t byte_size) PROTOLANG0_FINAL_METHOD;
+			virtual void deallocate(char *storage) PROTOLANG0_FINAL_METHOD;
+			virtual void commit_object(object &constructed) PROTOLANG0_FINAL_METHOD;
 			virtual void unmark() PROTOLANG0_FINAL_METHOD;
 			virtual void sweep(sweep_mode::type mode) PROTOLANG0_FINAL_METHOD;
 
 		private:
 
-			std::vector<std::unique_ptr<char []>> m_objects;
+			std::vector<std::unique_ptr<char []>> m_storage, m_objects;
+
+
+			std::unique_ptr<char []> remove_storage(char *storage);
 		};
 	}
 }

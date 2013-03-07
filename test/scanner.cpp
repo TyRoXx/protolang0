@@ -90,6 +90,7 @@ BOOST_AUTO_TEST_CASE(operator_test)
 	BOOST_CHECK(scan_single_token(".", dot));
 	BOOST_CHECK(scan_single_token("~", tilde));
 	BOOST_CHECK(scan_single_token("^", caret));
+	BOOST_CHECK(scan_single_token(":", colon));
 }
 
 BOOST_AUTO_TEST_CASE(keyword_test)

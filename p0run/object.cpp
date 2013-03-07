@@ -74,6 +74,14 @@ namespace p0
 			return boost::optional<value>();
 		}
 
+		boost::optional<value> object::call_method(
+				value const & /*method_name*/,
+				std::vector<value> const & /*arguments*/,
+				interpreter & /*interpreter*/)
+		{
+			return boost::optional<value>();
+		}
+
 		void object::print(std::ostream &out) const
 		{
 			out << "object";

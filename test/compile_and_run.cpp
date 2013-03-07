@@ -2,6 +2,7 @@
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
+#include "p0rt/std_module.hpp"
 #include "p0compile/compiler.hpp"
 #include "p0compile/compiler_error.hpp"
 #include <boost/test/unit_test.hpp>
@@ -22,7 +23,8 @@ namespace
 	void run_valid_source(
 			std::string const &source,
 			std::vector<value> const &arguments,
-			CheckResult const &check_result)
+			CheckResult const &check_result,
+			bool with_std = false)
 	{
 		p0::source_range const source_range(
 			source.data(),
@@ -32,7 +34,22 @@ namespace
 		auto const program = compiler.compile();
 
 		p0::run::default_garbage_collector gc;
-		p0::run::interpreter interpreter(gc, nullptr);
+
+		p0::run::interpreter::load_module_function const load_module =
+			[](p0::run::interpreter &interpreter, std::string const &name) -> p0::run::value
+		{
+			BOOST_REQUIRE(name == "std");
+			return p0::rt::register_standard_module(
+						interpreter.garbage_collector());
+		};
+
+		p0::run::interpreter::load_module_function const deny_module =
+				[](p0::run::interpreter &, std::string const &)
+		{
+			return p0::run::value();
+		};
+
+		p0::run::interpreter interpreter(gc, with_std ? load_module : deny_module);
 		p0::intermediate::function_ref const main_function(
 					program, program.functions().front());
 		auto const result = interpreter.call(main_function, arguments);
@@ -198,4 +215,24 @@ BOOST_AUTO_TEST_CASE(bind_many_variables_test)
 		BOOST_CHECK(result == value(
 					static_cast<integer>(2 + 3 / 5 - 7 * 11)));
 	});
+}
+
+BOOST_AUTO_TEST_CASE(method_test)
+{
+	std::string const source =
+			"var std = import \"std\"\n"
+			"var class = std.class(\n"
+			"[get_value = function (this) {\n"
+			"	return 11\n"
+			"}])\n"
+			"var instance = std.new(class)\n"
+			"return instance:get_value()\n"
+			;
+	std::vector<value> const arguments;
+	run_valid_source(source, arguments,
+		[](value const &result, p0::intermediate::unit const & /*program*/)
+	{
+		BOOST_CHECK(result == value(static_cast<integer>(11)));
+	},
+		true /*with_std*/);
 }

@@ -13,8 +13,12 @@ Dependencies:
 		if CMake does not find Boost, set -DBOOST_ROOT= appropriately
 
 Usually working compilers:
-	- GCC 4.7
+	- GCC 4.7 (also MinGW on Windows)
+
+Good chances to work, but tested infrequently:
 	- Clang 3.2
+
+Currently unsupported compilers due to obscure errors or missing C++11 features:
 	- Visual C++ 2010
 
 TyRoXx

@@ -13,17 +13,14 @@ namespace p0
 		struct object;
 
 
-		struct out_of_memory : std::runtime_error
-		{
-			out_of_memory();
-		};
-
-
 		namespace sweep_mode
 		{
 			enum type
 			{
+				/** Ask the GC to destroy any number of unmarked objects. */
 				partial,
+
+				/** Ask the GC to destroy as many of the unmarked objects as possible. */
 				full
 			};
 		}
@@ -32,26 +29,75 @@ namespace p0
 		struct garbage_collector
 		{
 			virtual ~garbage_collector();
+
+			/**
+			 * @brief allocate Reserves a piece of memory which can hold any object of the given size.
+			 * @param byte_size The size of the reserved memory in Bytes.
+			 * @return Pointer to a piece of memory which must be freed with this->deallocate or committed as
+			 *         a constructed object with this->commit_object to participate in garbage collection.
+			 */
 			virtual char *allocate(std::size_t byte_size) = 0;
+
+			/**
+			 * @brief deallocate Frees memory reserved by this->allocate which has not been constructed
+			 *        as an object yet.
+			 * @param storage Pointer to a piece of memory reserved by this->allocate.
+			 *        Undefined behaviour if called with a nullptr.
+			 */
+			virtual void deallocate(char *storage) = 0;
+
+			/**
+			 * @brief commit_object Marks a piece of memory as a fully constructed object for garbage collection.
+			 * @param constructed The callee is responsible for the object's destruction.
+			 */
+			virtual void commit_object(object &constructed) = 0;
+
+			/**
+			 * @brief unmark Prepares a garbage collection by unmarking all objects managed by this GC.
+			 */
 			virtual void unmark() = 0;
+
+			/**
+			 * @brief sweep Looks for objects which are not marked as being in use and destroys them.
+			 *              You have to mark each and every object which is still required.
+			 *              After sweep the behaviour is undefined if you access an object which you
+			 *              had not marked as required before sweep.
+			 * @param mode The GC may ignore the mode request and select a different strategy.
+			 *             See sweep_mode::type for explanations for the modes.
+			 */
 			virtual void sweep(sweep_mode::type mode) = 0;
 		};
 
 
-		template <class T>
-		object &construct_object(garbage_collector &gc)
+		struct raw_storage
 		{
-			T * const ptr = reinterpret_cast<T *>(gc.allocate(sizeof(T)));
-			new (ptr) T();
-			return *ptr;
-		}
+			raw_storage();
+			raw_storage(garbage_collector &gc, std::size_t byte_size);
+			raw_storage(raw_storage &&other);
+			~raw_storage();
+			raw_storage &operator = (raw_storage &&other);
+			void swap(raw_storage &other);
 
-		template <class T, class A0>
-		object &construct_object(garbage_collector &gc, A0 &&a0)
+			template <class T, class ...Args>
+			object &construct(Args && ...args)
+			{
+				object &constructed = *new (m_memory) T(std::forward<Args>(args)...);
+				m_gc->commit_object(constructed);
+				m_memory = nullptr;
+				return constructed;
+			}
+
+		private:
+
+			garbage_collector *m_gc;
+			char *m_memory;
+		};
+
+
+		template <class T, class ...Args>
+		object &construct_object(garbage_collector &gc, Args && ...args)
 		{
-			T * const ptr = reinterpret_cast<T *>(gc.allocate(sizeof(T)));
-			new (ptr) T(std::forward<A0>(a0));
-			return *ptr;
+			return raw_storage(gc, sizeof(T)).construct<T>(std::forward<Args>(args)...);
 		}
 	}
 }

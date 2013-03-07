@@ -3,14 +3,14 @@
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
 #include <algorithm>
+#include <array>
 using namespace p0::run;
 
-
-BOOST_AUTO_TEST_CASE(default_gc_test)
+namespace
 {
 	typedef int vector_safe_bool;
 
-	struct gc_tester PROTOLANG0_FINAL_CLASS : p0::run::object
+	struct gc_tester : p0::run::object
 	{
 		explicit gc_tester(vector_safe_bool &is_alive)
 			: m_is_alive(is_alive)
@@ -18,7 +18,7 @@ BOOST_AUTO_TEST_CASE(default_gc_test)
 			m_is_alive = true;
 		}
 
-		virtual ~gc_tester() PROTOLANG0_FINAL_METHOD
+		virtual ~gc_tester()
 		{
 			m_is_alive = false;
 		}
@@ -27,11 +27,14 @@ BOOST_AUTO_TEST_CASE(default_gc_test)
 
 		vector_safe_bool &m_is_alive;
 
-		virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
+		virtual void mark_recursively() PROTOLANG0_OVERRIDE
 		{
 		}
 	};
+}
 
+BOOST_AUTO_TEST_CASE(default_gc_test)
+{
 	p0::run::default_garbage_collector gc;
 
 	std::vector<vector_safe_bool> alive_status(64);
@@ -71,4 +74,94 @@ BOOST_AUTO_TEST_CASE(default_gc_test)
 	BOOST_CHECK(std::all_of(alive_status.begin() + alive_status.size() / 2,
 							alive_status.end(),
 							[](bool a) { return !a; }));
+}
+
+namespace
+{
+	struct referencing_gc_tester PROTOLANG0_FINAL_CLASS : gc_tester
+	{
+		p0::run::value reference;
+
+		referencing_gc_tester(vector_safe_bool &is_alive)
+			: gc_tester(is_alive)
+		{
+		}
+
+	private:
+
+		virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
+		{
+			mark_value(reference);
+		}
+	};
+
+	bool test_dependency_cycle(size_t cycle_length, bool is_marked)
+	{
+		p0::run::default_garbage_collector gc;
+		std::vector<vector_safe_bool> is_alive(cycle_length);
+		{
+			std::vector<referencing_gc_tester *> test_objects(cycle_length);
+			for (size_t i = 0; i < is_alive.size(); ++i)
+			{
+				test_objects[i] = &dynamic_cast<referencing_gc_tester &>(
+					construct_object<referencing_gc_tester>(gc, is_alive[i]));
+			}
+			for (size_t i = 0; i < test_objects.size(); ++i)
+			{
+				test_objects[i]->reference = p0::run::value(
+							*test_objects[(i + 1) % test_objects.size()]);
+			}
+			gc.unmark();
+			if (is_marked)
+			{
+				test_objects.front()->mark();
+			}
+		}
+		gc.sweep(p0::run::sweep_mode::full);
+		return std::count(begin(is_alive), end(is_alive), !is_marked) == 0;
+	}
+}
+
+BOOST_AUTO_TEST_CASE(default_gc_cycle_test)
+{
+	BOOST_CHECK(test_dependency_cycle(1, true));
+	BOOST_CHECK(test_dependency_cycle(2, true));
+	BOOST_CHECK(test_dependency_cycle(3, true));
+	BOOST_CHECK(test_dependency_cycle(4, true));
+	BOOST_CHECK(test_dependency_cycle(20, true));
+
+	BOOST_CHECK(test_dependency_cycle(1, false));
+	BOOST_CHECK(test_dependency_cycle(2, false));
+	BOOST_CHECK(test_dependency_cycle(3, false));
+	BOOST_CHECK(test_dependency_cycle(4, false));
+	BOOST_CHECK(test_dependency_cycle(20, false));
+}
+
+BOOST_AUTO_TEST_CASE(default_gc_deallocate_test)
+{
+	p0::run::default_garbage_collector gc;
+	std::array<size_t, 5> const deallocate_order =
+	{{
+		3, 2, 4, 0, 1
+	}};
+	std::array<char *, 5> memory;
+	size_t next_size = 1;
+	std::generate(begin(memory),
+				  end(memory),
+				  [&]()
+	{
+		char * const allocated = gc.allocate(next_size);
+
+		//check that there is valid memory
+		std::memset(allocated, 0xff, next_size);
+
+		next_size *= 4;
+		return allocated;
+	});
+
+	for (size_t i = 0; i < memory.size(); ++i)
+	{
+		char * const allocated = memory[deallocate_order[i]];
+		gc.deallocate(allocated);
+	}
 }

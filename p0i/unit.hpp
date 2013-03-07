@@ -6,6 +6,7 @@
 #include "function.hpp"
 #include <vector>
 #include <string>
+#include <memory>
 
 
 namespace p0

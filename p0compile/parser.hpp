@@ -6,6 +6,7 @@
 #include "token.hpp"
 #include <functional>
 #include <memory>
+#include <vector>
 
 
 namespace p0
@@ -45,6 +46,7 @@ namespace p0
 		std::unique_ptr<expression_tree> parse_extended_primary_expression();
 		std::unique_ptr<expression_tree> parse_primary_expression();
 		std::unique_ptr<function_tree> parse_function(source_range::iterator function_begin);
+		std::vector<std::unique_ptr<expression_tree>> parse_argument_list();
 		void expect_token_type(token const &token, token_type::Enum type, std::string const &message) const;
 		token const &peek_token();
 		token pop_token();

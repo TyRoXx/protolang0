@@ -91,6 +91,9 @@ namespace p0
 		comparison_result::Enum compare(value const &left, value const &right);
 
 		std::ostream &operator << (std::ostream &out, value const &value);
+
+
+		void mark_value(value const &value);
 	}
 }
 

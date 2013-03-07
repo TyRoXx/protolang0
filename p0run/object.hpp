@@ -31,6 +31,11 @@ namespace p0
 				std::vector<value> const &arguments,
 				interpreter &interpreter
 				);
+			virtual boost::optional<value> call_method(
+					value const &method_name,
+					std::vector<value> const &arguments,
+					interpreter &interpreter
+					);
 			virtual void print(std::ostream &out) const;
 			virtual bool bind(size_t index, value const &value);
 			virtual boost::optional<value> get_bound(size_t index) const;

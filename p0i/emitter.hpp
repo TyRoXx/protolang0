@@ -22,7 +22,7 @@ namespace p0
 				);
 			size_t get_current_jump_address() const;
 			void nothing();
-			void set_from_constant(
+			void set_constant(
 				instruction_argument destination,
 				instruction_argument constant
 				);
@@ -93,6 +93,11 @@ namespace p0
 			void call(
 				instruction_argument arguments_address,
 				instruction_argument argument_count
+				);
+			void call_method(
+				instruction_argument arguments_address,
+				instruction_argument argument_count,
+				instruction_argument method_name_address
 				);
 			void jump(
 				instruction_argument destination

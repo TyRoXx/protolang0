@@ -224,4 +224,12 @@ namespace p0
 			expression.position()
 			);
 	}
+
+	void lvalue_generator::visit(method_call_expression_tree const &expression)
+	{
+		throw compiler_error(
+			"An method call expression is not an LValue",
+			expression.position()
+			);
+	}
 }

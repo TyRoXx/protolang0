@@ -34,6 +34,10 @@ namespace p0
 		reference const m_destination;
 
 
+		void with_arguments(
+				std::vector<std::unique_ptr<expression_tree>> const &arguments,
+				std::function<void ()> const &handle_result
+				);
 		virtual void visit(name_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 		virtual void visit(integer_10_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 		virtual void visit(string_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
@@ -46,6 +50,7 @@ namespace p0
 		virtual void visit(dot_element_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 		virtual void visit(subscript_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 		virtual void visit(import_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
+		virtual void visit(method_call_expression_tree const &expression) PROTOLANG0_FINAL_METHOD;
 	};
 }
 
