@@ -136,3 +136,32 @@ BOOST_AUTO_TEST_CASE(default_gc_cycle_test)
 	BOOST_CHECK(test_dependency_cycle(4, false));
 	BOOST_CHECK(test_dependency_cycle(20, false));
 }
+
+BOOST_AUTO_TEST_CASE(default_gc_deallocate_test)
+{
+	p0::run::default_garbage_collector gc;
+	std::array<size_t, 5> const deallocate_order =
+	{{
+		3, 2, 4, 0, 1
+	}};
+	std::array<char *, 5> memory;
+	size_t next_size = 1;
+	std::generate(begin(memory),
+				  end(memory),
+				  [&]()
+	{
+		char * const allocated = gc.allocate(next_size);
+
+		//check that there is valid memory
+		std::memset(allocated, 0xff, next_size);
+
+		next_size *= 4;
+		return allocated;
+	});
+
+	for (size_t i = 0; i < memory.size(); ++i)
+	{
+		char * const allocated = memory[deallocate_order[i]];
+		gc.deallocate(allocated);
+	}
+}
