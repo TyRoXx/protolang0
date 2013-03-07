@@ -728,13 +728,13 @@ namespace p0
 	{
 		std::vector<std::unique_ptr<expression_tree>> arguments;
 
+		if (try_skip_token(token_type::parenthesis_right))
+		{
+			return arguments;
+		}
+
 		for (;;)
 		{
-			if (try_skip_token(token_type::parenthesis_right))
-			{
-				break;
-			}
-
 			auto argument = parse_expression();
 			arguments.push_back(
 			  std::move(argument)

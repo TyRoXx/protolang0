@@ -62,3 +62,21 @@ BOOST_AUTO_TEST_CASE(outmost_scope_closing_brace_test)
 {
 	BOOST_CHECK(test_syntax_error("", "}"));
 }
+
+BOOST_AUTO_TEST_CASE(invalid_method_name_test)
+{
+	BOOST_CHECK(test_syntax_error("instance:", ""));
+	BOOST_CHECK(test_syntax_error("instance:", "123"));
+	BOOST_CHECK(test_syntax_error("instance:", "while"));
+	BOOST_CHECK(test_syntax_error("instance:\"", "str\""));
+}
+
+BOOST_AUTO_TEST_CASE(invalid_argument_list_test)
+{
+	BOOST_CHECK(test_syntax_error("instance:method", ""));
+	BOOST_CHECK(test_syntax_error("instance:method(", ""));
+	BOOST_CHECK(test_syntax_error("instance:method(", "while"));
+	BOOST_CHECK(test_syntax_error("instance:method(", ",)"));
+	BOOST_CHECK(test_syntax_error("instance:method(a ", "b"));
+	BOOST_CHECK(test_syntax_error("instance:method(a, ", ")"));
+}
