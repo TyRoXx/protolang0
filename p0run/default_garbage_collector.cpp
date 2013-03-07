@@ -13,8 +13,19 @@ namespace p0
 			//assumption: new char[] returns memory which is aligned for any object
 			//TODO: do this more portably with respect to alignment requirements
 			std::unique_ptr<char []> allocated(new char[byte_size]);
-			m_objects.push_back(std::move(allocated));
-			return m_objects.back().get();
+			m_storage.push_back(std::move(allocated));
+			return m_storage.back().get();
+		}
+
+		void default_garbage_collector::deallocate(char *storage)
+		{
+			remove_storage(storage);
+		}
+
+		void default_garbage_collector::commit_object(object &constructed)
+		{
+			m_objects.push_back(remove_storage(
+									reinterpret_cast<char *>(&constructed)));
 		}
 
 		void default_garbage_collector::unmark()
@@ -52,6 +63,20 @@ namespace p0
 
 			//free memory
 			m_objects.erase(new_end, m_objects.end());
+		}
+
+		std::unique_ptr<char []> default_garbage_collector::remove_storage(char *storage)
+		{
+			auto const s = std::find_if(begin(m_storage), end(m_storage),
+						 [storage](std::unique_ptr<char []> const &element)
+			{
+						 return (element.get() == storage);
+			});
+			assert(s != end(m_storage));
+			auto result = std::move(*s);
+			swap(*s, m_storage.back());
+			m_storage.pop_back();
+			return result;
 		}
 	}
 }
