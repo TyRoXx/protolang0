@@ -37,14 +37,14 @@ namespace p0
 		struct raw_storage
 		{
 			raw_storage();
-			raw_storage(garbage_collector &gc, char *memory);
+			raw_storage(garbage_collector &gc, std::size_t byte_size);
 			raw_storage(raw_storage &&other);
 			~raw_storage();
 			raw_storage &operator = (raw_storage &&other);
 			void swap(raw_storage &other);
 
 			template <class T, class ...Args>
-			object &construct(Args ...args)
+			object &construct(Args && ...args)
 			{
 				object &constructed = *new (m_memory) T(std::forward<Args>(args)...);
 				m_gc->commit_object(constructed);
@@ -59,22 +59,10 @@ namespace p0
 		};
 
 
-		template <class T>
-		object &construct_object(garbage_collector &gc)
+		template <class T, class ...Args>
+		object &construct_object(garbage_collector &gc, Args && ...args)
 		{
-			T * const ptr = reinterpret_cast<T *>(gc.allocate(sizeof(T)));
-			new (ptr) T();
-			gc.commit_object(*ptr);
-			return *ptr;
-		}
-
-		template <class T, class A0>
-		object &construct_object(garbage_collector &gc, A0 &&a0)
-		{
-			T * const ptr = reinterpret_cast<T *>(gc.allocate(sizeof(T)));
-			new (ptr) T(std::forward<A0>(a0));
-			gc.commit_object(*ptr);
-			return *ptr;
+			return raw_storage(gc, sizeof(T)).construct<T>(std::forward<Args>(args)...);
 		}
 	}
 }

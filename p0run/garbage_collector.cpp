@@ -17,9 +17,9 @@ namespace p0
 		{
 		}
 
-		raw_storage::raw_storage(garbage_collector &gc, char *memory)
+		raw_storage::raw_storage(garbage_collector &gc, std::size_t byte_size)
 			: m_gc(&gc)
-			, m_memory(memory)
+			, m_memory(gc.allocate(byte_size))
 		{
 		}
 
