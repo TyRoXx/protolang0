@@ -10,18 +10,11 @@ namespace p0
 	{
 		char *default_garbage_collector::allocate(std::size_t byte_size)
 		{
-			try
-			{
-				//assumption: new char[] returns memory which is aligned for any object
-				//TODO: do this more portably with respect to alignment requirements
-				std::unique_ptr<char []> allocated(new char[byte_size]);
-				m_objects.push_back(std::move(allocated));
-				return m_objects.back().get();
-			}
-			catch (std::bad_alloc const &)
-			{
-				throw out_of_memory();
-			}
+			//assumption: new char[] returns memory which is aligned for any object
+			//TODO: do this more portably with respect to alignment requirements
+			std::unique_ptr<char []> allocated(new char[byte_size]);
+			m_objects.push_back(std::move(allocated));
+			return m_objects.back().get();
 		}
 
 		void default_garbage_collector::unmark()

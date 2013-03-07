@@ -13,12 +13,6 @@ namespace p0
 		struct object;
 
 
-		struct out_of_memory : std::runtime_error
-		{
-			out_of_memory();
-		};
-
-
 		namespace sweep_mode
 		{
 			enum type
