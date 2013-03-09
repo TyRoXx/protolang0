@@ -484,7 +484,7 @@ namespace p0
 							}
 
 							auto_swapper<size_t> const call_frame_guard(
-										m_next_call_frame, arguments_address);
+										m_next_call_frame, local_frame + arguments_address);
 
 							auto const result = callee.obj->call(arguments, *this);
 							if (!result)
@@ -532,7 +532,7 @@ namespace p0
 						auto const method_name = get(local_frame, method_name_address);
 
 						auto_swapper<size_t> const call_frame_guard(
-									m_next_call_frame, arguments_address);
+									m_next_call_frame, local_frame + arguments_address);
 
 						auto const result = instance.obj->call_method(
 									method_name, arguments, *this);
