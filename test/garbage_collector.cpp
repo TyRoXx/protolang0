@@ -35,9 +35,10 @@ namespace
 
 BOOST_AUTO_TEST_CASE(default_gc_test)
 {
+	std::vector<vector_safe_bool> alive_status(64);
+
 	p0::run::default_garbage_collector gc;
 
-	std::vector<vector_safe_bool> alive_status(64);
 	std::vector<p0::run::object *> test_objects;
 
 	BOOST_FOREACH (auto &is_alive, alive_status)
@@ -97,8 +98,8 @@ namespace
 
 	bool test_dependency_cycle(size_t cycle_length, bool is_marked)
 	{
-		p0::run::default_garbage_collector gc;
 		std::vector<vector_safe_bool> is_alive(cycle_length);
+		p0::run::default_garbage_collector gc;
 		{
 			std::vector<referencing_gc_tester *> test_objects(cycle_length);
 			for (size_t i = 0; i < is_alive.size(); ++i)

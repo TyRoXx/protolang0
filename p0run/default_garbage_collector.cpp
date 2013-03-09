@@ -8,6 +8,60 @@ namespace p0
 {
 	namespace run
 	{
+		struct default_garbage_collector::object_handle
+		{
+			object_handle()
+			{
+			}
+
+			explicit object_handle(std::unique_ptr<char []> data)
+				: m_data(std::move(data))
+			{
+			}
+
+			object_handle(object_handle &&other)
+			{
+				swap(other);
+			}
+
+			~object_handle()
+			{
+				if (get())
+				{
+					get()->~object();
+				}
+			}
+
+			object_handle &operator = (object_handle &&other)
+			{
+				swap(other);
+				return *this;
+			}
+
+			object *get() const
+			{
+				return reinterpret_cast<object *>(m_data.get());
+			}
+
+			void swap(object_handle &other)
+			{
+				m_data.swap(other.m_data);
+			}
+
+		private:
+
+			std::unique_ptr<char []> m_data;
+		};
+
+
+		default_garbage_collector::default_garbage_collector()
+		{
+		}
+
+		default_garbage_collector::~default_garbage_collector()
+		{
+		}
+
 		char *default_garbage_collector::allocate(std::size_t byte_size)
 		{
 			//assumption: new char[] returns memory which is aligned for any object
@@ -24,24 +78,16 @@ namespace p0
 
 		void default_garbage_collector::commit_object(object &constructed)
 		{
-			try
-			{
-				m_objects.push_back(remove_storage(
-									reinterpret_cast<char *>(&constructed)));
-			}
-			catch (...)
-			{
-				//TODO: make this responsibility explicit in constructed's type
-				constructed.~object();
-				throw;
-			}
+			object_handle handle(remove_storage(
+								 reinterpret_cast<char *>(&constructed)));
+			m_objects.push_back(std::move(handle));
 		}
 
 		void default_garbage_collector::unmark()
 		{
 			for (auto i = m_objects.begin(); i != m_objects.end(); ++i)
 			{
-				reinterpret_cast<object *>(i->get())->unmark();
+				i->get()->unmark();
 			}
 		}
 
@@ -51,9 +97,9 @@ namespace p0
 			(void)mode;
 
 			auto const is_marked =
-				[](std::unique_ptr<char []> const &memory) -> bool
+				[](object_handle const &handle) -> bool
 			{
-				return reinterpret_cast<object *>(memory.get())->is_marked();
+				return handle.get()->is_marked();
 			};
 
 			//move all objects which are not marked to the end of the vector
@@ -61,22 +107,14 @@ namespace p0
 												m_objects.end(),
 												is_marked);
 
-			//call destructors
-			std::for_each(new_end, m_objects.end(),
-						  [](std::unique_ptr<char []> const &memory)
-			{
-				object * const obj = reinterpret_cast<object *>(memory.get());
-				assert(obj);
-				obj->~object();
-			});
-
 			//free memory
 			m_objects.erase(new_end, m_objects.end());
 		}
 
-		std::unique_ptr<char []> default_garbage_collector::remove_storage(char *storage)
+		std::unique_ptr<char []> default_garbage_collector::remove_storage(char *storage) noexcept
 		{
-			auto const s = std::find_if(begin(m_storage), end(m_storage),
+			auto const s = std::find_if(begin(m_storage),
+										end(m_storage),
 						 [storage](std::unique_ptr<char []> const &element)
 			{
 						 return (element.get() == storage);

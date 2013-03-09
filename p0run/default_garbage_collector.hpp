@@ -16,6 +16,8 @@ namespace p0
 		struct default_garbage_collector PROTOLANG0_FINAL_CLASS
 				: garbage_collector
 		{
+			default_garbage_collector();
+			~default_garbage_collector();
 			virtual char *allocate(std::size_t byte_size) PROTOLANG0_FINAL_METHOD;
 			virtual void deallocate(char *storage) PROTOLANG0_FINAL_METHOD;
 			virtual void commit_object(object &constructed) PROTOLANG0_FINAL_METHOD;
@@ -24,10 +26,13 @@ namespace p0
 
 		private:
 
-			std::vector<std::unique_ptr<char []>> m_storage, m_objects;
+			struct object_handle;
+
+			std::vector<std::unique_ptr<char []>> m_storage;
+			std::vector<object_handle> m_objects;
 
 
-			std::unique_ptr<char []> remove_storage(char *storage);
+			std::unique_ptr<char []> remove_storage(char *storage) noexcept;
 		};
 	}
 }
