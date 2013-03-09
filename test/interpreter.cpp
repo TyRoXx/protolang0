@@ -461,12 +461,12 @@ namespace
 {
 	struct trivial_module : p0::run::object
 	{
-		virtual boost::optional<value> get_element(value const & /*key*/) const override
+		virtual boost::optional<value> get_element(value const & /*key*/) const PROTOLANG0_FINAL_METHOD
 		{
 			return value(static_cast<integer>(456));
 		}
 
-		virtual bool set_element(value const & /*key*/, value const & /*value*/) override
+		virtual bool set_element(value const & /*key*/, value const & /*value*/) PROTOLANG0_FINAL_METHOD
 		{
 			BOOST_REQUIRE(nullptr == "This module is read-only");
 			return false;
@@ -474,7 +474,7 @@ namespace
 
 	private:
 
-		virtual void mark_recursively() override
+		virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
 		{
 		}
 	};

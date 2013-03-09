@@ -1,3 +1,4 @@
+
 #pragma once
 #ifndef P0C_STATEMENT_TREE_HPP
 #define P0C_STATEMENT_TREE_HPP
@@ -53,7 +54,7 @@ namespace p0
 			std::unique_ptr<expression_tree> value
 			);
 		~declaration_tree();
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		source_range const &name() const;
 		expression_tree const &value() const;
 
@@ -70,7 +71,7 @@ namespace p0
 			std::unique_ptr<expression_tree> value
 			);
 		~return_tree();
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &value() const;
 
 	private:
@@ -87,7 +88,7 @@ namespace p0
 		explicit block_tree(
 			statement_vector body
 			);
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		statement_vector const &body() const;
 
 	private:
@@ -102,7 +103,7 @@ namespace p0
 			std::unique_ptr<expression_tree> expression
 			);
 		~expression_statement_tree();
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &expression() const;
 
 	private:
@@ -117,7 +118,7 @@ namespace p0
 			std::unique_ptr<expression_tree> destination,
 			std::unique_ptr<expression_tree> source
 			);
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &destination() const;
 		expression_tree const &source() const;
 
@@ -135,7 +136,7 @@ namespace p0
 			std::unique_ptr<statement_tree> on_true,
 			std::unique_ptr<statement_tree> on_false
 			);
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &condition() const;
 		statement_tree const &on_true() const;
 		statement_tree const *on_false() const;
@@ -156,7 +157,7 @@ namespace p0
 			std::unique_ptr<expression_tree> condition,
 			std::unique_ptr<statement_tree> body
 			);
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &condition() const;
 		statement_tree const &body() const;
 
@@ -170,7 +171,7 @@ namespace p0
 	struct break_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit break_tree(source_range const &position);
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		source_range const &position() const;
 
 	private:
@@ -182,7 +183,7 @@ namespace p0
 	struct continue_tree PROTOLANG0_FINAL_CLASS : statement_tree
 	{
 		explicit continue_tree(source_range const &position);
-		virtual void accept(statement_tree_visitor &visitor) const override;
+		virtual void accept(statement_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
 		source_range const &position() const;
 
 	private:

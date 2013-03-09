@@ -11,16 +11,16 @@ namespace
 {
 	struct dummy_object : object
 	{
-		virtual void mark_recursively() override
+		virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
 		{
 		}
 
-		virtual boost::optional<value> get_element(value const & /*key*/) const override
+		virtual boost::optional<value> get_element(value const & /*key*/) const PROTOLANG0_FINAL_METHOD
 		{
 			return boost::optional<value>();
 		}
 
-		virtual bool set_element(value const & /*key*/, value const & /*value*/) override
+		virtual bool set_element(value const & /*key*/, value const & /*value*/) PROTOLANG0_FINAL_METHOD
 		{
 			return false;
 		}

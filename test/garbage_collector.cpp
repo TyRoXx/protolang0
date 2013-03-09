@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(default_gc_deallocate_test)
 	size_t next_size = 1;
 	std::generate(begin(memory),
 				  end(memory),
-				  [&]()
+				  [&]() -> char *
 	{
 		char * const allocated = gc.allocate(next_size);
 

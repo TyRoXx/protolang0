@@ -85,7 +85,7 @@ namespace p0
 	{
 		enum
 		{
-			base = 10,
+			base = 10
 		};
 
 		typedef intermediate::instruction_argument integer;

@@ -60,8 +60,8 @@ namespace p0
 		explicit name_expression_tree(
 			source_range name
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		source_range const &name() const;
 
 	private:
@@ -74,9 +74,10 @@ namespace p0
 	{
 		explicit integer_10_expression_tree(
 			source_range value
+
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		source_range const &value() const;
 
 	private:
@@ -93,8 +94,8 @@ namespace p0
 		explicit string_expression_tree(
 			part_vector parts
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		part_vector const &parts() const;
 
 	private:
@@ -112,8 +113,8 @@ namespace p0
 			std::unique_ptr<expression_tree> function,
 			expression_vector arguments
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &function() const;
 		expression_vector const &arguments() const;
 
@@ -135,8 +136,8 @@ namespace p0
 			source_range position
 			);
 		~function_tree();
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		statement_tree const &body() const;
 		name_vector const &parameters() const;
 
@@ -153,8 +154,8 @@ namespace p0
 		explicit null_expression_tree(
 			source_range position
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 
 	private:
 
@@ -172,8 +173,8 @@ namespace p0
 			element_vector elements,
 			source_range position
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		element_vector const &elements() const;
 
 	private:
@@ -189,7 +190,7 @@ namespace p0
 		{
 			not_,
 			inverse,
-			negative,
+			negative
 		};
 	}
 
@@ -200,8 +201,8 @@ namespace p0
 			std::unique_ptr<expression_tree> input,
 			source_range position
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		unary_operator::Enum type() const;
 		expression_tree const &input() const;
 
@@ -249,8 +250,8 @@ namespace p0
 			std::unique_ptr<expression_tree> right,
 			source_range position
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		binary_operator::Enum type() const;
 		expression_tree const &left() const;
 		expression_tree const &right() const;
@@ -269,8 +270,8 @@ namespace p0
 			std::unique_ptr<expression_tree> table,
 			source_range element_name
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &table() const;
 		source_range const &element_name() const;
 
@@ -288,8 +289,8 @@ namespace p0
 			std::unique_ptr<expression_tree> key,
 			source_range position
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &table() const;
 		expression_tree const &key() const;
 
@@ -306,8 +307,8 @@ namespace p0
 			std::unique_ptr<expression_tree> name,
 			source_range position
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &name() const;
 
 	private:
@@ -327,8 +328,8 @@ namespace p0
 			source_range method_name,
 			expression_vector arguments
 			);
-		virtual void accept(expression_tree_visitor &visitor) const override;
-		virtual source_range position() const override;
+		virtual void accept(expression_tree_visitor &visitor) const PROTOLANG0_FINAL_METHOD;
+		virtual source_range position() const PROTOLANG0_FINAL_METHOD;
 		expression_tree const &instance() const;
 		source_range const &method_name() const;
 		expression_vector const &arguments() const;

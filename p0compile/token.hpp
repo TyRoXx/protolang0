@@ -57,7 +57,7 @@ namespace p0
 			tilde,
 			caret,
 			colon,
-			end_of_file,
+			end_of_file
 		};
 	}
 

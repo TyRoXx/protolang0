@@ -32,7 +32,7 @@ namespace p0
 			F const m_functor;
 
 
-			virtual void mark_recursively() override
+			virtual void mark_recursively() PROTOLANG0_FINAL_METHOD
 			{
 			}
 		};
