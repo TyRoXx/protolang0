@@ -1,0 +1,68 @@
+var std = import "std"
+var signal = std.class([
+	connect = function (this, slot)
+	{
+		var second = this.first
+		var first = [next = second, slot = slot]
+		this.first = first
+		if (second)
+		{
+			second.previous = first
+		}
+		else
+		{
+			this.last = first
+		}
+		return first
+	},
+	disconnect = function (this, connection)
+	{
+		if (connection &&
+		    connection.slot)
+		{
+			if (connection.previous)
+			{
+				connection.previous.next = connection.next
+			}
+			else
+			{
+				this.first = null
+			}
+			if (connection.next)
+			{
+				connection.next.previous = connection.previous
+			}
+			else
+			{
+				this.last = null
+			}
+			; mark as disconnected
+			connection.slot = null
+		}
+	},
+	emit = function (this, argument)
+	{
+		var current = this.first
+		while (current)
+		{
+			current.slot(argument)
+			current = current.next
+		}
+	}
+])
+
+var s = std.new(signal)
+
+s:emit(null)
+
+var c = s:connect(function (argument)
+{
+	std.print(argument, "\n")
+})
+s:emit("Hello from signal")
+
+var d = s:connect(function (argument)
+{
+	s:disconnect(c)
+})
+s:emit("Not expected to be printed")

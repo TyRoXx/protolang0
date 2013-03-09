@@ -1,0 +1,178 @@
+function 0
+00: set_string                 1         0
+01: load_module                1
+02: copy                       3         1
+03: set_string                 4         1
+04: get_element                3         4         3
+05: new_table                  4
+06: set_string                 5         2
+07: set_function               6         1
+08: set_element                4         5         6
+09: set_string                 5         8
+10: set_function               6         2
+11: set_element                4         5         6
+12: set_string                 5         9
+13: set_function               6         3
+14: set_element                4         5         6
+15: call                       3         1
+16: copy                       2         3
+17: copy                       4         1
+18: set_string                 5        10
+19: get_element                4         5         4
+20: copy                       5         2
+21: call                       4         1
+22: copy                       3         4
+23: copy                       5         3
+24: set_string                 4         9
+25: set_null                   6
+26: call_method                5         1         4
+27: copy                       6         3
+28: set_string                 5         2
+29: set_function               7         4
+30: bind                       7         0         1
+31: call_method                6         1         5
+32: copy                       4         6
+33: copy                       6         3
+34: set_string                 5         9
+35: set_string                 7        13
+36: call_method                6         1         5
+37: copy                       7         3
+38: set_string                 6         2
+39: set_function               8         5
+40: bind                       8         0         3
+41: bind                       8         1         4
+42: call_method                7         1         6
+43: copy                       5         7
+44: copy                       7         3
+45: set_string                 6         9
+46: set_string                 8        14
+47: call_method                7         1         6
+end
+
+function 1
+00: copy                       3         1
+01: set_string                 4         3
+02: get_element                3         4         3
+03: new_table                  4
+04: set_string                 5         4
+05: copy                       6         3
+06: set_element                4         5         6
+07: set_string                 5         5
+08: copy                       6         2
+09: set_element                4         5         6
+10: copy                       5         4
+11: copy                       6         1
+12: set_string                 7         3
+13: set_element                6         7         5
+14: copy                       5         3
+15: jump_if_not               21         5
+16: copy                       6         4
+17: copy                       7         3
+18: set_string                 8         6
+19: set_element                7         8         6
+20: jump                      25
+21: copy                       6         4
+22: copy                       7         1
+23: set_string                 8         7
+24: set_element                7         8         6
+25: copy                       0         4
+26: jump                      27
+end
+
+function 2
+00: copy                       3         2
+01: jump_if_not                5         3
+02: copy                       3         2
+03: set_string                 4         5
+04: get_element                3         4         3
+05: jump_if_not               44         3
+06: copy                       4         2
+07: set_string                 5         6
+08: get_element                4         5         4
+09: jump_if_not               19         4
+10: copy                       5         2
+11: set_string                 6         4
+12: get_element                5         6         5
+13: copy                       6         2
+14: set_string                 7         6
+15: get_element                6         7         6
+16: set_string                 7         4
+17: set_element                6         7         5
+18: jump                      23
+19: set_null                   5
+20: copy                       6         1
+21: set_string                 7         3
+22: set_element                6         7         5
+23: copy                       4         2
+24: set_string                 5         4
+25: get_element                4         5         4
+26: jump_if_not               36         4
+27: copy                       5         2
+28: set_string                 6         6
+29: get_element                5         6         5
+30: copy                       6         2
+31: set_string                 7         4
+32: get_element                6         7         6
+33: set_string                 7         6
+34: set_element                6         7         5
+35: jump                      40
+36: set_null                   5
+37: copy                       6         1
+38: set_string                 7         7
+39: set_element                6         7         5
+40: set_null                   4
+41: copy                       5         2
+42: set_string                 6         5
+43: set_element                5         6         4
+end
+
+function 3
+00: copy                       3         1
+01: set_string                 4         3
+02: get_element                3         4         3
+03: copy                       4         3
+04: jump_if_not               13         4
+05: copy                       5         3
+06: set_string                 6         5
+07: get_element                5         6         5
+08: copy                       6         2
+09: call                       5         1
+10: set_string                 5         4
+11: get_element                3         5         3
+12: jump                       3
+end
+
+function 4
+0: current_function           3
+1: get_bound                  3         0         2
+2: set_string                 3        11
+3: get_element                2         3         2
+4: copy                       3         1
+5: set_string                 4        12
+6: call                       2         2
+end
+
+function 5
+0: current_function           4
+1: get_bound                  4         0         3
+2: set_string                 2         8
+3: current_function           5
+4: get_bound                  5         1         4
+5: call_method                3         1         2
+end
+
+00: std
+01: class
+02: connect
+03: first
+04: next
+05: slot
+06: previous
+07: last
+08: disconnect
+09: emit
+10: new
+11: print
+12: \x0a
+13: Hello from signal
+14: Not expected to be printed
