@@ -2,6 +2,7 @@
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
 #include "p0run/default_garbage_collector.hpp"
+#include "p0run/raw_storage.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>

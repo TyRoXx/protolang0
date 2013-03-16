@@ -5,7 +5,7 @@
 
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
-#include "p0run/garbage_collector.hpp"
+#include "p0run/raw_storage.hpp"
 #include "native_function.hpp"
 
 

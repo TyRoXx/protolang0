@@ -5,6 +5,7 @@
 #include "function.hpp"
 #include "runtime_error.hpp"
 #include "garbage_collector.hpp"
+#include "raw_storage.hpp"
 #include "p0i/function_ref.hpp"
 #include <cassert>
 #include <climits>
