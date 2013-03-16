@@ -3,6 +3,7 @@
 #define P0RUN_GARBAGE_COLLECTOR_HPP
 
 
+#include "p0common/final.hpp"
 #include <stdexcept>
 
 
@@ -69,7 +70,7 @@ namespace p0
 		};
 
 
-		struct raw_storage
+		struct raw_storage PROTOLANG0_FINAL_CLASS
 		{
 			raw_storage();
 			raw_storage(garbage_collector &gc, std::size_t byte_size);
