@@ -30,7 +30,7 @@ namespace p0
 			throw std::runtime_error("Not implemented");
 		}
 
-		struct lazy_module
+		struct lazy_module PROTOLANG0_FINAL_CLASS
 		{
 			typedef std::function<run::value (run::garbage_collector &)> loader;
 
@@ -95,7 +95,8 @@ namespace p0
 						"The module name '" + name + "' is already in use");
 				}
 
-				m_modules.insert(std::make_pair(std::move(name), std::move(module)));
+				m_modules.insert(std::make_pair(std::move(name),
+												module_state{std::move(module), false}));
 			}
 
 			run::value get_module(
@@ -108,18 +109,50 @@ namespace p0
 					return run::value();
 				}
 
-				auto &module = m->second;
-				if (module.cached == run::value())
+				auto &state = m->second;
+				module_load_lock const lock(state);
+
+				if (state.module.cached == run::value())
 				{
-					module.cached = module.load(gc);
+					state.module.cached = state.module.load(gc);
 				}
 
-				return module.cached;
+				return state.module.cached;
 			}
 
 		private:
 
-			typedef std::map<std::string, lazy_module> modules_by_name;
+			struct module_state
+			{
+				lazy_module module;
+				bool is_being_loaded;
+			};
+
+			struct module_load_lock
+			{
+				explicit module_load_lock(module_state &state)
+					: m_state(state)
+				{
+					if (m_state.is_being_loaded)
+					{
+						throw std::runtime_error(
+									"Recursive module dependency detected");
+					}
+
+					m_state.is_being_loaded = true;
+				}
+
+				~module_load_lock()
+				{
+					m_state.is_being_loaded = false;
+				}
+
+			private:
+
+				module_state &m_state;
+			};
+
+			typedef std::map<std::string, module_state> modules_by_name;
 
 
 			modules_by_name m_modules;
