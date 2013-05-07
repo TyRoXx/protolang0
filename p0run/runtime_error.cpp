@@ -10,8 +10,7 @@ namespace p0
 				intermediate::function_ref const &function,
 				std::size_t instruction
 				)
-			: std::runtime_error("Runtime error")
-			, m_type(type)
+			: m_type(type)
 			, m_function(function)
 			, m_instruction(instruction)
 		{

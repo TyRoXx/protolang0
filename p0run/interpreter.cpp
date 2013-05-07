@@ -3,10 +3,11 @@
 #include "string.hpp"
 #include "interpreter_listener.hpp"
 #include "function.hpp"
-#include "runtime_error.hpp"
+#include "runtime_error_exception.hpp"
 #include "garbage_collector.hpp"
 #include "raw_storage.hpp"
 #include "p0i/function_ref.hpp"
+#include "p0common/throw.hpp"
 #include <cassert>
 #include <climits>
 #include <stdexcept>
@@ -152,9 +153,10 @@ namespace p0
 
 			auto const raise_error = [&](runtime_error_code::type type)
 			{
-				throw run::runtime_error(type,
-										 function,
-										 static_cast<size_t>(current_instr - code.begin()));
+				PROTOLANG0_THROW(run::runtime_error_exception(run::runtime_error(
+						 type,
+						 function,
+						 static_cast<size_t>(current_instr - code.begin()))));
 			};
 
 			while (current_instr != code.end())
@@ -213,7 +215,7 @@ namespace p0
 						auto const string_id = static_cast<size_t>(instr_arguments[1]);
 						if (string_id >= program.strings().size())
 						{
-							throw std::runtime_error("Invalid string id");
+							raise_error(runtime_error_code::invalid_string_id);
 						}
 						auto const &content = program.strings()[string_id];
 						value const new_string_ptr(
@@ -240,8 +242,7 @@ namespace p0
 						if ((closure.type != value_type::object) ||
 							!closure.obj->bind(bound_index, source))
 						{
-							throw std::runtime_error(
-								"Cannot bind a variable to a non-function");
+							raise_error(runtime_error_code::bind_to_non_function);
 						}
 						break;
 					}
@@ -255,8 +256,7 @@ namespace p0
 
 						if (closure.type != value_type::object)
 						{
-							throw std::runtime_error(
-								"Cannot get bound variable from a non-object");
+							raise_error(runtime_error_code::no_bound_value);
 						}
 
 						auto const bound = closure.obj->get_bound(bound_index);
@@ -267,8 +267,7 @@ namespace p0
 						}
 						else
 						{
-							throw std::runtime_error(
-								"A bound variable was not found in the object");
+							raise_error(runtime_error_code::no_bound_value);
 						}
 						break;
 					}
@@ -310,7 +309,7 @@ namespace p0
 							(source.type == value_type::integer))
 						{
 							auto const check_divisor =
-								[&](integer dividend, integer divisor)
+								[&raise_error](integer dividend, integer divisor)
 							{
 								if (divisor == 0)
 								{
@@ -322,19 +321,21 @@ namespace p0
 									raise_error(runtime_error_code::integer_overflow);
 								}
 							};
-							auto const check_shift_amount = [](integer shift)
+							auto const check_shift_amount = [&raise_error](integer shift)
 							{
 								integer const integer_size_bits = sizeof(integer) * CHAR_BIT;
 								if (shift < 0)
 								{
-									throw std::runtime_error("Shift by negative amount");
+									//TODO allow this?
+									raise_error(runtime_error_code::negative_shift);
 								}
 								if (shift >= integer_size_bits)
 								{
-									throw std::runtime_error("Shift beyond bounds");
+									//TODO allow this by modulo-ing?
+									raise_error(runtime_error_code::shift_out_of_range);
 								}
 							};
-							auto const checked_add = [&](integer &left, integer right)
+							auto const checked_add = [&raise_error](integer &left, integer right)
 							{
 								if (left > 0 &&
 									std::numeric_limits<integer>::max() - left < right)
@@ -490,8 +491,7 @@ namespace p0
 							auto const result = callee.obj->call(arguments, *this);
 							if (!result)
 							{
-								throw std::runtime_error(
-									"Called object does not support the call operation");
+								raise_error(runtime_error_code::call_not_supported);
 							}
 							get(local_frame, arguments_address) = *result;
 							break;
@@ -505,8 +505,7 @@ namespace p0
 							break;
 
 						default:
-							throw std::runtime_error(
-								"Cannot call that value as a function");
+							raise_error(runtime_error_code::call_non_object);
 						}
 						break;
 					}
@@ -519,8 +518,7 @@ namespace p0
 						auto const instance = get(local_frame, arguments_address);
 						if (instance.type != value_type::object)
 						{
-							throw std::runtime_error(
-								"Cannot call method on non-object");
+							raise_error(runtime_error_code::call_non_object);
 						}
 
 						std::vector<value> arguments;
@@ -539,8 +537,7 @@ namespace p0
 									method_name, arguments, *this);
 						if (!result)
 						{
-							throw std::runtime_error(
-								"Called object does not support the call_method operation");
+							raise_error(runtime_error_code::call_not_supported);
 						}
 						get(local_frame, arguments_address) = *result;
 						break;
@@ -632,13 +629,13 @@ namespace p0
 					auto const name_object = get(local_frame, name_address);
 					if (name_object.type != value_type::object)
 					{
-						throw std::runtime_error("Module name object expected");
+						raise_error(runtime_error_code::invalid_module_name);
 					}
 					//TODO: something better than dynamic_cast
 					string const * const name_string = dynamic_cast<string const *>(name_object.obj);
 					if (!name_string)
 					{
-						throw std::runtime_error("Module name string expected");
+						raise_error(runtime_error_code::invalid_module_name);
 					}
 					value result;
 					if (m_load_module)

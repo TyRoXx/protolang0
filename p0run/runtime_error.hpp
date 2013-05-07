@@ -4,7 +4,7 @@
 
 
 #include "p0i/function_ref.hpp"
-#include <stdexcept>
+#include "p0common/final.hpp"
 #include <array>
 
 
@@ -24,12 +24,18 @@ namespace p0
 				get_not_supported,
 				set_on_non_object,
 				set_not_supported,
-				jump_out_of_range
+				jump_out_of_range,
+				invalid_string_id,
+				bind_to_non_function,
+				no_bound_value,
+				negative_shift,
+				shift_out_of_range,
+				invalid_module_name
 			};
 
 			inline std::string const &to_string(type type)
 			{
-				static std::array<std::string, 9> const strings =
+				static std::array<std::string, 10> const strings =
 				{{
 					 "call_non_object",
 					 "call_not_supported",
@@ -39,14 +45,15 @@ namespace p0
 					 "get_not_supported",
 					 "set_on_non_object",
 					 "set_not_supported",
-					 "jump_out_of_range"
+					 "jump_out_of_range",
+					 "invalid_string_id"
 				}};
 				return strings[type];
 			}
 		}
 
 
-		struct runtime_error : std::runtime_error
+		struct runtime_error PROTOLANG0_FINAL_CLASS
 		{
 			runtime_error(
 					runtime_error_code::type type,

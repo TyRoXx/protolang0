@@ -6,6 +6,7 @@
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/table.hpp"
 #include "p0run/runtime_error.hpp"
+#include "p0run/runtime_error_exception.hpp"
 #include "p0rt/std_module.hpp"
 #include <iostream>
 #include <fstream>
@@ -274,8 +275,9 @@ int main(int argc, char **argv)
 						p0::intermediate::function_ref(program, *entry_point),
 						arguments);
 		}
-		catch (p0::run::runtime_error const &error)
+		catch (p0::run::runtime_error_exception const &ex)
 		{
+			auto &error = ex.error();
 			auto &program = error.function().origin();
 
 			//TODO: generate/load debug info

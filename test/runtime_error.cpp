@@ -1,6 +1,7 @@
 #include "p0run/interpreter.hpp"
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/runtime_error.hpp"
+#include "p0run/runtime_error_exception.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
 using namespace p0::run;
@@ -60,8 +61,8 @@ namespace
 		{
 			throw std::runtime_error("The function is not expected to return anything");
 		})),
-			std::runtime_error,
-			[](std::runtime_error const &) { return true; });
+			p0::run::runtime_error_exception,
+			[](p0::run::runtime_error_exception const &) { return true; });
 	}
 }
 
@@ -95,8 +96,8 @@ namespace
 		{
 			BOOST_CHECK(nullptr == "No result expected");
 		})),
-			std::runtime_error,
-			([&found_error](std::runtime_error const &) -> bool
+			p0::run::runtime_error_exception,
+			([&found_error](p0::run::runtime_error_exception const &) -> bool
 		{
 			BOOST_REQUIRE(!found_error);
 			found_error = true;
@@ -123,10 +124,10 @@ namespace
 		{
 			BOOST_CHECK(nullptr == "No result expected");
 		})),
-			p0::run::runtime_error,
-			([expected_error](p0::run::runtime_error const &ex) -> bool
+			p0::run::runtime_error_exception,
+			([expected_error](p0::run::runtime_error_exception const &ex) -> bool
 		{
-			BOOST_REQUIRE(ex.type() == expected_error);
+			BOOST_REQUIRE(ex.error().type() == expected_error);
 			return true;
 		}));
 	}
