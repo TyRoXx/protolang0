@@ -27,6 +27,11 @@ namespace p0
 				return m_functor(arguments);
 			}
 
+			virtual void print(std::ostream &out) const PROTOLANG0_FINAL_METHOD
+			{
+				out << "native_function";
+			}
+
 		private:
 
 			F const m_functor;

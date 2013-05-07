@@ -2,6 +2,7 @@
 #include "interpreter.hpp"
 #include "p0i/function_ref.hpp"
 #include "p0i/function.hpp"
+#include <iterator>
 
 
 namespace p0
@@ -26,7 +27,15 @@ namespace p0
 
 		void function::print(std::ostream &out) const
 		{
-			out << "function"; //TODO
+			out << "function("
+				<< m_function.function().parameters()
+				<< ")[";
+
+			std::copy(begin(m_bound_variables),
+					  end(m_bound_variables),
+					  std::ostream_iterator<value>(out, ", "));
+
+			out << "]";
 		}
 
 		bool function::bind(size_t index, value const &value)

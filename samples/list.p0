@@ -1,0 +1,46 @@
+var std = import "std"
+
+var empty_list = null
+var prepend = function (list, element)
+{
+	return function (what)
+	{
+		if (what)
+		{
+			return element
+		}
+		else
+		{
+			return list
+		}
+	}
+}
+var head = function (list)
+{
+	return list(1)
+}
+var tail = function (list)
+{
+	return list(0)
+}
+var is_empty = function (list)
+{
+	return list == empty_list
+}
+
+var L0 = prepend(empty_list, 12)
+std.print(head(L0))
+var L1 = prepend(L0, 12)
+
+std.print("\n")
+
+var println = function (message)
+{
+	std.print(message, "\n")
+}
+
+println(std.print)
+println(println)
+println(empty_list)
+println(L0)
+println(L1)

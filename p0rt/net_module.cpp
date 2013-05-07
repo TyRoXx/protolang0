@@ -132,9 +132,11 @@ namespace p0
 				}
 			};
 
-			run::value net_create_io_service(run::garbage_collector &gc,
-								  std::vector<run::value> const &arguments)
+			run::value net_create_io_service(
+					run::garbage_collector &gc,
+					std::vector<run::value> const &arguments)
 			{
+				(void)arguments;
 				return run::value(run::construct_object<io_service>(gc));
 			}
 		}

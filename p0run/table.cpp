@@ -1,4 +1,5 @@
 #include "table.hpp"
+#include <boost/foreach.hpp>
 
 
 namespace p0
@@ -28,6 +29,18 @@ namespace p0
 		{
 			m_elements[key] = value;
 			return true;
+		}
+
+		void table::print(std::ostream &out) const
+		{
+			out << "[";
+
+			BOOST_FOREACH (auto const &element, m_elements)
+			{
+				out << element.first << ": " << element.second << ", ";
+			}
+
+			out << "]";
 		}
 
 
