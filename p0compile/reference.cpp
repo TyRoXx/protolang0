@@ -5,18 +5,18 @@
 namespace p0
 {
 	reference::reference()
-		: m_local_address(static_cast<size_t>(-1))
+		: m_local_address(-1)
 	{
 	}
 
 	reference::reference(
-		size_t local_address
+		p0::local_address local_address
 		)
 		: m_local_address(local_address)
 	{
 	}
 
-	size_t reference::local_address() const
+	p0::local_address reference::local_address() const
 	{
 		assert(is_valid());
 		return m_local_address;

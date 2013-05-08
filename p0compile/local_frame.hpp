@@ -73,7 +73,7 @@ namespace p0
 		local_frame * const m_function_parent;
 		function_generator &m_function_generator;
 		symbols_by_name m_symbols_by_name;
-		size_t m_next_local_address;
+		local_address m_next_local_address;
 		loop *m_current_loop;
 
 

@@ -1,4 +1,5 @@
 #include "emitter.hpp"
+#include "p0common/integer_cast.hpp"
 #include <cassert>
 
 
@@ -13,9 +14,9 @@ namespace p0
 		{
 		}
 
-		size_t emitter::get_current_jump_address() const
+		jump_offset emitter::get_current_jump_address() const
 		{
-			return m_destination.size();
+			return integer_cast<jump_offset>(m_destination.size());
 		}
 
 		void emitter::nothing()
@@ -26,7 +27,7 @@ namespace p0
 		}
 
 		void emitter::set_constant(
-			instruction_argument destination,
+			local_address destination,
 			instruction_argument constant
 			)
 		{
@@ -38,7 +39,7 @@ namespace p0
 		}
 
 		void emitter::set_null(
-			instruction_argument destination
+			local_address destination
 			)
 		{
 			push_instruction(instruction(
@@ -48,7 +49,7 @@ namespace p0
 		}
 
 		void emitter::set_function(
-			instruction_argument destination,
+			local_address destination,
 			instruction_argument function_id
 			)
 		{
@@ -60,9 +61,9 @@ namespace p0
 		}
 
 		void emitter::bind(
-			instruction_argument closure,
+			local_address closure,
 			instruction_argument bound_index,
-			instruction_argument source
+			local_address source
 			)
 		{
 			push_instruction(instruction(
@@ -74,9 +75,9 @@ namespace p0
 		}
 
 		void emitter::get_bound(
-			instruction_argument closure,
+			local_address closure,
 			instruction_argument bound_index,
-			instruction_argument destination
+			local_address destination
 			)
 		{
 			push_instruction(instruction(
@@ -87,7 +88,7 @@ namespace p0
 				));
 		}
 
-		void emitter::current_function(instruction_argument destination)
+		void emitter::current_function(local_address destination)
 		{
 			push_instruction(instruction(
 				instruction_type::current_function,
@@ -96,7 +97,7 @@ namespace p0
 		}
 
 		void emitter::set_string(
-			instruction_argument destination,
+			local_address destination,
 			instruction_argument string_id
 			)
 		{
@@ -108,8 +109,8 @@ namespace p0
 		}
 
 		void emitter::copy(
-			instruction_argument destination,
-			instruction_argument source
+			local_address destination,
+			local_address source
 			)
 		{
 			push_instruction(instruction(
@@ -120,8 +121,8 @@ namespace p0
 		}
 
 		void emitter::add(
-			instruction_argument destination,
-			instruction_argument summand
+			local_address destination,
+			local_address summand
 			)
 		{
 			push_instruction(instruction(
@@ -132,8 +133,8 @@ namespace p0
 		}
 
 		void emitter::sub(
-			instruction_argument destination,
-			instruction_argument source
+			local_address destination,
+			local_address source
 			)
 		{
 			push_instruction(instruction(
@@ -144,8 +145,8 @@ namespace p0
 		}
 
 		void emitter::mul(
-			instruction_argument destination,
-			instruction_argument source
+			local_address destination,
+			local_address source
 			)
 		{
 			push_instruction(instruction(
@@ -156,8 +157,8 @@ namespace p0
 		}
 
 		void emitter::div(
-			instruction_argument destination,
-			instruction_argument source
+			local_address destination,
+			local_address source
 			)
 		{
 			push_instruction(instruction(
@@ -168,8 +169,8 @@ namespace p0
 		}
 
 		void emitter::mod(
-			instruction_argument destination,
-			instruction_argument source
+			local_address destination,
+			local_address source
 			)
 		{
 			push_instruction(instruction(
@@ -180,7 +181,7 @@ namespace p0
 		}
 
 		void emitter::not_(
-			instruction_argument destination
+			local_address destination
 			)
 		{
 			push_instruction(instruction(
@@ -190,7 +191,7 @@ namespace p0
 		}
 
 		void emitter::invert(
-			instruction_argument destination
+			local_address destination
 			)
 		{
 			push_instruction(instruction(
@@ -200,7 +201,7 @@ namespace p0
 		}
 
 		void emitter::negate(
-			instruction_argument destination
+			local_address destination
 			)
 		{
 			push_instruction(instruction(
@@ -210,8 +211,8 @@ namespace p0
 		}
 
 		void emitter::equal(
-			instruction_argument left,
-			instruction_argument right)
+			local_address left,
+			local_address right)
 		{
 			push_instruction(instruction(
 				instruction_type::equal,
@@ -221,8 +222,8 @@ namespace p0
 		}
 
 		void emitter::not_equal(
-			instruction_argument left,
-			instruction_argument right)
+			local_address left,
+			local_address right)
 		{
 			push_instruction(instruction(
 				instruction_type::not_equal,
@@ -232,8 +233,8 @@ namespace p0
 		}
 
 		void emitter::less(
-			instruction_argument left,
-			instruction_argument right)
+			local_address left,
+			local_address right)
 		{
 			push_instruction(instruction(
 				instruction_type::less,
@@ -243,7 +244,7 @@ namespace p0
 		}
 
 		void emitter::call(
-			instruction_argument arguments_address,
+			local_address arguments_address,
 			instruction_argument argument_count
 			)
 		{
@@ -255,9 +256,9 @@ namespace p0
 		}
 
 		void emitter::call_method(
-			instruction_argument arguments_address,
-				instruction_argument argument_count,
-			instruction_argument method_name_address
+			local_address arguments_address,
+			instruction_argument argument_count,
+			local_address method_name_address
 			)
 		{
 			push_instruction(instruction(
@@ -269,7 +270,7 @@ namespace p0
 		}
 
 		void emitter::jump(
-			instruction_argument destination
+			jump_offset destination
 			)
 		{
 			push_instruction(instruction(
@@ -279,8 +280,8 @@ namespace p0
 		}
 
 		void emitter::jump_if(
-			instruction_argument destination,
-			instruction_argument condition_address
+			jump_offset destination,
+			local_address condition_address
 			)
 		{
 			push_instruction(instruction(
@@ -291,8 +292,8 @@ namespace p0
 		}
 
 		void emitter::jump_if_not(
-			instruction_argument destination,
-			instruction_argument condition_address
+			jump_offset destination,
+			local_address condition_address
 			)
 		{
 			push_instruction(instruction(
@@ -303,11 +304,11 @@ namespace p0
 		}
 
 		void emitter::update_jump_destination(
-			size_t jump_address,
-			instruction_argument destination
+			jump_offset jump_address,
+			jump_offset destination
 			)
 		{
-			auto &jump = m_destination[jump_address];
+			auto &jump = m_destination[integer_cast<size_t>(jump_address)];
 
 			assert(
 				jump.type() == instruction_type::jump ||
@@ -319,7 +320,7 @@ namespace p0
 		}
 
 		void emitter::new_table(
-			instruction_argument destination
+			local_address destination
 			)
 		{
 			push_instruction(instruction(
@@ -329,9 +330,9 @@ namespace p0
 		}
 
 		void emitter::set_element(
-			instruction_argument table_address,
-			instruction_argument key_address,
-			instruction_argument value_address
+			local_address table_address,
+			local_address key_address,
+			local_address value_address
 			)
 		{
 			push_instruction(instruction(
@@ -343,9 +344,9 @@ namespace p0
 		}
 
 		void emitter::get_element(
-			instruction_argument table_address,
-			instruction_argument key_address,
-			instruction_argument value_address
+			local_address table_address,
+			local_address key_address,
+			local_address value_address
 			)
 		{
 			push_instruction(instruction(
@@ -358,8 +359,8 @@ namespace p0
 
 		void emitter::binary_operation(
 			instruction_type::Enum operation,
-			instruction_argument destination,
-			instruction_argument source)
+			local_address destination,
+			local_address source)
 		{
 			assert(is_binary_arithmetic(operation));
 
@@ -370,7 +371,7 @@ namespace p0
 		}
 
 		void emitter::load_module(
-			instruction_argument name_and_result
+			local_address name_and_result
 			)
 		{
 			push_instruction(instruction(

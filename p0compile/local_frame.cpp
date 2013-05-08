@@ -3,6 +3,7 @@
 #include "function_generator.hpp"
 #include "temporary.hpp"
 #include "p0i/emitter.hpp"
+#include "p0common/integer_cast.hpp"
 
 
 namespace p0
@@ -154,7 +155,7 @@ namespace p0
 
 	void local_frame::deallocate_top(size_t count)
 	{
-		assert(m_next_local_address >= count);
+		assert(m_next_local_address >= integer_cast<local_address>(count));
 		m_next_local_address -= count;
 	}
 

@@ -63,7 +63,6 @@ namespace p0
 
 		unit_generator &m_unit;
 		local_frame * const m_outer_frame;
-		function_generator * const m_parent;
 		std::vector<std::size_t> m_return_instructions;
 		std::vector<bound_variable> m_bound_variables;
 

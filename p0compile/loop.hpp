@@ -4,6 +4,7 @@
 
 
 #include "p0common/final.hpp"
+#include "p0common/types.hpp"
 #include <cstddef>
 #include <vector>
 
@@ -22,22 +23,20 @@ namespace p0
 	{
 		explicit loop(local_frame &frame,
 					  intermediate::emitter &emitter,
-					  std::size_t continue_destination);
+					  jump_offset continue_destination);
 		~loop();
 		void emit_break();
 		void emit_continue();
-		void finish(std::size_t after_loop);
+		void finish(jump_offset after_loop);
 
 	private:
 
 		local_frame &m_frame;
 		intermediate::emitter &m_emitter;
 		loop * const m_previous;
-		std::size_t const m_continue_destination;
-		std::vector<std::size_t> m_breaks;
+		jump_offset const m_continue_destination;
+		std::vector<jump_offset> m_breaks;
 	};
-
-
 }
 
 

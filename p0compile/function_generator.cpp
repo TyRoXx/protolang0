@@ -16,7 +16,6 @@ namespace p0
 		)
 		: m_unit(unit)
 		, m_outer_frame(nullptr)
-		, m_parent(nullptr)
 	{
 	}
 
@@ -26,7 +25,6 @@ namespace p0
 		)
 		: m_unit(parent.m_unit)
 		, m_outer_frame(outer_frame)
-		, m_parent(&parent)
 	{
 	}
 

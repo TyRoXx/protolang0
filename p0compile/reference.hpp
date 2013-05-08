@@ -4,7 +4,7 @@
 
 
 #include "p0common/final.hpp"
-#include <cstddef>
+#include "p0common/types.hpp"
 
 
 namespace p0
@@ -13,14 +13,14 @@ namespace p0
 	{
 		reference();
 		explicit reference(
-			size_t local_address
+			p0::local_address local_address
 			);
-		size_t local_address() const;
+		p0::local_address local_address() const;
 		bool is_valid() const;
 
 	private:
 
-		size_t m_local_address;
+		p0::local_address m_local_address;
 	};
 
 

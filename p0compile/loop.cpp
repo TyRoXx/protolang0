@@ -8,7 +8,7 @@ namespace p0
 {
 	loop::loop(local_frame &frame,
 			   intermediate::emitter &emitter,
-			   std::size_t continue_destination)
+			   jump_offset continue_destination)
 		: m_frame(frame)
 		, m_emitter(emitter)
 		, m_previous(frame.enter_loop(*this))
@@ -33,7 +33,7 @@ namespace p0
 		m_emitter.jump(m_continue_destination);
 	}
 
-	void loop::finish(std::size_t after_loop)
+	void loop::finish(jump_offset after_loop)
 	{
 		BOOST_FOREACH (auto const break_address, m_breaks)
 		{
