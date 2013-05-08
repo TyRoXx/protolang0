@@ -153,10 +153,18 @@ namespace p0
 
 			auto const raise_error = [&](runtime_error_code::type type)
 			{
-				PROTOLANG0_THROW(run::runtime_error_exception(run::runtime_error(
-						 type,
-						 function,
-						 static_cast<size_t>(current_instr - code.begin()))));
+				run::runtime_error const error(
+							type,
+							function,
+							static_cast<size_t>(current_instr - code.begin()));
+				if (m_listener)
+				{
+					m_listener->on_error(error);
+				}
+				else
+				{
+					PROTOLANG0_THROW(run::runtime_error_exception(error));
+				}
 			};
 
 			while (current_instr != code.end())
@@ -201,7 +209,7 @@ namespace p0
 						auto const function_index = static_cast<size_t>(instr_arguments[1]);
 						if (function_index >= program.functions().size())
 						{
-							throw std::runtime_error("Invalid function id");
+							raise_error(runtime_error_code::invalid_function_id);
 						}
 						auto const &function_ptr = program.functions()[function_index];
 						intermediate::function_ref const ref(program, function_ptr);
