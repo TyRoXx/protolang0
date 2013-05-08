@@ -20,6 +20,9 @@ namespace p0
 			{
 				return;
 			}
+
+			//mark this object before the children
+			//to prevent endless recursion on circular references
 			m_is_marked = true;
 			mark_recursively();
 		}
