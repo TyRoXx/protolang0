@@ -4,9 +4,9 @@
 
 
 #include "p0common/final.hpp"
+#include "p0common/types.hpp"
 #include <array>
 #include <string>
-#include <cstdint>
 #include <cstddef>
 
 
@@ -61,8 +61,6 @@ namespace p0
 				invalid_ = count_
 			};
 		}
-
-		typedef std::int64_t instruction_argument;
 
 
 		struct instruction_info PROTOLANG0_FINAL_CLASS

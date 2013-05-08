@@ -11,6 +11,7 @@ namespace p0
 	typedef std::int32_t local_address;
 	typedef std::int32_t jump_offset;
 	typedef std::int64_t integer;
+	typedef std::int64_t instruction_argument;
 }
 
 

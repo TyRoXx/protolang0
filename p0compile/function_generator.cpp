@@ -6,6 +6,7 @@
 #include "temporary.hpp"
 #include "statement_code_generator.hpp"
 #include "p0i/emitter.hpp"
+#include "p0common/integer_cast.hpp"
 #include <cassert>
 
 
@@ -79,7 +80,8 @@ namespace p0
 		{
 			auto &return_instruction = instructions[*i];
 			assert(intermediate::is_any_jump(return_instruction.type()));
-			return_instruction.arguments()[0] = instructions.size();
+			return_instruction.arguments()[0] =
+					integer_cast<instruction_argument>(instructions.size());
 		}
 
 		m_unit.define_function(function_index, intermediate::function(
@@ -98,7 +100,7 @@ namespace p0
 		m_unit.handle_error(error);
 	}
 
-	void function_generator::add_return(std::size_t jump_address)
+	void function_generator::add_return(jump_offset jump_address)
 	{
 		m_return_instructions.push_back(jump_address);
 	}

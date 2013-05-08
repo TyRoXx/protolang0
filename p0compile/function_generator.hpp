@@ -42,7 +42,7 @@ namespace p0
 		void handle_error(
 			compiler_error const &error
 			);
-		void add_return(std::size_t jump_address);
+		void add_return(jump_offset jump_address);
 		std::size_t bind_local(reference bound_variable);
 		std::size_t bind_from_parent(size_t index_in_parent);
 		void emit_bindings(
@@ -63,7 +63,7 @@ namespace p0
 
 		unit_generator &m_unit;
 		local_frame * const m_outer_frame;
-		std::vector<std::size_t> m_return_instructions;
+		std::vector<jump_offset> m_return_instructions;
 		std::vector<bound_variable> m_bound_variables;
 
 

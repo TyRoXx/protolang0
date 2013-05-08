@@ -34,7 +34,8 @@ namespace p0
 			m_frame,
 			argument_count
 			);
-		size_t current_argument_address = argument_variables.address().local_address();
+		auto current_argument_address =
+				argument_variables.address().local_address();
 
 		for (auto arg = arguments.begin(), end = arguments.end();
 			arg != end; ++arg, ++current_argument_address)
@@ -87,8 +88,6 @@ namespace p0
 		{
 			base = 10
 		};
-
-		typedef intermediate::instruction_argument integer;
 
 		integer value = 0, previous_value = 0;
 		integer const integer_mask = std::numeric_limits<integer>::max();
