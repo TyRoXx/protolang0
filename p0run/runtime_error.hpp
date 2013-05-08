@@ -30,12 +30,13 @@ namespace p0
 				no_bound_value,
 				negative_shift,
 				shift_out_of_range,
-				invalid_module_name
+				invalid_module_name,
+				invalid_function_id
 			};
 
 			inline std::string const &to_string(type type)
 			{
-				static std::array<std::string, 10> const strings =
+				static std::array<std::string, 16> const strings =
 				{{
 					 "call_non_object",
 					 "call_not_supported",
@@ -47,6 +48,12 @@ namespace p0
 					 "set_not_supported",
 					 "jump_out_of_range",
 					 "invalid_string_id"
+					 "bind_to_non_function",
+					 "no_bound_value",
+					 "negative_shift",
+					 "shift_out_of_range",
+					 "invalid_module_name",
+					 "invalid_function_id"
 				}};
 				return strings[type];
 			}
