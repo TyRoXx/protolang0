@@ -36,7 +36,11 @@ namespace
 				[](const std::vector<p0::run::value> &arguments)
 			{
 				BOOST_REQUIRE(arguments.size() == 1);
-				BOOST_REQUIRE(p0::run::to_boolean(arguments.front()));
+				auto const condition = arguments.front();
+				if (!p0::run::to_boolean(condition))
+				{
+					BOOST_REQUIRE(!"Assertion failed");
+				}
 				return p0::run::value{};
 			}));
 

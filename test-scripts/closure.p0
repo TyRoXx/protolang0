@@ -4,6 +4,7 @@ return function (assert)
 	{
 		return left + right
 	}
+	assert(nothingBound)
 	assert(nothingBound(2, 3) == 5)
 
 	var a = 1
@@ -14,17 +15,22 @@ return function (assert)
 	{
 		return operand + a
 	}
+	assert(bound1)
+	assert(nothingBound != bound1)
 	assert(bound1(-1) == 0)
 
 	var bound2 = function ()
 	{
 		return a + b
 	}
+	assert(bound2)
+	assert(bound2 != bound1)
 	assert(bound2() == 3)
 
 	var bound3 = function ()
 	{
 		return a + b + c
 	}
+	assert(bound3 != bound2)
 	assert(bound3() == 6)
 }

@@ -13,4 +13,19 @@ return function (assert)
 	assert(1 << 1 == 2)
 	assert(1 << 10 == 1024)
 	assert(1024 >> 10 == 1)
+
+	assert((1 & 2) == 0)
+	assert((1 & 1) == 1)
+	assert((1 & 0) == 0)
+
+	assert((1 | 2) == 3)
+	assert((1 | 1) == 1)
+	assert((1 | 0) == 1)
+
+	var a = 1
+	var b = 2
+	assert(a + b == 3)
+	assert(a != b)
+	assert(a)
+	assert(!!b)
 }
