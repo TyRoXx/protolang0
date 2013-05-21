@@ -28,3 +28,15 @@ add_subdirectory(p0c)
 add_subdirectory(p0rt)
 add_subdirectory(p0)
 add_subdirectory(test)
+
+file(GLOB headers "p0common/*.hpp")
+install(FILES ${headers} DESTINATION include/p0common)
+
+file(GLOB headers "p0i/*.hpp")
+install(FILES ${headers} DESTINATION include/p0i)
+
+file(GLOB headers "p0run/*.hpp")
+install(FILES ${headers} DESTINATION include/p0run)
+
+file(GLOB headers "p0rt/*.hpp")
+install(FILES ${headers} DESTINATION include/p0rt)

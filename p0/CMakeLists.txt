@@ -8,3 +8,5 @@ target_link_libraries(p0 p0compile p0run p0rt p0i)
 if (NOT MSVC)
 	target_link_libraries(p0 ${Boost_LIBRARIES})
 endif()
+
+install(TARGETS p0 RUNTIME DESTINATION bin)

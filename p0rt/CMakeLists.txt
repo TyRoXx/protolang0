@@ -4,3 +4,5 @@ file(GLOB files
 
 add_library(p0rt ${files})
 target_link_libraries(p0rt p0run)
+
+install(TARGETS p0rt ARCHIVE DESTINATION lib)
