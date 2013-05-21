@@ -63,6 +63,7 @@ namespace
 		t.run_test_script("empty.p0");
 		t.run_test_script("closure.p0");
 		t.run_test_script("integer.p0");
+		t.run_test_script("table.p0");
 	}
 }
 

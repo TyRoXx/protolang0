@@ -1,0 +1,20 @@
+return function (assert)
+{
+	assert([])
+	assert([] != [])
+	assert([a = 0])
+	assert([] != 0)
+	assert([] != null)
+	assert([] != function (){})
+
+	var t = []
+	assert(t.a == null)
+	t.a = 2
+	assert(t.a == 2)
+	assert(t.b == null)
+
+	var q = [a = 2]
+	assert(t != q)
+	assert(q.a == 2)
+	assert(q.b == null)
+}
