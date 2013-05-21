@@ -420,7 +420,7 @@ namespace p0
 					{
 						auto const operand_address = static_cast<size_t>(instr_arguments[0]);
 						auto &operand = get(local_frame, operand_address);
-						operand = value(static_cast<integer>(to_boolean(operand)));
+						operand = value(static_cast<integer>(!to_boolean(operand)));
 						break;
 					}
 
