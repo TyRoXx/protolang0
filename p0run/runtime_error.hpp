@@ -77,6 +77,9 @@ namespace p0
 			intermediate::function_ref m_function;
 			std::size_t m_instruction;
 		};
+
+
+		std::ostream &operator << (std::ostream &os, runtime_error const &error);
 	}
 }
 
