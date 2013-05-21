@@ -12,7 +12,7 @@ if (MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif()
 
-find_package(Boost REQUIRED unit_test_framework program_options)
+find_package(Boost REQUIRED unit_test_framework program_options filesystem system)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(".")
