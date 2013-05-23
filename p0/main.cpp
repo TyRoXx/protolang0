@@ -283,10 +283,10 @@ int main(int argc, char **argv)
 			//TODO: generate/load debug info
 			p0::intermediate::unit_info * const info = nullptr;
 
-			auto const function_id =
+			auto const function_id = static_cast<size_t>(
 					std::distance(
 						&program.functions().front(),
-						&error.function().function());
+						&error.function().function()));
 
 			err << "Error ";
 			if (info)
