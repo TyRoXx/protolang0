@@ -3,6 +3,7 @@
 #include "compiler_error.hpp"
 #include "pretty_print_error.hpp"
 #include <fstream>
+#include <iostream>
 
 namespace p0
 {
