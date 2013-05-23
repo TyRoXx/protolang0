@@ -6,6 +6,7 @@
 #include "p0i/function_ref.hpp"
 #include "p0common/final.hpp"
 #include <array>
+#include <string>
 
 
 namespace p0
