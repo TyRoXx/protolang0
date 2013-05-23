@@ -33,4 +33,23 @@ return function (assert)
 		assert(t.f() == 7)
 		assert(t["f"]() == 7)
 	}
+
+	{
+		var t = []
+		t[125] = 1
+		t["abc"] = 2
+		t[null] = 3
+
+		var f = function () {}
+		t[f] = 4
+
+		var k = []
+		t[k] = 5
+
+		assert(t[125] == 1)
+		assert(t["abc"] == 2)
+		assert(t[null] == 3)
+		assert(t[f] == 4)
+		assert(t[k] == 5)
+	}
 }
