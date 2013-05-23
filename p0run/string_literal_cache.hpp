@@ -6,8 +6,8 @@
 #include "value.hpp"
 #include "p0common/final.hpp"
 #include <unordered_map>
-#include <vector>
 #include <memory>
+#include <boost/functional/hash.hpp>
 
 
 namespace p0
@@ -28,8 +28,8 @@ namespace p0
 
 		private:
 
-			typedef std::vector<std::unique_ptr<object>> unit_strings;
-			typedef std::unordered_map<intermediate::unit const *, unit_strings>
+			typedef std::pair<intermediate::unit const *, std::size_t> string_key;
+			typedef std::unordered_map<string_key, std::unique_ptr<object>, boost::hash<string_key>>
 				strings_by_unit;
 
 			strings_by_unit m_strings;

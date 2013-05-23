@@ -19,13 +19,8 @@ namespace p0
 				intermediate::unit const &program,
 				std::size_t string_index)
 		{
-			auto &program_strings = m_strings[&program];
-			if (program_strings.empty())
-			{
-				program_strings.resize(program.strings().size());
-			}
-			assert(string_index < program_strings.size());
-			auto &string_ptr = program_strings[string_index];
+			assert(string_index < program.strings().size());
+			auto &string_ptr = m_strings[std::make_pair(&program, string_index)];
 			if (!string_ptr)
 			{
 				string_ptr.reset(new string(program.strings()[string_index]));
