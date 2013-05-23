@@ -46,10 +46,6 @@ namespace p0
 
 		void table::mark_recursively()
 		{
-			if (is_marked())
-			{
-				return;
-			}
 			for (auto i = m_elements.begin(); i != m_elements.end(); ++i)
 			{
 				auto const &value = i->second;
