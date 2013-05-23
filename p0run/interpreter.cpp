@@ -225,10 +225,9 @@ namespace p0
 						{
 							raise_error(runtime_error_code::invalid_string_id);
 						}
-						auto const &content = program.strings()[string_id];
-						value const new_string_ptr(
-									construct<string>(m_gc, content));
-						get(local_frame, dest_address) = new_string_ptr;
+
+						auto const string = m_string_literals.require_string(program, string_id);
+						get(local_frame, dest_address) = string;
 						break;
 					}
 

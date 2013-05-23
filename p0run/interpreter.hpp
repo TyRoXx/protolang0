@@ -5,6 +5,7 @@
 
 #include "p0i/unit.hpp"
 #include "value.hpp"
+#include "string_literal_cache.hpp"
 #include <set>
 
 
@@ -46,6 +47,7 @@ namespace p0
 			interpreter_listener *m_listener;
 			std::set<intermediate::function_ref> m_function_refs;
 			std::size_t m_next_call_frame;
+			string_literal_cache m_string_literals;
 
 
 			void native_call(
