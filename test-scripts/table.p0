@@ -15,6 +15,9 @@ return function (assert)
 		assert(t["a"] == 2)
 		assert(t.b == null)
 		assert(t["b"] == null)
+		t["b"] = 3
+		assert(t.b == 3)
+		assert(t["b"] == 3)
 	}
 
 	{
