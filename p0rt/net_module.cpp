@@ -137,13 +137,13 @@ namespace p0
 					std::vector<run::value> const &arguments)
 			{
 				(void)arguments;
-				return run::value(run::construct_object<io_service>(gc));
+				return run::value(run::construct<io_service>(gc));
 			}
 		}
 
 		run::value register_network_module(run::garbage_collector &gc)
 		{
-			auto &module = run::construct_object<run::table>(gc);
+			auto &module = run::construct<run::table>(gc);
 			rt::inserter(module, gc)
 				.insert_fn("create_io_service", std::bind(net_create_io_service, std::ref(gc), std::placeholders::_1))
 				;

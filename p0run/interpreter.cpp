@@ -5,7 +5,7 @@
 #include "function.hpp"
 #include "runtime_error_exception.hpp"
 #include "garbage_collector.hpp"
-#include "raw_storage.hpp"
+#include "construct.hpp"
 #include "p0i/function_ref.hpp"
 #include "p0common/throw.hpp"
 #include <cassert>
@@ -227,7 +227,7 @@ namespace p0
 						}
 						auto const &content = program.strings()[string_id];
 						value const new_string_ptr(
-									construct_object<string>(m_gc, content));
+									construct<string>(m_gc, content));
 						get(local_frame, dest_address) = new_string_ptr;
 						break;
 					}
@@ -242,7 +242,7 @@ namespace p0
 						if (closure.type == value_type::function_ptr)
 						{
 							value const new_closure(
-								construct_object<run::function>(m_gc, *closure.function_ptr));
+								construct<run::function>(m_gc, *closure.function_ptr));
 							closure = new_closure;
 						}
 
@@ -586,7 +586,7 @@ namespace p0
 						auto const table_address = static_cast<size_t>(instr_arguments[0]);
 						auto &destination = get(local_frame, table_address);
 						value const created_table_ptr(
-									construct_object<table>(m_gc));
+									construct<table>(m_gc));
 						destination = created_table_ptr;
 						break;
 					}

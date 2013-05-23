@@ -2,7 +2,7 @@
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
 #include "p0run/default_garbage_collector.hpp"
-#include "p0run/raw_storage.hpp"
+#include "p0run/construct.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
@@ -509,7 +509,7 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 		BOOST_REQUIRE(!module_loaded);
 		BOOST_CHECK(name == module_name);
 
-		module_ptr = &p0::run::construct_object<trivial_module>(interpreter.garbage_collector());
+		module_ptr = &p0::run::construct<trivial_module>(interpreter.garbage_collector());
 		p0::run::value const module_handle(*module_ptr);
 		module_loaded = true;
 		return module_handle;

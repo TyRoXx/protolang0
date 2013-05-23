@@ -141,7 +141,7 @@ namespace p0
 				{
 					P0_NOT_IMPLEMENTED();
 				}
-				return run::value(run::construct_object<class_instance>(
+				return run::value(run::construct<class_instance>(
 									  gc,
 									  *definition.obj));
 			}
@@ -149,7 +149,7 @@ namespace p0
 
 		run::value register_standard_module(run::garbage_collector &gc)
 		{
-			auto &module = run::construct_object<run::table>(gc);
+			auto &module = run::construct<run::table>(gc);
 			rt::inserter(module, gc)
 				.insert_fn("print", &std_print_string)
 				.insert_fn("read_line", std::bind(std_read_line, std::ref(gc), std::placeholders::_1))

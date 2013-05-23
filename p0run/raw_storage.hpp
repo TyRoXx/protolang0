@@ -36,13 +36,6 @@ namespace p0
 			garbage_collector *m_gc;
 			char *m_memory;
 		};
-
-
-		template <class T, class ...Args>
-		object &construct_object(garbage_collector &gc, Args && ...args)
-		{
-			return raw_storage(gc, sizeof(T)).construct<T>(std::forward<Args>(args)...);
-		}
 	}
 }
 

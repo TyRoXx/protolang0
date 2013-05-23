@@ -1,6 +1,6 @@
 #include "p0run/table.hpp"
 #include "p0run/default_garbage_collector.hpp"
-#include "p0run/raw_storage.hpp"
+#include "p0run/construct.hpp"
 #include <boost/test/unit_test.hpp>
 #include <array>
 using namespace p0::run;
@@ -18,7 +18,7 @@ namespace
 
 	value make_test_object(garbage_collector &gc)
 	{
-		return value(construct_object<test_object>(gc));
+		return value(construct<test_object>(gc));
 	}
 }
 

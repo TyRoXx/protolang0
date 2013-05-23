@@ -5,7 +5,7 @@
 
 #include "p0run/string.hpp"
 #include "p0run/table.hpp"
-#include "p0run/raw_storage.hpp"
+#include "p0run/construct.hpp"
 #include "native_function.hpp"
 
 
@@ -23,7 +23,7 @@ namespace p0
 			typedef native_function<clean_functor_type> wrapper;
 
 			return run::value(
-				run::construct_object<wrapper>(
+				run::construct<wrapper>(
 							gc, std::forward<F>(functor)));
 		}
 
