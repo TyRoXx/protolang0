@@ -1,0 +1,17 @@
+return function (assert)
+{
+	assert(null == null)
+	assert(!null)
+	assert(null != 0)
+	assert(null != 1)
+	assert(null != [])
+	assert(null != function () {})
+	assert(null != "null")
+	assert(null != "")
+
+	var a = null
+	var b = null
+	assert(a == null)
+	assert(b == null)
+	assert(a == b)
+}
