@@ -4,6 +4,7 @@
 
 
 #include "reference.hpp"
+#include "p0common/noexcept.hpp"
 
 
 namespace p0
@@ -16,10 +17,10 @@ namespace p0
 		explicit temporary(
 			local_frame &frame,
 			local_address size
-			);
-		~temporary();
-		reference address() const;
-		local_address size() const;
+			) PROTOLANG0_NOEXCEPT;
+		~temporary() PROTOLANG0_NOEXCEPT;
+		reference address() const PROTOLANG0_NOEXCEPT;
+		local_address size() const PROTOLANG0_NOEXCEPT;
 
 	private:
 

@@ -5,6 +5,7 @@
 
 #include "source_range.hpp"
 #include "p0common/final.hpp"
+#include "p0common/noexcept.hpp"
 
 
 namespace p0
@@ -68,8 +69,8 @@ namespace p0
 		source_range content;
 
 
-		token();
-		explicit token(token_type::Enum type, source_range content);
+		token() PROTOLANG0_NOEXCEPT;
+		explicit token(token_type::Enum type, source_range content) PROTOLANG0_NOEXCEPT;
 	};
 }
 
