@@ -59,8 +59,8 @@ namespace p0
 			intermediate::emitter &emitter
 			);
 
-		reference allocate(size_t count);
-		void deallocate_top(size_t count);
+		reference allocate(local_address count);
+		void deallocate_top(local_address count);
 		loop *enter_loop(loop &loop);
 		void leave_loop(loop *previous);
 		loop *get_loop() const;

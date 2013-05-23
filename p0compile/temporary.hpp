@@ -15,17 +15,17 @@ namespace p0
 	{
 		explicit temporary(
 			local_frame &frame,
-			std::size_t size
+			local_address size
 			);
 		~temporary();
 		reference address() const;
-		std::size_t size() const;
+		local_address size() const;
 
 	private:
 
 		local_frame &frame;
 		reference const m_address;
-		std::size_t const m_size;
+		local_address const m_size;
 	};
 }
 

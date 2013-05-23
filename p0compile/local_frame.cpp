@@ -146,16 +146,16 @@ namespace p0
 		return possible_space;
 	}
 
-	reference local_frame::allocate(size_t count)
+	reference local_frame::allocate(local_address count)
 	{
 		reference const result(m_next_local_address);
 		m_next_local_address += count;
 		return result;
 	}
 
-	void local_frame::deallocate_top(size_t count)
+	void local_frame::deallocate_top(local_address count)
 	{
-		assert(m_next_local_address >= integer_cast<local_address>(count));
+		assert(m_next_local_address >= count);
 		m_next_local_address -= count;
 	}
 

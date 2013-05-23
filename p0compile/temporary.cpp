@@ -6,7 +6,7 @@ namespace p0
 {
 	temporary::temporary(
 		local_frame &frame,
-		std::size_t size
+		local_address size
 		)
 		: frame(frame)
 		, m_address(frame.allocate(size))
@@ -24,7 +24,7 @@ namespace p0
 		return m_address;
 	}
 
-	std::size_t temporary::size() const
+	local_address temporary::size() const
 	{
 		return m_size;
 	}

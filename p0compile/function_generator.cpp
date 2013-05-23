@@ -121,7 +121,7 @@ namespace p0
 		bound_variable_emitter(
 			intermediate::emitter &emitter,
 			local_frame &frame,
-			size_t closure_address,
+			local_address closure_address,
 			size_t bound_index,
 			std::unique_ptr<temporary> &current_function)
 			: m_emitter(emitter)
@@ -159,12 +159,12 @@ namespace p0
 
 		intermediate::emitter &m_emitter;
 		local_frame &m_frame;
-		size_t const m_closure_address;
+		local_address const m_closure_address;
 		size_t const m_bound_index;
 		std::unique_ptr<temporary> &m_current_function;
 
 
-		size_t require_current_function() const
+		local_address require_current_function() const
 		{
 			if (!m_current_function)
 			{
@@ -179,7 +179,7 @@ namespace p0
 	};
 
 	void function_generator::emit_bindings(
-		size_t closure_address,
+		local_address closure_address,
 		local_frame &frame,
 		intermediate::emitter &emitter) const
 	{

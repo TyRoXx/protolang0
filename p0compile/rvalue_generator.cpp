@@ -4,6 +4,7 @@
 #include "function_generator.hpp"
 #include "unit_generator.hpp"
 #include "temporary.hpp"
+#include "p0common/integer_cast.hpp"
 #include <sstream>
 #include <cctype>
 
@@ -29,10 +30,9 @@ namespace p0
 			std::function<void ()> const &handle_result
 			)
 	{
-		auto const argument_count = arguments.size();
 		temporary const argument_variables(
 			m_frame,
-			argument_count
+			integer_cast<local_address>(arguments.size())
 			);
 		auto current_argument_address =
 				argument_variables.address().local_address();

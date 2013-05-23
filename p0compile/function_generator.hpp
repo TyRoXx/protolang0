@@ -46,7 +46,7 @@ namespace p0
 		std::size_t bind_local(reference bound_variable);
 		std::size_t bind_from_parent(size_t index_in_parent);
 		void emit_bindings(
-			size_t closure_address,
+			local_address closure_address,
 			local_frame &frame,
 			intermediate::emitter &emitter) const;
 
