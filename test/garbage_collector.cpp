@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(default_gc_test)
 	BOOST_FOREACH (auto &is_alive, alive_status)
 	{
 		test_objects.push_back(
-					&construct_object<gc_tester>(gc, is_alive));
+					&construct<gc_tester>(gc, is_alive));
 	}
 
 	//all created objects are expected to be alive before garbage collection
@@ -106,7 +106,7 @@ namespace
 			for (size_t i = 0; i < is_alive.size(); ++i)
 			{
 				test_objects[i] = &dynamic_cast<referencing_gc_tester &>(
-					construct_object<referencing_gc_tester>(gc, is_alive[i]));
+					construct<referencing_gc_tester>(gc, is_alive[i]));
 			}
 			for (size_t i = 0; i < test_objects.size(); ++i)
 			{
