@@ -316,7 +316,7 @@ int main(int argc, char **argv)
 	}
 	catch (std::exception const &ex)
 	{
-		std::cerr << ex.what() << "\n";
+		err << ex.what() << "\n";
 		return 1;
 	}
 }

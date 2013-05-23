@@ -12,7 +12,7 @@ if (MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif()
 
-find_package(Boost REQUIRED unit_test_framework program_options filesystem system)
+find_package(Boost REQUIRED unit_test_framework program_options filesystem date_time system)
 
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(".")
@@ -28,6 +28,7 @@ add_subdirectory(p0c)
 add_subdirectory(p0rt)
 add_subdirectory(p0)
 add_subdirectory(test)
+add_subdirectory(speed-test)
 
 file(GLOB headers "p0common/*.hpp")
 install(FILES ${headers} DESTINATION include/p0common)
