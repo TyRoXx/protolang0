@@ -1,6 +1,6 @@
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/object.hpp"
-#include "p0run/raw_storage.hpp"
+#include "p0run/construct.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/foreach.hpp>
 #include <algorithm>
