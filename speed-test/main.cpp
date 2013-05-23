@@ -3,6 +3,7 @@
 #include "p0run/default_garbage_collector.hpp"
 #include "p0run/runtime_error.hpp"
 #include "p0run/runtime_error_exception.hpp"
+#include "p0common/version.hpp"
 #include <iostream>
 #include <boost/program_options.hpp>
 #include <boost/date_time/microsec_time_clock.hpp>
@@ -127,6 +128,7 @@ int main(int argc, char **argv)
 	po::options_description desc("");
 	desc.add_options()
 		("help", "produce help message")
+		("version", "print the version number")
 		;
 
 	po::variables_map vm;
@@ -141,6 +143,11 @@ int main(int argc, char **argv)
 	{
 		err << e.what() << "\n";
 		return 1;
+	}
+
+	if (vm.count("version"))
+	{
+		std::cout << "protolang0 version " << p0::version << '\n';
 	}
 
 	if (vm.count("help"))
