@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 2.8)
 
 project(protolang0)
 
-if (UNIX OR MINGW)
+if(UNIX OR MINGW)
 	set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -pedantic")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
+#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 endif()
 
-if (MSVC)
+if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif()
 
@@ -17,7 +17,7 @@ find_package(Boost REQUIRED unit_test_framework program_options filesystem date_
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(".")
 
-if (UNIX)
+if(UNIX)
 	add_definitions("-DBOOST_TEST_DYN_LINK")
 endif()
 
