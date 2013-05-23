@@ -41,19 +41,25 @@ namespace p0
 		run::default_garbage_collector gc;
 		run::interpreter interpreter(gc, nullptr);
 		run::value result;
-		auto const duration = measure_running_duration([&result, &program, &interpreter]()
+		auto const duration = measure_running_duration([&result, &program, &interpreter, &gc]()
 		{
 			result = interpreter.call(
 				intermediate::function_ref(program, program.functions().front()), {});
+			gc.sweep(run::sweep_mode::full);
 		});
-		out << test_name << " ";
+		out << test_name << " \t";
 		bool const is_success = check_result(result);
-		out << (is_success ? "succeeded" : "failed") << " in ";
+		out << (is_success ? "succeeded" : "failed") << " in \t";
 		print_running_duration(out, duration);
 		out << '\n';
 		return is_success;
 	}
 
+	/**
+	 * @brief run_sum_test calculates the sum of 0..max in O(max)
+	 * @param max
+	 * @param out
+	 */
 	void run_sum_test(run::integer max, std::ostream &out)
 	{
 		run_test((boost::format("sum %1%") % max).str(),
@@ -73,6 +79,28 @@ namespace p0
 		}, out);
 	}
 
+	/**
+	 * @brief run_string_literal_test instantiates a string from a literal
+	 * inside a loop. Runtime: O(iterations)
+	 * @param iterations the number of loop iterations
+	 * @param out
+	 */
+	void run_string_literal_test(run::integer iterations, std::ostream &out)
+	{
+		run_test((boost::format("strlit %1%") % iterations).str(),
+				 (boost::format(
+					  "var i = 0\n"
+					  "while i < %1% {\n"
+					  "    var s = \"string literal\"\n"
+					  "    i = i + 1\n"
+					  "}\n"
+					  "return i\n") % iterations).str(),
+				 [iterations](run::value result)
+		{
+			return result == run::value(iterations);
+		}, out);
+	}
+
 	void run_all_tests(std::ostream &out)
 	{
 		run_test("trivial", "return 5", [](run::value result)
@@ -80,9 +108,13 @@ namespace p0
 			return result == run::value(5);
 		}, out);
 
-		run_sum_test(100000, out);
-		run_sum_test(1000000, out);
-		run_sum_test(10000000, out);
+		run_sum_test(30000, out);
+		run_sum_test(300000, out);
+		run_sum_test(3000000, out);
+
+		run_string_literal_test(30000, out);
+		run_string_literal_test(300000, out);
+		run_string_literal_test(3000000, out);
 	}
 }
 
