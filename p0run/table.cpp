@@ -48,11 +48,8 @@ namespace p0
 		{
 			for (auto i = m_elements.begin(); i != m_elements.end(); ++i)
 			{
-				auto const &value = i->second;
-				if (value.type == value_type::object)
-				{
-					value.obj->mark();
-				}
+				mark_value(i->first);
+				mark_value(i->second);
 			}
 		}
 	}
