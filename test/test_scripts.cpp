@@ -30,16 +30,22 @@ namespace
 				p0::intermediate::function_ref(script, script.functions().front()),
 				{});
 
+			std::size_t assertionIndex = 0;
+
 			std::vector<p0::run::value> arguments;
 			arguments.push_back(p0::rt::expose_fn(
 				gc,
-				[](const std::vector<p0::run::value> &arguments)
+				[&assertionIndex, &file_name]
+				(const std::vector<p0::run::value> &arguments)
 			{
+				++assertionIndex;
 				BOOST_REQUIRE(arguments.size() == 1);
 				auto const condition = arguments.front();
 				if (!p0::run::to_boolean(condition))
 				{
-					BOOST_REQUIRE(!"Assertion failed");
+					std::cerr << file_name
+							  << ": The " << assertionIndex << ". assert failed\n";
+					BOOST_CHECK(nullptr == "Assertion failed");
 				}
 				return p0::run::value{};
 			}));
