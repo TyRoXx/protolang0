@@ -7,14 +7,27 @@ return function (assert)
 	assert([] != null)
 	assert([] != function (){})
 
-	var t = []
-	assert(t.a == null)
-	t.a = 2
-	assert(t.a == 2)
-	assert(t.b == null)
+	{
+		var t = []
+		assert(t.a == null)
+		t.a = 2
+		assert(t.a == 2)
+		assert(t["a"] == 2)
+		assert(t.b == null)
+		assert(t["b"] == null)
+	}
 
-	var q = [a = 2]
-	assert(t != q)
-	assert(q.a == 2)
-	assert(q.b == null)
+	{
+		var t = [a = 2]
+		var q = [a = 2]
+		assert(t != q)
+		assert(t.a == 2)
+		assert(t.b == null)
+	}
+
+	{
+		var t = [f = function () { return 7 }]
+		assert(t.f() == 7)
+		assert(t["f"]() == 7)
+	}
 }
