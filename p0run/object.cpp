@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include <stdexcept>
 
 
 namespace p0
@@ -116,6 +117,18 @@ namespace p0
 		boost::optional<value> object::get_bound(size_t /*index*/) const
 		{
 			return boost::optional<value>();
+		}
+
+
+		permanent_object_ptr make_permanent(run::object &object)
+		{
+			if (object.is_marked_permanently())
+			{
+				throw std::invalid_argument(
+				            "the object may not be permanently marked already");
+			}
+			object.mark_permanently();
+			return permanent_object_ptr(&object);
 		}
 	}
 }

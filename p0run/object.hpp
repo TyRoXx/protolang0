@@ -6,6 +6,7 @@
 #include "value.hpp"
 #include <boost/optional.hpp>
 #include <vector>
+#include <memory>
 
 
 namespace p0
@@ -62,6 +63,21 @@ namespace p0
 			}
 			return nullptr;
 		}
+
+
+		struct object_permanent_unmarker PROTOLANG0_FINAL_CLASS
+		{
+			void operator ()(run::object *object) const
+			{
+				assert(object);
+				object->unmark_permanently();
+			}
+		};
+
+		typedef std::unique_ptr<run::object, object_permanent_unmarker>
+			permanent_object_ptr;
+
+		permanent_object_ptr make_permanent(run::object &object);
 	}
 }
 
