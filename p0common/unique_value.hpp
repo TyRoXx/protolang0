@@ -9,32 +9,35 @@
 
 namespace p0
 {
-	template <class Value, class OwnershipPolicy>
-	struct unique_value : private OwnershipPolicy
+	template <class Value, class ValuePolicy>
+	struct unique_value : private ValuePolicy
 	{
+		typedef typename ValuePolicy::storage_type storage_type;
+
 		unique_value()
 		{
+			ValuePolicy::acquire(m_value);
 		}
 
 		template <class V>
 		explicit unique_value(V &&value)
 			: m_value(std::forward<V>(value))
 		{
+			ValuePolicy::acquire(m_value);
 		}
 
-		template <class V, class O>
-		explicit unique_value(V &&value, O &&ownership)
-			: OwnershipPolicy(std::forward<O>(ownership))
+		template <class V, class P>
+		explicit unique_value(V &&value, P &&policy)
+			: ValuePolicy(std::forward<P>(policy))
 			, m_value(std::forward<V>(value))
 		{
-			OwnershipPolicy::acquire(m_value);
+			ValuePolicy::acquire(m_value);
 		}
 
 		unique_value(unique_value &&other)
-			: OwnershipPolicy(std::move(static_cast<OwnershipPolicy &>(other)))
+			: ValuePolicy(std::move(static_cast<ValuePolicy &>(other)))
 			, m_value(std::move(other.m_value))
 		{
-			OwnershipPolicy::acquire(m_value);
 		}
 
 		unique_value &operator = (unique_value &&other)
@@ -46,45 +49,35 @@ namespace p0
 
 		~unique_value()
 		{
-			OwnershipPolicy::release(m_value);
+			ValuePolicy::release(m_value);
 		}
 
 		void swap(unique_value &other)
 		{
 			auto left = std::tie(
-						static_cast<OwnershipPolicy &>(*this),
+						static_cast<ValuePolicy &>(*this),
 						m_value);
 			auto right = std::tie(
-						static_cast<OwnershipPolicy &>(other),
+						static_cast<ValuePolicy &>(other),
 						other.m_value);
 			left.swap(right);
 		}
 
-		Value &operator * ()
-		{
-			return m_value;
-		}
-
 		Value const &operator * () const
 		{
-			return m_value;
-		}
-
-		Value *operator -> ()
-		{
-			return &m_value;
+			return ValuePolicy::get_reference(m_value);
 		}
 
 		Value const *operator -> () const
 		{
-			return &m_value;
+			return &ValuePolicy::get_reference(m_value);
 		}
 
 		//TODO: ==, !=, <, .., std::hash
 
 	private:
 
-		Value m_value;
+		storage_type m_value;
 	};
 }
 
