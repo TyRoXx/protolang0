@@ -7,6 +7,7 @@ namespace p0
 	{
 		object::object()
 			: m_is_marked(false)
+			, m_is_marked_permanently(false)
 		{
 		}
 
@@ -16,7 +17,7 @@ namespace p0
 
 		void object::mark()
 		{
-			if (m_is_marked)
+			if (is_marked())
 			{
 				return;
 			}
@@ -34,7 +35,22 @@ namespace p0
 
 		bool object::is_marked() const
 		{
-			return m_is_marked;
+			return m_is_marked || m_is_marked_permanently;
+		}
+
+		void object::mark_permanently()
+		{
+			m_is_marked_permanently = true;
+		}
+
+		void object::unmark_permanently()
+		{
+			m_is_marked_permanently = false;
+		}
+
+		bool object::is_marked_permanently() const
+		{
+			return m_is_marked_permanently;
 		}
 
 		boost::optional<value> object::get_element(value const & /*key*/) const

@@ -22,6 +22,9 @@ namespace p0
 			void mark();
 			void unmark();
 			bool is_marked() const;
+			void mark_permanently();
+			void unmark_permanently();
+			bool is_marked_permanently() const;
 			virtual boost::optional<value> get_element(value const &key) const;
 			virtual bool set_element(value const &key, value const &value);
 			virtual integer get_hash_code() const;
@@ -43,6 +46,7 @@ namespace p0
 		private:
 
 			bool m_is_marked;
+			bool m_is_marked_permanently;
 
 
 			virtual void mark_recursively() = 0;

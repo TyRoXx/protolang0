@@ -1,6 +1,7 @@
 #include "net_module.hpp"
 #include "insert.hpp"
 #include "p0common/not_implemented.hpp"
+#include "p0common/unique_value.hpp"
 #include "p0run/garbage_collector.hpp"
 #include <boost/asio.hpp>
 

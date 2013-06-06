@@ -52,7 +52,7 @@ BOOST_AUTO_TEST_CASE(unique_value_trivial)
 
 	a = std::move(b);
 
-	BOOST_CHECK(*a == 456);
+	BOOST_CHECK(*a == 123);
 }
 
 BOOST_AUTO_TEST_CASE(unique_value_counting)

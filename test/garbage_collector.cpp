@@ -167,3 +167,26 @@ BOOST_AUTO_TEST_CASE(default_gc_deallocate_test)
 		gc.deallocate(allocated);
 	}
 }
+
+BOOST_AUTO_TEST_CASE(object_mark_permanently)
+{
+	p0::run::default_garbage_collector gc;
+	vector_safe_bool is_alive = true;
+	auto &object = p0::run::construct<gc_tester>(gc, is_alive);
+
+	BOOST_CHECK(is_alive);
+	BOOST_CHECK(!object.is_marked());
+	BOOST_CHECK(!object.is_marked_permanently());
+
+	object.mark_permanently();
+
+	BOOST_CHECK(is_alive);
+	BOOST_CHECK(object.is_marked());
+	BOOST_CHECK(object.is_marked_permanently());
+
+	gc.sweep(p0::run::sweep_mode::full);
+
+	BOOST_CHECK(is_alive);
+	BOOST_CHECK(object.is_marked());
+	BOOST_CHECK(object.is_marked_permanently());
+}
