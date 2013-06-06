@@ -17,7 +17,9 @@ namespace p0
 
 		void object::mark()
 		{
-			if (is_marked())
+			//m_is_marked_permanently is not a condition here because we have
+			//to mark the children anyway
+			if (m_is_marked)
 			{
 				return;
 			}
