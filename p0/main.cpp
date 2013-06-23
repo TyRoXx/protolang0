@@ -8,10 +8,14 @@
 #include "p0run/runtime_error.hpp"
 #include "p0run/runtime_error_exception.hpp"
 #include "p0rt/std_module.hpp"
+#ifdef PROTOLANG0_WITH_TEMPEST
+#	include "p0tempest/tempest_module.hpp"
+#endif
 #include <iostream>
 #include <fstream>
 #include <boost/program_options.hpp>
 #include <boost/foreach.hpp>
+#include <boost/bind.hpp>
 
 
 namespace p0
@@ -267,6 +271,10 @@ int main(int argc, char **argv)
 		p0::run::interpreter interpreter(gc, get_module);
 		module_storage.add_module("std",
 								  p0::lazy_module(p0::rt::register_standard_module(gc)));
+#ifdef PROTOLANG0_WITH_TEMPEST
+		module_storage.add_module(p0::tempest::default_module_name,
+		                          p0::lazy_module(boost::bind(p0::tempest::register_tempest_module, boost::ref(gc))));
+#endif
 
 		std::vector<p0::run::value> arguments;
 		try

@@ -64,6 +64,26 @@ namespace p0
 			return false;
 		}
 
+		integer to_integer(value const &value)
+		{
+			BOOST_STATIC_ASSERT(value_type::count_ == 4);
+			switch (value.type)
+			{
+			case value_type::integer:
+				return value.i;
+
+			case value_type::null:
+				return 0;
+
+			case value_type::function_ptr:
+				return -1;
+
+			case value_type::object:
+				return -1;
+			}
+			return 0;
+		}
+
 		bool is_null(value const &value)
 		{
 			return (value.type == value_type::null);
