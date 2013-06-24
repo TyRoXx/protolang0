@@ -24,10 +24,15 @@ endif()
 set(P0_TEMPEST_DIR "${CMAKE_SOURCE_DIR}/libtempest")
 option(P0_WITH_TEMPEST "build the Tempest HTTP server for P0" OFF)
 if(P0_WITH_TEMPEST)
+	set(P0_TEMPEST_INSTALL_DIR ${CMAKE_BINARY_DIR}/libtempest)
+	link_directories(${P0_TEMPEST_INSTALL_DIR}/lib)
+	set(P0_TEMPEST_LIBRARIES tempest http)
 	include(ExternalProject)
 	ExternalProject_Add(libtempest
 		SOURCE_DIR ${P0_TEMPEST_DIR}
-		INSTALL_COMMAND "")
+		INSTALL_DIR ${P0_TEMPEST_INSTALL_DIR}
+		CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${P0_TEMPEST_INSTALL_DIR}
+		)
 	add_definitions("-DPROTOLANG0_WITH_TEMPEST")
 	include_directories(${P0_TEMPEST_DIR})
 endif()
