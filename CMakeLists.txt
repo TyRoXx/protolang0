@@ -12,6 +12,9 @@ if(MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 endif()
 
+if(NOT MSVC)
+	set(Boost_USE_STATIC_LIBS OFF)
+endif()
 find_package(Boost REQUIRED unit_test_framework program_options filesystem date_time system)
 
 include_directories(${Boost_INCLUDE_DIRS})
