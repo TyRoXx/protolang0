@@ -23,9 +23,6 @@ namespace p0
 			void mark();
 			void unmark();
 			bool is_marked() const;
-			void mark_permanently();
-			void unmark_permanently();
-			bool is_marked_permanently() const;
 			virtual boost::optional<value> get_element(value const &key) const;
 			virtual bool set_element(value const &key, value const &value);
 			virtual integer get_hash_code() const;
@@ -47,7 +44,6 @@ namespace p0
 		private:
 
 			bool m_is_marked;
-			bool m_is_marked_permanently;
 
 
 			virtual void mark_recursively() = 0;
@@ -63,21 +59,6 @@ namespace p0
 			}
 			return nullptr;
 		}
-
-
-		struct object_permanent_unmarker PROTOLANG0_FINAL_CLASS
-		{
-			void operator ()(run::object *object) const
-			{
-				assert(object);
-				object->unmark_permanently();
-			}
-		};
-
-		typedef std::unique_ptr<run::object, object_permanent_unmarker>
-			permanent_object_ptr;
-
-		permanent_object_ptr make_permanent(run::object &object);
 	}
 }
 

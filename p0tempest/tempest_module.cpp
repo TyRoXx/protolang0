@@ -79,6 +79,7 @@ namespace p0
 
 			void on_client(::tempest::tcp_acceptor::client_ptr &client)
 			{
+				(void)client;
 				//TODO
 			}
 
