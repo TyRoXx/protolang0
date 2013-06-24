@@ -7,5 +7,5 @@ return function (assert)
 		assert(client)
 	})
 	assert(server)
-	server.poll()
+	server:poll()
 }

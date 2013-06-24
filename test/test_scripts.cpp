@@ -3,6 +3,11 @@
 #include "p0run/runtime_error_exception.hpp"
 #include "p0compile/compile_unit.hpp"
 #include "p0rt/expose.hpp"
+#include "p0rt/module_cache.hpp"
+#include "p0rt/std_module.hpp"
+#ifdef PROTOLANG0_WITH_TEMPEST
+#	include "p0tempest/tempest_module.hpp"
+#endif
 #include <boost/test/unit_test.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
@@ -23,7 +28,11 @@ namespace
 			const auto script = p0::compile_unit_from_file(full_file_name.string());
 
 			p0::run::default_garbage_collector gc;
-			p0::run::interpreter interpreter(gc, nullptr);
+			p0::rt::module_cache modules;
+			modules.add_module("std", p0::rt::lazy_module(p0::rt::register_standard_module));
+			modules.add_module(p0::tempest::default_module_name,
+			                   p0::rt::lazy_module(p0::tempest::register_tempest_module));
+			p0::run::interpreter interpreter(gc, p0::rt::make_import(modules));
 
 			BOOST_REQUIRE(!script.functions().empty());
 			const auto main = interpreter.call(
@@ -76,7 +85,7 @@ namespace
 		t.run_test_script("table.p0");
 		t.run_test_script("null.p0");
 #ifdef PROTOLANG0_WITH_TEMPEST
-//		t.run_test_script("tempest.p0"); //TODO provide tempest in tests
+		t.run_test_script("tempest.p0");
 #endif
 	}
 }
