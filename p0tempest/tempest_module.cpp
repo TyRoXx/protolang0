@@ -5,12 +5,45 @@
 #include "tempest/tcp_acceptor.hpp"
 #include "p0rt/insert.hpp"
 #include <boost/bind.hpp>
+#include <boost/unordered_map.hpp>
 
 namespace p0
 {
 	namespace tempest
 	{
 		std::string const default_module_name = "tempest";
+
+		template <class Type>
+		struct method_map
+		{
+			typedef run::value (Type::*method)(std::vector<run::value> const &);
+			typedef boost::unordered_map<std::string, method> string_to_method;
+
+			void add_method(std::string method_name,
+			                method method)
+			{
+				m_mapping.insert(std::make_pair(std::move(method_name), method));
+			}
+
+			boost::optional<run::value> call(
+			        Type &object,
+			        std::string const &method_name,
+			        std::vector<run::value> const &arguments) const
+			{
+				auto const m = m_mapping.find(method_name);
+				if (m == m_mapping.end())
+				{
+					return boost::optional<run::value>();
+				}
+
+				auto const method = m->second;
+				return (object.*method)(arguments);
+			}
+
+		private:
+
+			string_to_method m_mapping;
+		};
 
 		struct http_server : p0::run::object
 		{
@@ -19,6 +52,18 @@ namespace p0
 			    : m_acceptor(port, boost::bind(&http_server::on_client, this, _1), m_io_service)
 			    , m_on_client(on_client)
 			{
+			}
+
+			virtual boost::optional<run::value> call_method(
+					run::value const &method_name,
+					std::vector<run::value> const &arguments,
+					run::interpreter &interpreter
+					) PROTOLANG0_OVERRIDE
+			{
+				(void)interpreter;
+				return get_methods().call(*this,
+				                          run::expect_string(method_name),
+				                          arguments);
 			}
 
 		private:
@@ -35,6 +80,34 @@ namespace p0
 			void on_client(::tempest::tcp_acceptor::client_ptr &client)
 			{
 				//TODO
+			}
+
+			run::value run(std::vector<run::value> const &arguments)
+			{
+				(void)arguments;
+				m_io_service.run();
+				return run::value();
+			}
+
+			run::value poll(std::vector<run::value> const &arguments)
+			{
+				(void)arguments;
+				m_io_service.poll();
+				return run::value();
+			}
+
+			static method_map<http_server> const &get_methods()
+			{
+				struct methods : method_map<http_server>
+				{
+					methods()
+					{
+						add_method("run", &http_server::run);
+						add_method("poll", &http_server::poll);
+					}
+				};
+				static methods const value;
+				return value;
 			}
 		};
 

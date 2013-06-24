@@ -1,4 +1,5 @@
 #include "string.hpp"
+#include <stdexcept>
 
 
 namespace p0
@@ -72,6 +73,20 @@ namespace p0
 
 		void string::mark_recursively()
 		{
+		}
+
+
+		std::string expect_string(value const &value)
+		{
+			if (value.type == value_type::object)
+			{
+				string const * const str = dynamic_cast<string *>(value.obj);
+				if (str)
+				{
+					return str->content();
+				}
+			}
+			throw std::invalid_argument("String expected");
 		}
 	}
 }

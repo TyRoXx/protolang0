@@ -30,6 +30,9 @@ namespace p0
 
 			virtual void mark_recursively() PROTOLANG0_FINAL_METHOD;
 		};
+
+
+		std::string expect_string(value const &value);
 	}
 }
 

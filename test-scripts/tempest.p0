@@ -1,0 +1,11 @@
+return function (assert)
+{
+	var tempest = import "tempest"
+	assert(tempest)
+	var server = tempest.create_http_server(8080, function (client)
+	{
+		assert(client)
+	})
+	assert(server)
+	server.poll()
+}
