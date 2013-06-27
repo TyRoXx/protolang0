@@ -38,6 +38,15 @@ namespace
 		{
 			return 0;
 		}
+
+		int returns_value(int)
+		{
+			return 0;
+		}
+
+		void returns_nothing()
+		{
+		}
 	};
 
 	using namespace native_object_policies;
@@ -52,6 +61,16 @@ namespace
 	        , not_bindable
 	{
 	};
+}
+
+BOOST_AUTO_TEST_CASE(native_class_test)
+{
+	native_class<has_methods> cls;
+	cls.add_method("returns_nothing", &has_methods::returns_nothing);
+	cls.add_method("returns_value",
+	               static_cast<int (has_methods::*)()>(&has_methods::returns_value));
+	cls.add_method("returns_value",
+	               static_cast<int (has_methods::*)(int)>(&has_methods::returns_value));
 }
 
 BOOST_AUTO_TEST_CASE(native_object_methods_test)

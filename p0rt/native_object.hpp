@@ -125,7 +125,7 @@ namespace p0
 					virtual run::value call(
 					        Class const &value,
 					        std::vector<run::value> const &arguments,
-					        run::interpreter &) const PROTOLANG0_OVERRIDE
+					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
 					{
 						auto const i = m_overloads.find(arguments.size());
 						if (i == m_overloads.end())
@@ -134,7 +134,7 @@ namespace p0
 							throw std::runtime_error(
 							            "No overload for this argument count");
 						}
-						return i->second->call(value, arguments);
+						return i->second->call(value, arguments, interpreter);
 					}
 
 					virtual void overload(
