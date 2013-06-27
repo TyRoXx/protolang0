@@ -94,6 +94,13 @@ namespace p0
 					}
 				}
 
+				template <class Result, class ...Args>
+				void add_method(std::string name,
+				                Result (Class::*method)(Args...) const)
+				{
+					//TODO
+				}
+
 			private:
 
 				struct basic_method

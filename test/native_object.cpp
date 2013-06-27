@@ -47,6 +47,11 @@ namespace
 		void returns_nothing()
 		{
 		}
+
+		int const_method() const
+		{
+			return 0;
+		}
 	};
 
 	using namespace native_object_policies;
@@ -71,6 +76,7 @@ BOOST_AUTO_TEST_CASE(native_class_test)
 	               static_cast<int (has_methods::*)()>(&has_methods::returns_value));
 	cls.add_method("returns_value",
 	               static_cast<int (has_methods::*)(int)>(&has_methods::returns_value));
+	cls.add_method("const_method", &has_methods::const_method);
 }
 
 BOOST_AUTO_TEST_CASE(native_object_methods_test)
