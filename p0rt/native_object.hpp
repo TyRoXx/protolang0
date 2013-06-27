@@ -67,23 +67,31 @@ namespace p0
 			};
 
 			template <class Class>
-			struct native_methods
+			struct native_class
 			{
-				boost::optional<run::value> call_method(
-				        run::object &obj,
-				        Class const &value,
-				        run::value const &method_name,
-				        std::vector<run::value> const &arguments,
-				        run::interpreter &interpreter) const
-				{
-					return boost::optional<run::value>();
-				}
+			public:
 
 				template <class Result, class ...Args>
 				void add_method(std::string name,
 				                Result (Class::*method)(Args...))
 				{
-					//TODO
+					typedef non_overloaded_method<Result, Args...> wrapper_type;
+					std::unique_ptr<wrapper_type> method_wrapper(
+								new wrapper_type()); //TODO
+
+					auto const i = m_methods.find(name);
+					if (i == m_methods.end())
+					{
+						m_methods.insert(std::make_pair(std::move(name),
+														std::move(method_wrapper)));
+					}
+					else
+					{
+						auto &overload = i->second;
+						overload->overload(overload,
+						                   std::move(method_wrapper),
+						                   sizeof...(Args));
+					}
 				}
 
 			private:
@@ -175,6 +183,29 @@ namespace p0
 
 				private:
 				};
+
+			private:
+
+				typedef boost::unordered_map<std::string,
+				                             std::unique_ptr<basic_method>> methods_by_name;
+
+				methods_by_name m_methods;
+			};
+
+			template <class Class>
+			struct native_methods
+			{
+				boost::optional<run::value> call_method(
+				        run::object &obj,
+				        Class const &value,
+				        run::value const &method_name,
+				        std::vector<run::value> const &arguments,
+				        run::interpreter &interpreter) const
+				{
+					return boost::optional<run::value>();
+				}
+
+			private:
 			};
 
 			struct print_with_operator
