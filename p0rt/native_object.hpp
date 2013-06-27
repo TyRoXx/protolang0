@@ -131,6 +131,27 @@ namespace p0
 				}
 			};
 
+			struct not_bindable
+			{
+				template <class Value>
+				bool bind(run::object &,
+				          Value const &,
+				          size_t,
+				          run::value const &) const
+				{
+					return false;
+				}
+
+				template <class Value>
+				boost::optional<run::value> get_bound(
+				        run::object const &,
+				        Value const &,
+				        size_t) const
+				{
+					return boost::optional<run::value>();
+				}
+			};
+
 			struct not_callable
 			{
 				template <class Value>
@@ -151,6 +172,7 @@ namespace p0
 			        , print_object
 			        , compare_object
 			        , no_elements
+			        , not_bindable
 			{
 			};
 		}
@@ -217,14 +239,12 @@ namespace p0
 
 			virtual bool bind(size_t index, run::value const &value) PROTOLANG0_FINAL_METHOD
 			{
-				//TODO
-				return {};
+				return Policies::bind(*this, this->value(), index, value);
 			}
 
 			virtual boost::optional<run::value> get_bound(size_t index) const PROTOLANG0_FINAL_METHOD
 			{
-				//TODO
-				return {};
+				return Policies::get_bound(*this, this->value(), index);
 			}
 
 		private:

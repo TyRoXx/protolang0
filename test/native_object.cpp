@@ -26,4 +26,6 @@ BOOST_AUTO_TEST_CASE(empty_native_object_test)
 	BOOST_CHECK(!a.get_element(run::value()).is_initialized());
 	BOOST_CHECK(!a.set_element(run::value(), run::value()));
 	BOOST_CHECK(!a.call(std::vector<run::value>(), interpreter_).is_initialized());
+	BOOST_CHECK(!a.bind(0, run::value()));
+	BOOST_CHECK(!a.get_bound(0).is_initialized());
 }
