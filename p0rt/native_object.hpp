@@ -5,6 +5,9 @@
 
 #include "p0run/object.hpp"
 #include "p0run/construct.hpp"
+#include <stdexcept>
+#include <memory>
+#include <boost/unordered_map.hpp>
 
 
 namespace p0
@@ -51,13 +54,127 @@ namespace p0
 
 			struct no_methods
 			{
-				boost::optional<run::value> call_method(run::object &,
-														run::value const &,
-														std::vector<run::value> const &,
-														run::interpreter &) const
+				template <class Value>
+				boost::optional<run::value> call_method(
+				        run::object &,
+				        Value const &,
+				        run::value const &,
+				        std::vector<run::value> const &,
+				        run::interpreter &) const
 				{
 					return boost::optional<run::value>();
 				}
+			};
+
+			template <class Class>
+			struct native_methods
+			{
+				boost::optional<run::value> call_method(
+				        run::object &obj,
+				        Class const &value,
+				        run::value const &method_name,
+				        std::vector<run::value> const &arguments,
+				        run::interpreter &interpreter) const
+				{
+					return boost::optional<run::value>();
+				}
+
+				template <class Result, class ...Args>
+				void add_method(std::string name,
+				                Result (Class::*method)(Args...))
+				{
+					//TODO
+				}
+
+			private:
+
+				struct basic_method
+				{
+					virtual ~basic_method()
+					{
+					}
+
+					virtual run::value call(
+					        Class const &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &interpreter) const = 0;
+					virtual void overload(
+					        std::unique_ptr<basic_method> &this_,
+					        std::unique_ptr<basic_method> new_method,
+					        std::size_t argument_count
+					        ) = 0;
+				};
+
+				struct overloaded_method : basic_method
+				{
+					void add_method(std::size_t argument_count,
+					                std::unique_ptr<basic_method> method)
+					{
+						m_overloads.insert(
+						    std::make_pair(argument_count, std::move(method)));
+					}
+
+					virtual run::value call(
+					        Class const &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &) const PROTOLANG0_OVERRIDE
+					{
+						auto const i = m_overloads.find(arguments.size());
+						if (i == m_overloads.end())
+						{
+							//TODO
+							throw std::runtime_error(
+							            "No overload for this argument count");
+						}
+						return i->second->call(value, arguments);
+					}
+
+					virtual void overload(
+					        std::unique_ptr<basic_method> &this_,
+					        std::unique_ptr<basic_method> new_method,
+					        std::size_t argument_count
+					        ) PROTOLANG0_OVERRIDE
+					{
+						assert(this == this_.get());
+						add_method(argument_count, std::move(new_method));
+					}
+
+				private:
+
+					typedef boost::unordered_map<std::size_t, std::unique_ptr<basic_method>> overloads;
+
+					overloads m_overloads;
+				};
+
+				template <class Result, class ...Args>
+				struct non_overloaded_method : basic_method
+				{
+					virtual run::value call(
+					        Class const &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &) const PROTOLANG0_OVERRIDE
+					{
+						//TODO
+						return run::value();
+					}
+
+					virtual void overload(
+					        std::unique_ptr<basic_method> &this_,
+					        std::unique_ptr<basic_method> new_method,
+					        std::size_t argument_count
+					        ) PROTOLANG0_OVERRIDE
+					{
+						//TODO make this method exception-safe
+						assert(this == this_.get());
+						std::unique_ptr<overloaded_method> methods(
+						            new overloaded_method);
+						methods->add_method(argument_count, std::move(new_method));
+						methods->add_method(sizeof...(Args), std::move(this_));
+						this_ = std::move(methods);
+					}
+
+				private:
+				};
 			};
 
 			struct print_with_operator
@@ -229,6 +346,7 @@ namespace p0
 					) PROTOLANG0_FINAL_METHOD
 			{
 				return Policies::call_method(*this,
+				                             this->value(),
 				                             method_name, arguments, interpreter);
 			}
 

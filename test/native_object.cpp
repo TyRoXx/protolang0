@@ -29,3 +29,33 @@ BOOST_AUTO_TEST_CASE(empty_native_object_test)
 	BOOST_CHECK(!a.bind(0, run::value()));
 	BOOST_CHECK(!a.get_bound(0).is_initialized());
 }
+
+namespace
+{
+	struct has_methods
+	{
+		int returns_value()
+		{
+			return 0;
+		}
+	};
+
+	using namespace native_object_policies;
+
+	struct has_methods_policies
+	        : do_not_mark
+	        , native_methods<has_methods>
+	        , not_callable
+	        , print_object
+	        , compare_object
+	        , no_elements
+	        , not_bindable
+	{
+	};
+}
+
+BOOST_AUTO_TEST_CASE(native_object_methods_test)
+{
+	native_object<has_methods, has_methods_policies> obj;
+//	obj.add_method("returns_value", &has_methods::returns_value);
+}
