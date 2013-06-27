@@ -5,6 +5,7 @@
 
 #include "p0run/object.hpp"
 #include "p0run/construct.hpp"
+#include "p0run/string.hpp"
 #include <stdexcept>
 #include <memory>
 #include <boost/unordered_map.hpp>
@@ -99,6 +100,19 @@ namespace p0
 				                Result (Class::*method)(Args...) const)
 				{
 					//TODO
+				}
+
+				run::value call_method(Class const &instance,
+				                       std::string const &method_name,
+				                       std::vector<run::value> const &arguments,
+				                       run::interpreter &interpreter) const
+				{
+					auto const i = m_methods.find(method_name);
+					if (i == m_methods.end())
+					{
+						throw std::runtime_error("Unknown method " + method_name);
+					}
+					return i->second->call(instance, arguments, interpreter);
 				}
 
 			private:
@@ -200,19 +214,25 @@ namespace p0
 			};
 
 			template <class Class>
+			struct native_class_traits;
+
+			template <class Class>
 			struct native_methods
 			{
 				boost::optional<run::value> call_method(
-				        run::object &obj,
-				        Class const &value,
+				        run::object & /*obj*/,
+				        Class &instance,
 				        run::value const &method_name,
 				        std::vector<run::value> const &arguments,
 				        run::interpreter &interpreter) const
 				{
-					return boost::optional<run::value>();
+					native_class<Class> const &class_ =
+					        native_class_traits<Class>::description();
+					return class_.call_method(instance,
+					                          run::expect_string(method_name),
+					                          arguments,
+					                          interpreter);
 				}
-
-			private:
 			};
 
 			struct print_with_operator

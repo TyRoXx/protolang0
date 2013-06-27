@@ -36,12 +36,12 @@ namespace
 	{
 		int returns_value()
 		{
-			return 0;
+			return 123;
 		}
 
 		int returns_value(int)
 		{
-			return 0;
+			return 456;
 		}
 
 		void returns_nothing()
@@ -50,7 +50,7 @@ namespace
 
 		int const_method() const
 		{
-			return 0;
+			return -3;
 		}
 	};
 
@@ -66,21 +66,69 @@ namespace
 	        , not_bindable
 	{
 	};
+
+	void add_methods(native_class<has_methods> &cls)
+	{
+		cls.add_method("returns_nothing", &has_methods::returns_nothing);
+		cls.add_method("returns_value",
+		               static_cast<int (has_methods::*)()>(&has_methods::returns_value));
+		cls.add_method("returns_value",
+		               static_cast<int (has_methods::*)(int)>(&has_methods::returns_value));
+		cls.add_method("const_method", &has_methods::const_method);
+	}
 }
 
 BOOST_AUTO_TEST_CASE(native_class_test)
 {
 	native_class<has_methods> cls;
-	cls.add_method("returns_nothing", &has_methods::returns_nothing);
-	cls.add_method("returns_value",
-	               static_cast<int (has_methods::*)()>(&has_methods::returns_value));
-	cls.add_method("returns_value",
-	               static_cast<int (has_methods::*)(int)>(&has_methods::returns_value));
-	cls.add_method("const_method", &has_methods::const_method);
+	add_methods(cls);
+}
+
+namespace p0
+{
+	namespace rt
+	{
+		namespace native_object_policies
+		{
+			template <>
+			struct native_class_traits<has_methods>
+			{
+				static native_class<has_methods> const &description()
+				{
+					static native_class<has_methods> const instance = create_instance();
+					return instance;
+				}
+
+			private:
+
+				static native_class<has_methods> create_instance()
+				{
+					native_class<has_methods> instance;
+					add_methods(instance);
+					return instance;
+				}
+			};
+		}
+	}
 }
 
 BOOST_AUTO_TEST_CASE(native_object_methods_test)
 {
+	run::default_garbage_collector gc;
+	run::interpreter interpreter_(gc, nullptr);
+	run::string returns_nothing("returns_nothing");
+	run::string returns_value("returns_value");
 	native_object<has_methods, has_methods_policies> obj;
-//	obj.add_method("returns_value", &has_methods::returns_value);
+	BOOST_CHECK_EQUAL(run::value(), obj.call_method(
+	            run::value(returns_nothing),
+	            std::vector<run::value>(),
+	            interpreter_));
+	BOOST_CHECK_EQUAL(run::value(123), obj.call_method(
+	            run::value(returns_value),
+	            std::vector<run::value>(),
+	            interpreter_));
+	BOOST_CHECK_EQUAL(run::value(456), obj.call_method(
+	            run::value(returns_value),
+	            std::vector<run::value>(1, run::value(0)),
+	            interpreter_));
 }
