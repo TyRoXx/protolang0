@@ -13,3 +13,4 @@ endif()
 if(NOT MSVC)
 	target_link_libraries(test ${Boost_LIBRARIES})
 endif()
+
