@@ -145,18 +145,87 @@ namespace p0
 									  gc,
 									  *definition.obj));
 			}
+
+			struct array : run::object
+			{
+				explicit array(std::vector<run::value> elements)
+				    : m_elements(std::move(elements))
+				{
+				}
+
+				virtual boost::optional<run::value> get_element(run::value const &key) const PROTOLANG0_OVERRIDE
+				{
+					if (key.type == run::value_type::integer &&
+					    static_cast<size_t>(key.i) < m_elements.size())
+					{
+						return m_elements[key.i];
+					}
+					return boost::optional<run::value>();
+				}
+
+				virtual bool set_element(run::value const &key, run::value const &value) PROTOLANG0_OVERRIDE
+				{
+					if (key.type == run::value_type::integer &&
+					    static_cast<size_t>(key.i) < m_elements.size())
+					{
+						m_elements[key.i] = value;
+						return true;
+					}
+					return false;
+				}
+
+				virtual boost::optional<run::value> call_method(
+						run::value const &method_name,
+						std::vector<run::value> const &arguments,
+						run::interpreter &interpreter
+						) PROTOLANG0_OVERRIDE
+				{
+					//TODO
+					return boost::optional<run::value>();
+				}
+
+				virtual void print(std::ostream &out) const PROTOLANG0_OVERRIDE
+				{
+					out << "array(";
+					BOOST_FOREACH (auto const &element, m_elements)
+					{
+						out << element << ", ";
+					}
+					out << ')';
+				}
+
+			private:
+
+				std::vector<run::value> m_elements;
+
+				virtual void mark_recursively() PROTOLANG0_OVERRIDE
+				{
+					std::for_each(m_elements.begin(),
+					              m_elements.end(),
+					              run::mark_value);
+				}
+			};
+
+			run::value std_array(run::garbage_collector &gc,
+			                     std::vector<run::value> const &arguments)
+			{
+				run::object &result = run::construct<array>(gc, arguments);
+				return run::value(result);
+			}
 		}
 
 		run::value register_standard_module(run::garbage_collector &gc)
 		{
+			using namespace std::placeholders;
 			auto &module = run::construct<run::table>(gc);
 			rt::inserter(module, gc)
 				.insert_fn("print", &std_print_string)
-				.insert_fn("read_line", std::bind(std_read_line, std::ref(gc), std::placeholders::_1))
+				.insert_fn("read_line", std::bind(std_read_line, std::ref(gc), _1))
 				.insert_fn("assert", &std_assert)
-				.insert_fn("to_string", std::bind(std_to_string, std::ref(gc), std::placeholders::_1))
+				.insert_fn("to_string", std::bind(std_to_string, std::ref(gc), _1))
 				.insert_fn("class", &std_class)
-				.insert_fn("new", std::bind(std_new, std::ref(gc), std::placeholders::_1))
+				.insert_fn("new", std::bind(std_new, std::ref(gc), _1))
+				.insert_fn("array", std::bind(&std_array, std::ref(gc), _1))
 				;
 			return run::value(module);
 		}

@@ -79,6 +79,7 @@ namespace
 	void run_test_scripts(const std::string &testScriptsPath)
 	{
 		Tester t((testScriptsPath));
+		t.run_test_script("array.p0");
 		t.run_test_script("empty.p0");
 		t.run_test_script("closure.p0");
 		t.run_test_script("integer.p0");
