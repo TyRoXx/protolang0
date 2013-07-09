@@ -158,7 +158,7 @@ namespace p0
 					if (key.type == run::value_type::integer &&
 					    static_cast<size_t>(key.i) < m_elements.size())
 					{
-						return m_elements[key.i];
+						return m_elements[static_cast<size_t>(key.i)];
 					}
 					return boost::optional<run::value>();
 				}
@@ -168,7 +168,7 @@ namespace p0
 					if (key.type == run::value_type::integer &&
 					    static_cast<size_t>(key.i) < m_elements.size())
 					{
-						m_elements[key.i] = value;
+						m_elements[static_cast<size_t>(key.i)] = value;
 						return true;
 					}
 					return false;
