@@ -119,6 +119,7 @@ BOOST_AUTO_TEST_CASE(native_object_methods_test)
 	run::string returns_nothing("returns_nothing");
 	run::string returns_value("returns_value");
 	native_object<has_methods, has_methods_policies> obj;
+
 	BOOST_CHECK_EQUAL(run::value(), obj.call_method(
 	            run::value(returns_nothing),
 	            std::vector<run::value>(),

@@ -9,6 +9,7 @@
 #include <stdexcept>
 #include <memory>
 #include <boost/unordered_map.hpp>
+#include <boost/type_traits/is_integral.hpp>
 
 
 namespace p0
@@ -39,6 +40,24 @@ namespace p0
 			private:
 
 				T m_value;
+			};
+
+			template <std::size_t ...Indices>
+			struct indices
+			{
+				typedef indices<Indices..., sizeof...(Indices)> next;
+			};
+
+			template <std::size_t N>
+			struct make_indices
+			{
+				typedef typename make_indices<N - 1>::type::next type;
+			};
+
+			template <>
+			struct make_indices<0>
+			{
+				typedef indices<> type;
 			};
 		}
 
@@ -76,9 +95,33 @@ namespace p0
 				void add_method(std::string name,
 				                Result (Class::*method)(Args...))
 				{
-					typedef non_overloaded_method<Result, Args...> wrapper_type;
+					return add_method<Result, Args...>(
+						std::move(name),
+						[method](Class &instance, Args ...args)
+					{
+						return (instance.*method)(std::move(args)...);
+					});
+				}
+
+				template <class Result, class ...Args>
+				void add_method(std::string name,
+				                Result (Class::*method)(Args...) const)
+				{
+					return add_method<Result, Args...>(
+						std::move(name),
+						[method](Class const &instance, Args ...args)
+					{
+						return (instance.*method)(std::move(args)...);
+					});
+				}
+
+				template <class Result, class ...Args, class F>
+				void add_method(std::string name,
+				                F &&method)
+				{
+					typedef non_overloaded_method<F, Result, Args...> wrapper_type;
 					std::unique_ptr<wrapper_type> method_wrapper(
-								new wrapper_type()); //TODO
+					            new wrapper_type(std::forward<F>(method)));
 
 					auto const i = m_methods.find(name);
 					if (i == m_methods.end())
@@ -95,14 +138,7 @@ namespace p0
 					}
 				}
 
-				template <class Result, class ...Args>
-				void add_method(std::string name,
-				                Result (Class::*method)(Args...) const)
-				{
-					//TODO
-				}
-
-				run::value call_method(Class const &instance,
+				run::value call_method(Class &instance,
 				                       std::string const &method_name,
 				                       std::vector<run::value> const &arguments,
 				                       run::interpreter &interpreter) const
@@ -124,7 +160,7 @@ namespace p0
 					}
 
 					virtual run::value call(
-					        Class const &value,
+					        Class &value,
 					        std::vector<run::value> const &arguments,
 					        run::interpreter &interpreter) const = 0;
 					virtual void overload(
@@ -144,18 +180,12 @@ namespace p0
 					}
 
 					virtual run::value call(
-					        Class const &value,
+					        Class &value,
 					        std::vector<run::value> const &arguments,
 					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
 					{
-						auto const i = m_overloads.find(arguments.size());
-						if (i == m_overloads.end())
-						{
-							//TODO
-							throw std::runtime_error(
-							            "No overload for this argument count");
-						}
-						return i->second->call(value, arguments, interpreter);
+						return find_overload(arguments.size()).call(
+						            value, arguments, interpreter);
 					}
 
 					virtual void overload(
@@ -173,18 +203,44 @@ namespace p0
 					typedef boost::unordered_map<std::size_t, std::unique_ptr<basic_method>> overloads;
 
 					overloads m_overloads;
+
+					basic_method const &find_overload(std::size_t argument_count) const
+					{
+						auto const i = m_overloads.find(argument_count);
+						if (i == m_overloads.end())
+						{
+							//TODO
+							throw std::runtime_error(
+							            "No overload for this argument count");
+						}
+						return *i->second;
+					}
 				};
 
-				template <class Result, class ...Args>
+				template <class F, class Result, class ...Args>
 				struct non_overloaded_method : basic_method
 				{
-					virtual run::value call(
-					        Class const &value,
-					        std::vector<run::value> const &arguments,
-					        run::interpreter &) const PROTOLANG0_OVERRIDE
+					template <class G>
+					explicit non_overloaded_method(G &&function)
+					    : m_function(std::forward<G>(function))
 					{
-						//TODO
-						return run::value();
+					}
+
+					virtual run::value call(
+					        Class &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
+					{
+						std::size_t expected_arguments = sizeof...(Args);
+						if (arguments.size() < expected_arguments)
+						{
+							throw std::invalid_argument("More arguments required");
+						}
+						return do_call(value,
+						               arguments,
+						               interpreter,
+						               typename detail::make_indices<sizeof...(Args)>::type(),
+						               boost::is_same<void, Result>());
 					}
 
 					virtual void overload(
@@ -203,6 +259,53 @@ namespace p0
 					}
 
 				private:
+
+					F const m_function;
+
+					template <class Integer,
+					          class IsCompatible = boost::is_integral<Integer>>
+					static void convert_argument(Integer &to,
+					                             run::value const &from)
+					{
+						to = static_cast<Integer>(run::to_integer(from));
+					}
+
+					template <class A>
+					static A get_cpp_argument(run::value const &from)
+					{
+						A to;
+						convert_argument(to, from);
+						return to;
+					}
+
+					template <class C, std::size_t ...Indices>
+					run::value do_call(C &&value,
+					                   std::vector<run::value> const &arguments,
+							           run::interpreter &,
+					                   detail::indices<Indices...>,
+					                   boost::true_type) const
+					{
+						std::size_t expected_arguments = sizeof...(Args);
+						assert(arguments.size() >= expected_arguments);
+						m_function(value,
+						           get_cpp_argument<Args>(arguments[Indices])...);
+						return run::value();
+					}
+
+					template <class C, std::size_t ...Indices>
+					run::value do_call(C &&value,
+					                   std::vector<run::value> const &arguments,
+							           run::interpreter &,
+					                   detail::indices<Indices...>,
+					                   boost::false_type) const
+					{
+						std::size_t expected_arguments = sizeof...(Args);
+						assert(arguments.size() >= expected_arguments);
+						//TODO support more types
+						return run::value(
+						    m_function(value,
+						               get_cpp_argument<Args>(arguments[Indices])...));
+					}
 				};
 
 			private:
