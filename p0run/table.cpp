@@ -27,7 +27,14 @@ namespace p0
 
 		bool table::set_element(value const &key, value const &value)
 		{
-			m_elements[key] = value;
+			if (value.type == value_type::null)
+			{
+				m_elements.erase(key);
+			}
+			else
+			{
+				m_elements[key] = value;
+			}
 			return true;
 		}
 
