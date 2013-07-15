@@ -192,3 +192,75 @@ BOOST_AUTO_TEST_CASE(native_object_policy_args_test)
 	BOOST_CHECK_EQUAL(run::value(125),
 	                  obj.call_method(run::value(add_a), std::vector<run::value>(1, run::value(2)), interpreter_));
 }
+
+namespace
+{
+	struct builtin_types_tester
+	{
+		template <class Int>
+		Int test_int(Int a, Int b)
+		{
+			return a + b;
+		}
+	};
+
+	bool test_int(run::object &tester,
+	              std::string const &method_name,
+	              run::interpreter &interpreter)
+	{
+		run::string test_int(method_name);
+		return (run::value(-3) ==
+		        tester.call_method(run::value(test_int),
+		            {run::value(5), run::value(-8)}, interpreter));
+
+	}
+
+	bool test_uint(run::object &tester,
+	              std::string const &method_name,
+	              run::interpreter &interpreter)
+	{
+		run::string test_int(method_name);
+		return (run::value(13) ==
+		        tester.call_method(run::value(test_int),
+		            {run::value(5), run::value(8)}, interpreter));
+
+	}
+}
+
+BOOST_AUTO_TEST_CASE(native_object_int_test)
+{
+	run::default_garbage_collector gc;
+	run::interpreter interpreter_(gc, nullptr);
+
+	native_class<builtin_types_tester> test_class;
+	test_class.add_method("test_char", &builtin_types_tester::test_int<char>);
+
+	test_class.add_method("test_schar", &builtin_types_tester::test_int<signed char>);
+	test_class.add_method("test_short", &builtin_types_tester::test_int<short>);
+	test_class.add_method("test_int", &builtin_types_tester::test_int<int>);
+	test_class.add_method("test_long", &builtin_types_tester::test_int<long>);
+	test_class.add_method("test_longlong", &builtin_types_tester::test_int<long long>);
+
+	test_class.add_method("test_uchar", &builtin_types_tester::test_int<unsigned char>);
+	test_class.add_method("test_ushort", &builtin_types_tester::test_int<unsigned short>);
+	test_class.add_method("test_uint", &builtin_types_tester::test_int<unsigned int>);
+	test_class.add_method("test_ulong", &builtin_types_tester::test_int<unsigned long>);
+	test_class.add_method("test_ulonglong", &builtin_types_tester::test_int<unsigned long long>);
+
+	native_object<builtin_types_tester, per_object_native_class<builtin_types_tester>>
+	    obj(policy_arg(), std::ref(test_class));
+
+	BOOST_CHECK(test_uint(obj, "test_char", interpreter_));
+
+	BOOST_CHECK(test_int(obj, "test_schar", interpreter_));
+	BOOST_CHECK(test_int(obj, "test_short", interpreter_));
+	BOOST_CHECK(test_int(obj, "test_int", interpreter_));
+	BOOST_CHECK(test_int(obj, "test_long", interpreter_));
+	BOOST_CHECK(test_int(obj, "test_longlong", interpreter_));
+
+	BOOST_CHECK(test_uint(obj, "test_uchar", interpreter_));
+	BOOST_CHECK(test_uint(obj, "test_ushort", interpreter_));
+	BOOST_CHECK(test_uint(obj, "test_uint", interpreter_));
+	BOOST_CHECK(test_uint(obj, "test_ulong", interpreter_));
+	BOOST_CHECK(test_uint(obj, "test_ulonglong", interpreter_));
+}
