@@ -6,6 +6,7 @@
 #include "p0run/string.hpp"
 #include "p0run/interpreter.hpp"
 #include "p0run/construct.hpp"
+#include "p0rt/from_cpp.hpp"
 #include <cstddef>
 #include <boost/unordered_map.hpp>
 
@@ -240,27 +241,6 @@ namespace p0
 						a_value to;
 						convert_argument(to, from);
 						return to;
-					}
-
-					template <class Integer,
-					          class IsCompatible = typename std::enable_if<boost::is_integral<Integer>::value, void>::type>
-					static run::value from_cpp(Integer value,
-					                           run::interpreter &)
-					{
-						return run::value(static_cast<run::integer>(value));
-					}
-
-					static run::value from_cpp(std::string value,
-					                           run::interpreter &interpreter)
-					{
-						auto &gc = interpreter.garbage_collector();
-						return run::value(run::construct<run::string>(gc, std::move(value)));
-					}
-
-					static run::value from_cpp(run::value value,
-					                           run::interpreter &)
-					{
-						return value;
 					}
 
 					template <class C, std::size_t ...Indices>
