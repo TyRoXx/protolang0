@@ -203,6 +203,11 @@ namespace
 			return static_cast<Int>(a + b);
 		}
 
+		bool test_bool(bool a)
+		{
+			return !a;
+		}
+
 		std::string std_str(std::string a, std::string const &b)
 		{
 			return a + b;
@@ -311,4 +316,22 @@ BOOST_AUTO_TEST_CASE(native_object_p0_value_test)
 	BOOST_CHECK_EQUAL(run::value(12),
 	                  obj.call_method(run::value(p0_value),
 	                      {run::value(12), run::value(6)}, interpreter_));
+}
+
+BOOST_AUTO_TEST_CASE(native_object_bool_test)
+{
+	run::default_garbage_collector gc;
+	run::interpreter interpreter_(gc, nullptr);
+
+	native_class<builtin_types_tester> test_class;
+	test_class.add_method("test_bool", &builtin_types_tester::test_bool);
+
+	native_object<builtin_types_tester, per_object_native_class<builtin_types_tester>>
+	    obj(policy_arg(), std::ref(test_class));
+
+	run::string test_bool("test_bool");
+
+	BOOST_CHECK_EQUAL(run::value(0),
+	                  obj.call_method(run::value(test_bool),
+	                      {run::value(1)}, interpreter_));
 }

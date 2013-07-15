@@ -28,6 +28,12 @@ namespace p0
 			to = static_cast<Integer>(run::to_integer(from));
 		}
 
+		inline void to_cpp(bool &to,
+		                   run::value from)
+		{
+			to = run::to_boolean(from);
+		}
+
 		inline void to_cpp(std::string &to,
 		                   run::value from)
 		{
