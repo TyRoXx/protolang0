@@ -146,6 +146,11 @@ namespace
 		    , b(std::move(b))
 		{
 		}
+
+		int add_a(int other) const
+		{
+			return a + other;
+		}
 	};
 
 	struct without_default_ctor_policies
@@ -157,17 +162,31 @@ namespace
 	        , no_elements
 	        , not_bindable
 	{
+		explicit without_default_ctor_policies(native_class<without_default_ctor> const &description)
+		    : native_methods_from_ctor<without_default_ctor>(description)
+		{
+		}
 	};
 }
 
 BOOST_AUTO_TEST_CASE(native_object_policy_args_test)
 {
+	run::default_garbage_collector gc;
+	run::interpreter interpreter_(gc, nullptr);
+
 	native_class<without_default_ctor> wd_class;
-	//TODO: get the class into the object somehow
-	native_object<without_default_ctor, without_default_ctor_policies>
-	        obj(123, "hello");
+	wd_class.add_method("add_a", &without_default_ctor::add_a);
+
+	native_object<without_default_ctor, without_default_ctor_policies> obj(
+	            policy_arg(), std::ref(wd_class),
+	            123,
+	            "hello");
 
 	auto &value = obj.value();
 	BOOST_CHECK_EQUAL(value.a, 123);
 	BOOST_CHECK_EQUAL(value.b, "hello");
+
+	run::string add_a("add_a");
+	BOOST_CHECK_EQUAL(run::value(125),
+	                  obj.call_method(run::value(add_a), std::vector<run::value>(1, run::value(2)), interpreter_));
 }

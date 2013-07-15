@@ -307,8 +307,8 @@ namespace p0
 			template <class Class>
 			struct native_methods_from_ctor
 			{
-				native_methods_from_ctor()
-					: m_description(nullptr)
+				explicit native_methods_from_ctor(native_class<Class> const &description)
+					: m_description(&description)
 				{
 				}
 
@@ -327,7 +327,7 @@ namespace p0
 
 			private:
 
-				native_class<Class> *m_description;
+				native_class<Class> const *m_description;
 			};
 		}
 	}

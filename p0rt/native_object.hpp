@@ -180,15 +180,35 @@ namespace p0
 			};
 		}
 
+		struct policy_arg
+		{
+		};
+
 		template <class T,
 		          class Policies = native_object_policies::default_native_object>
 		struct native_object PROTOLANG0_FINAL_CLASS
 		        : public detail::basic_native_object<T>
 		        , private Policies
 		{
-			template <class ...Args>
-			explicit native_object(Args &&...args)
+			native_object()
+			{
+			}
+
+			template <class Arg0,
+			          class ...Args,
+			          class NoPolicyArgs = typename std::enable_if<!std::is_same<policy_arg, typename std::decay<Arg0>::type>::value, void>::type>
+			explicit native_object(Arg0 &&arg0,
+			                       Args &&...args)
+			    : detail::basic_native_object<T>(std::forward<Arg0>(arg0), std::forward<Args>(args)...)
+			{
+			}
+
+			template <class PolicyArgument, class ...Args>
+			explicit native_object(policy_arg const &,
+			                       PolicyArgument &&policy_arg,
+			                       Args &&...args)
 			    : detail::basic_native_object<T>(std::forward<Args>(args)...)
+			    , Policies(std::forward<PolicyArgument>(policy_arg))
 			{
 			}
 
