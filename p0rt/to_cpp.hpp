@@ -11,6 +11,12 @@ namespace p0
 {
 	namespace rt
 	{
+		inline void to_cpp(run::value &to,
+		                   run::value from)
+		{
+			to = from;
+		}
+
 		template <class Integer,
 		          class IsCompatible = typename std::enable_if<boost::is_integral<Integer>::value, void>::type>
 		void to_cpp(Integer &to,
@@ -23,12 +29,6 @@ namespace p0
 		                   run::value from)
 		{
 			to = run::expect_string(from);
-		}
-
-		inline void to_cpp(run::value &to,
-		                   run::value from)
-		{
-			to = from;
 		}
 
 		template <class Key, class Value, class Compare, class Alloc>

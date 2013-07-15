@@ -23,7 +23,7 @@ namespace p0
 		template <class Integer,
 		          class IsCompatible = typename std::enable_if<boost::is_integral<Integer>::value, void>::type>
 		run::value from_cpp(Integer value,
-		                           run::interpreter &)
+		                    run::interpreter &)
 		{
 			return run::value(static_cast<run::integer>(value));
 		}
