@@ -58,7 +58,7 @@ namespace
 
 	struct has_methods_policies
 	        : do_not_mark
-	        , native_methods<has_methods>
+	        , native_methods_global<has_methods>
 	        , not_callable
 	        , print_object
 	        , compare_object
@@ -112,7 +112,7 @@ namespace p0
 	}
 }
 
-BOOST_AUTO_TEST_CASE(native_object_methods_test)
+BOOST_AUTO_TEST_CASE(native_object_methods_call_test)
 {
 	run::default_garbage_collector gc;
 	run::interpreter interpreter_(gc, nullptr);
@@ -132,4 +132,42 @@ BOOST_AUTO_TEST_CASE(native_object_methods_test)
 	            run::value(returns_value),
 	            std::vector<run::value>(1, run::value(0)),
 	            interpreter_));
+}
+
+namespace
+{
+	struct without_default_ctor
+	{
+		int a;
+		std::string b;
+
+		explicit without_default_ctor(int a, std::string b)
+		    : a(a)
+		    , b(std::move(b))
+		{
+		}
+	};
+
+	struct without_default_ctor_policies
+	        : do_not_mark
+	        , native_methods_from_ctor<without_default_ctor>
+	        , not_callable
+	        , print_object
+	        , compare_object
+	        , no_elements
+	        , not_bindable
+	{
+	};
+}
+
+BOOST_AUTO_TEST_CASE(native_object_policy_args_test)
+{
+	native_class<without_default_ctor> wd_class;
+	//TODO: get the class into the object somehow
+	native_object<without_default_ctor, without_default_ctor_policies>
+	        obj(123, "hello");
+
+	auto &value = obj.value();
+	BOOST_CHECK_EQUAL(value.a, 123);
+	BOOST_CHECK_EQUAL(value.b, "hello");
 }

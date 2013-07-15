@@ -268,8 +268,26 @@ namespace p0
 			template <class Class>
 			struct native_class_traits;
 
+			namespace detail
+			{
+				template <class Class>
+				boost::optional<run::value> call_method(
+					Class &instance,
+					native_class<Class> const &description,
+					run::value const &method_name,
+					std::vector<run::value> const &arguments,
+					run::interpreter &interpreter)
+				{
+					return description.call_method(
+						instance,
+						run::expect_string(method_name),
+						arguments,
+						interpreter);
+				}
+			}
+
 			template <class Class>
-			struct native_methods
+			struct native_methods_global
 			{
 				boost::optional<run::value> call_method(
 				        run::object & /*obj*/,
@@ -278,13 +296,38 @@ namespace p0
 				        std::vector<run::value> const &arguments,
 				        run::interpreter &interpreter) const
 				{
-					native_class<Class> const &class_ =
+					native_class<Class> const &description =
 					        native_class_traits<Class>::description();
-					return class_.call_method(instance,
-					                          run::expect_string(method_name),
-					                          arguments,
-					                          interpreter);
+					return detail::call_method(
+						instance, description,
+						method_name, arguments, interpreter);
 				}
+			};
+
+			template <class Class>
+			struct native_methods_from_ctor
+			{
+				native_methods_from_ctor()
+					: m_description(nullptr)
+				{
+				}
+
+				boost::optional<run::value> call_method(
+				        run::object & /*obj*/,
+				        Class &instance,
+				        run::value const &method_name,
+				        std::vector<run::value> const &arguments,
+				        run::interpreter &interpreter) const
+				{
+					assert(m_description);
+					return detail::call_method(
+						instance, *m_description,
+						method_name, arguments, interpreter);
+				}
+
+			private:
+
+				native_class<Class> *m_description;
 			};
 		}
 	}
