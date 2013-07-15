@@ -4,15 +4,23 @@ return function (assert)
 	assert(std)
 	assert(std.enumerate)
 
-	var enumeration_state = [count = 0]
-
-	std.enumerate([a = 1, b = 2], function (key, value)
 	{
-		assert((key == "a" && value == 1) ||
-		       (key == "b" && value == 2))
-		enumeration_state.count = enumeration_state.count + 1
-		return 1
-	})
+		var enumeration_state = [count = 0]
 
-	assert(enumeration_state.count == 2)
+		std.enumerate([a = 1, b = 2], function (key, value)
+		{
+			assert((key == "a" && value == 1) ||
+				   (key == "b" && value == 2))
+			enumeration_state.count = enumeration_state.count + 1
+			return 1
+		})
+
+		assert(enumeration_state.count == 2)
+	}
+
+	std.enumerate([], function (key, value)
+	{
+		; this callback is not expected to be called
+		assert(0)
+	})
 }
