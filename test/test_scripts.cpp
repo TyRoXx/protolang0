@@ -85,6 +85,7 @@ namespace
 		t.run_test_script("integer.p0");
 		t.run_test_script("table.p0");
 		t.run_test_script("null.p0");
+		t.run_test_script("std_enumerate.p0");
 #ifdef PROTOLANG0_WITH_TEMPEST
 		t.run_test_script("tempest.p0");
 #endif

@@ -212,6 +212,48 @@ namespace p0
 				run::object &result = run::construct<array>(gc, arguments);
 				return run::value(result);
 			}
+
+			run::value std_enumerate(std::vector<run::value> const &arguments)
+			{
+				if (arguments.size() < 2 ||
+				    arguments[0].type != run::value_type::object)
+				{
+					return run::value();
+				}
+
+				typedef std::vector<std::pair<run::value, run::value>> element_vector;
+				struct element_flattener : run::object_element_callback
+				{
+					explicit element_flattener(element_vector &elements)
+					    : elements(elements)
+					{
+					}
+
+					virtual bool handle_element(run::value key,
+					                            run::value value) PROTOLANG0_OVERRIDE
+					{
+						elements.push_back(std::make_pair(key, value));
+						return true;
+					}
+
+				private:
+
+					element_vector &elements;
+				};
+
+				element_vector elements;
+				{
+					element_flattener callback((elements));
+					arguments[0].obj->enumerate_elements(callback);
+				}
+
+				run::value const element_callback = arguments[1];
+				BOOST_FOREACH (auto const &element, elements)
+				{
+					assert(nullptr == "TODO");
+				}
+				return run::value();
+			}
 		}
 
 		run::value register_standard_module(run::garbage_collector &gc)
@@ -226,6 +268,7 @@ namespace p0
 				.insert_fn("class", &std_class)
 				.insert_fn("new", std::bind(std_new, std::ref(gc), _1))
 				.insert_fn("array", std::bind(&std_array, std::ref(gc), _1))
+				.insert_fn("enumerate", &std_enumerate)
 				;
 			return run::value(module);
 		}
