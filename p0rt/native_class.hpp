@@ -39,6 +39,160 @@ namespace p0
 
 		namespace native_object_policies
 		{
+			namespace detail
+			{
+				template <class Class>
+				struct basic_method
+				{
+					virtual ~basic_method()
+					{
+					}
+
+					virtual run::value call(
+					        Class &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &interpreter) const = 0;
+					virtual void overload(
+					        std::unique_ptr<basic_method> &this_,
+					        std::unique_ptr<basic_method> new_method,
+					        std::size_t argument_count
+					        ) = 0;
+				};
+
+				template <class Class>
+				struct overloaded_method : basic_method<Class>
+				{
+					void add_method(std::size_t argument_count,
+					                std::unique_ptr<basic_method<Class>> method)
+					{
+						m_overloads.insert(
+						    std::make_pair(argument_count, std::move(method)));
+					}
+
+					virtual run::value call(
+					        Class &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
+					{
+						return find_overload(arguments.size()).call(
+						            value, arguments, interpreter);
+					}
+
+					virtual void overload(
+					        std::unique_ptr<basic_method<Class>> &this_,
+					        std::unique_ptr<basic_method<Class>> new_method,
+					        std::size_t argument_count
+					        ) PROTOLANG0_OVERRIDE
+					{
+						assert(this == this_.get());
+						add_method(argument_count, std::move(new_method));
+					}
+
+				private:
+
+					typedef boost::unordered_map<std::size_t, std::unique_ptr<basic_method<Class>>> overloads;
+
+					overloads m_overloads;
+
+					basic_method<Class> const &find_overload(std::size_t argument_count) const
+					{
+						auto const i = m_overloads.find(argument_count);
+						if (i == m_overloads.end())
+						{
+							//TODO
+							throw std::runtime_error(
+							            "No overload for this argument count");
+						}
+						return *i->second;
+					}
+				};
+
+				template <class Class, class F, class Result, class ...Args>
+				struct non_overloaded_method : basic_method<Class>
+				{
+					template <class G>
+					explicit non_overloaded_method(G &&function)
+					    : m_function(std::forward<G>(function))
+					{
+					}
+
+					virtual run::value call(
+					        Class &value,
+					        std::vector<run::value> const &arguments,
+					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
+					{
+						std::size_t expected_arguments = sizeof...(Args);
+						if (arguments.size() < expected_arguments)
+						{
+							throw std::invalid_argument("More arguments required");
+						}
+						return do_call(value,
+						               arguments,
+						               interpreter,
+						               typename p0::rt::detail::make_indices<sizeof...(Args)>::type(),
+						               boost::is_same<void, Result>());
+					}
+
+					virtual void overload(
+					        std::unique_ptr<basic_method<Class>> &this_,
+					        std::unique_ptr<basic_method<Class>> new_method,
+					        std::size_t argument_count
+					        ) PROTOLANG0_OVERRIDE
+					{
+						//TODO make this method exception-safe
+						assert(this == this_.get());
+						std::unique_ptr<overloaded_method<Class>> methods(
+						            new overloaded_method<Class>);
+						methods->add_method(argument_count, std::move(new_method));
+						methods->add_method(sizeof...(Args), std::move(this_));
+						this_ = std::move(methods);
+					}
+
+				private:
+
+					F const m_function;
+
+					template <class A,
+					          class a_value = typename std::decay<A>::type>
+					static a_value get_cpp_argument(run::value const &from)
+					{
+						a_value to;
+						to_cpp(to, from);
+						return to;
+					}
+
+					template <class C, std::size_t ...Indices>
+					run::value do_call(C &&value,
+					                   std::vector<run::value> const &arguments,
+							           run::interpreter &,
+					                   p0::rt::detail::indices<Indices...>,
+					                   boost::true_type) const
+					{
+						std::size_t expected_arguments = sizeof...(Args);
+						assert(arguments.size() >= expected_arguments);
+						m_function(value,
+						           get_cpp_argument<Args>(arguments[Indices])...);
+						return run::value();
+					}
+
+					template <class C, std::size_t ...Indices>
+					run::value do_call(C &&value,
+					                   std::vector<run::value> const &arguments,
+							           run::interpreter &interpreter,
+					                   p0::rt::detail::indices<Indices...>,
+					                   boost::false_type) const
+					{
+						std::size_t expected_arguments = sizeof...(Args);
+						assert(arguments.size() >= expected_arguments);
+						//TODO support more types
+						return from_cpp(
+						    m_function(value,
+						               get_cpp_argument<Args>(arguments[Indices])...),
+					        interpreter);
+					}
+				};
+			}
+
 			template <class Class>
 			struct native_class
 			{
@@ -72,7 +226,7 @@ namespace p0
 				void add_method(std::string name,
 				                F &&method)
 				{
-					typedef non_overloaded_method<F, Result, Args...> wrapper_type;
+					typedef detail::non_overloaded_method<Class, F, Result, Args...> wrapper_type;
 					std::unique_ptr<wrapper_type> method_wrapper(
 					            new wrapper_type(std::forward<F>(method)));
 
@@ -106,159 +260,8 @@ namespace p0
 
 			private:
 
-				struct basic_method
-				{
-					virtual ~basic_method()
-					{
-					}
-
-					virtual run::value call(
-					        Class &value,
-					        std::vector<run::value> const &arguments,
-					        run::interpreter &interpreter) const = 0;
-					virtual void overload(
-					        std::unique_ptr<basic_method> &this_,
-					        std::unique_ptr<basic_method> new_method,
-					        std::size_t argument_count
-					        ) = 0;
-				};
-
-				struct overloaded_method : basic_method
-				{
-					void add_method(std::size_t argument_count,
-					                std::unique_ptr<basic_method> method)
-					{
-						m_overloads.insert(
-						    std::make_pair(argument_count, std::move(method)));
-					}
-
-					virtual run::value call(
-					        Class &value,
-					        std::vector<run::value> const &arguments,
-					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
-					{
-						return find_overload(arguments.size()).call(
-						            value, arguments, interpreter);
-					}
-
-					virtual void overload(
-					        std::unique_ptr<basic_method> &this_,
-					        std::unique_ptr<basic_method> new_method,
-					        std::size_t argument_count
-					        ) PROTOLANG0_OVERRIDE
-					{
-						assert(this == this_.get());
-						add_method(argument_count, std::move(new_method));
-					}
-
-				private:
-
-					typedef boost::unordered_map<std::size_t, std::unique_ptr<basic_method>> overloads;
-
-					overloads m_overloads;
-
-					basic_method const &find_overload(std::size_t argument_count) const
-					{
-						auto const i = m_overloads.find(argument_count);
-						if (i == m_overloads.end())
-						{
-							//TODO
-							throw std::runtime_error(
-							            "No overload for this argument count");
-						}
-						return *i->second;
-					}
-				};
-
-				template <class F, class Result, class ...Args>
-				struct non_overloaded_method : basic_method
-				{
-					template <class G>
-					explicit non_overloaded_method(G &&function)
-					    : m_function(std::forward<G>(function))
-					{
-					}
-
-					virtual run::value call(
-					        Class &value,
-					        std::vector<run::value> const &arguments,
-					        run::interpreter &interpreter) const PROTOLANG0_OVERRIDE
-					{
-						std::size_t expected_arguments = sizeof...(Args);
-						if (arguments.size() < expected_arguments)
-						{
-							throw std::invalid_argument("More arguments required");
-						}
-						return do_call(value,
-						               arguments,
-						               interpreter,
-						               typename detail::make_indices<sizeof...(Args)>::type(),
-						               boost::is_same<void, Result>());
-					}
-
-					virtual void overload(
-					        std::unique_ptr<basic_method> &this_,
-					        std::unique_ptr<basic_method> new_method,
-					        std::size_t argument_count
-					        ) PROTOLANG0_OVERRIDE
-					{
-						//TODO make this method exception-safe
-						assert(this == this_.get());
-						std::unique_ptr<overloaded_method> methods(
-						            new overloaded_method);
-						methods->add_method(argument_count, std::move(new_method));
-						methods->add_method(sizeof...(Args), std::move(this_));
-						this_ = std::move(methods);
-					}
-
-				private:
-
-					F const m_function;
-
-					template <class A,
-					          class a_value = typename std::decay<A>::type>
-					static a_value get_cpp_argument(run::value const &from)
-					{
-						a_value to;
-						to_cpp(to, from);
-						return to;
-					}
-
-					template <class C, std::size_t ...Indices>
-					run::value do_call(C &&value,
-					                   std::vector<run::value> const &arguments,
-							           run::interpreter &,
-					                   detail::indices<Indices...>,
-					                   boost::true_type) const
-					{
-						std::size_t expected_arguments = sizeof...(Args);
-						assert(arguments.size() >= expected_arguments);
-						m_function(value,
-						           get_cpp_argument<Args>(arguments[Indices])...);
-						return run::value();
-					}
-
-					template <class C, std::size_t ...Indices>
-					run::value do_call(C &&value,
-					                   std::vector<run::value> const &arguments,
-							           run::interpreter &interpreter,
-					                   detail::indices<Indices...>,
-					                   boost::false_type) const
-					{
-						std::size_t expected_arguments = sizeof...(Args);
-						assert(arguments.size() >= expected_arguments);
-						//TODO support more types
-						return from_cpp(
-						    m_function(value,
-						               get_cpp_argument<Args>(arguments[Indices])...),
-					        interpreter);
-					}
-				};
-
-			private:
-
 				typedef boost::unordered_map<std::string,
-				                             std::unique_ptr<basic_method>> methods_by_name;
+				                             std::unique_ptr<detail::basic_method<Class>>> methods_by_name;
 
 				methods_by_name m_methods;
 			};
