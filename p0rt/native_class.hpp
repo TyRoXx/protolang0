@@ -7,6 +7,7 @@
 #include "p0run/interpreter.hpp"
 #include "p0run/construct.hpp"
 #include "p0rt/from_cpp.hpp"
+#include "p0rt/to_cpp.hpp"
 #include <cstddef>
 #include <boost/unordered_map.hpp>
 
@@ -214,32 +215,12 @@ namespace p0
 
 					F const m_function;
 
-					template <class Integer,
-					          class IsCompatible = typename std::enable_if<boost::is_integral<Integer>::value, void>::type>
-					static void convert_argument(Integer &to,
-					                             run::value from)
-					{
-						to = static_cast<Integer>(run::to_integer(from));
-					}
-
-					static void convert_argument(std::string &to,
-					                             run::value from)
-					{
-						to = run::expect_string(from);
-					}
-
-					static void convert_argument(run::value &to,
-					                             run::value from)
-					{
-						to = from;
-					}
-
 					template <class A,
 					          class a_value = typename std::decay<A>::type>
 					static a_value get_cpp_argument(run::value const &from)
 					{
 						a_value to;
-						convert_argument(to, from);
+						to_cpp(to, from);
 						return to;
 					}
 
