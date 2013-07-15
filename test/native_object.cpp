@@ -208,7 +208,7 @@ namespace
 			return a + b;
 		}
 
-		run::value p0_value(run::value a, run::value const &b)
+		run::value p0_value(run::value a, run::value const &)
 		{
 			return a;
 		}

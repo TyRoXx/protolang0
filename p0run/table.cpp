@@ -31,6 +31,17 @@ namespace p0
 			return true;
 		}
 
+		void table::enumerate_elements(object_element_callback &handler) const
+		{
+			BOOST_FOREACH (auto const &element, m_elements)
+			{
+				if (!handler.handle_element(element.first, element.second))
+				{
+					break;
+				}
+			}
+		}
+
 		void table::print(std::ostream &out) const
 		{
 			out << "[";

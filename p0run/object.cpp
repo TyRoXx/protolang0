@@ -6,6 +6,11 @@ namespace p0
 {
 	namespace run
 	{
+		object_element_callback::~object_element_callback()
+		{
+		}
+
+
 		object::object()
 			: m_is_marked(false)
 		{
@@ -48,6 +53,11 @@ namespace p0
 		bool object::set_element(value const & /*key*/, value const & /*value*/)
 		{
 			return false;
+		}
+
+		void object::enumerate_elements(object_element_callback &) const
+		{
+			//no elements by default, nothing to do
 		}
 
 		integer object::get_hash_code() const

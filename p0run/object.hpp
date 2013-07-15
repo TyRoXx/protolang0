@@ -16,6 +16,13 @@ namespace p0
 		struct interpreter;
 
 
+		struct object_element_callback
+		{
+			virtual ~object_element_callback();
+			virtual bool handle_element(value key, value value) = 0;
+		};
+
+
 		struct object
 		{
 			object();
@@ -25,6 +32,7 @@ namespace p0
 			bool is_marked() const;
 			virtual boost::optional<value> get_element(value const &key) const;
 			virtual bool set_element(value const &key, value const &value);
+			virtual void enumerate_elements(object_element_callback &handler) const;
 			virtual integer get_hash_code() const;
 			virtual bool equals(object const &other) const;
 			virtual comparison_result::Enum compare(object const &right) const;

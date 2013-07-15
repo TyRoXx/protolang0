@@ -22,6 +22,7 @@ namespace p0
 			explicit table(elements elements);
 			virtual boost::optional<value> get_element(value const &key) const PROTOLANG0_FINAL_METHOD;
 			virtual bool set_element(value const &key, value const &value) PROTOLANG0_FINAL_METHOD;
+			virtual void enumerate_elements(object_element_callback &handler) const PROTOLANG0_FINAL_METHOD;
 			virtual void print(std::ostream &out) const PROTOLANG0_FINAL_METHOD;
 
 		private:
