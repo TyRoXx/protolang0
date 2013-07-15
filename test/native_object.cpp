@@ -202,6 +202,16 @@ namespace
 		{
 			return a + b;
 		}
+
+		std::string std_str(std::string a, std::string const &b)
+		{
+			return a + b;
+		}
+
+		run::value p0_value(run::value a, run::value const &b)
+		{
+			return a;
+		}
 	};
 
 	bool test_int(run::object &tester,
@@ -263,4 +273,42 @@ BOOST_AUTO_TEST_CASE(native_object_int_test)
 	BOOST_CHECK(test_uint(obj, "test_uint", interpreter_));
 	BOOST_CHECK(test_uint(obj, "test_ulong", interpreter_));
 	BOOST_CHECK(test_uint(obj, "test_ulonglong", interpreter_));
+}
+
+BOOST_AUTO_TEST_CASE(native_object_string_test)
+{
+	run::default_garbage_collector gc;
+	run::interpreter interpreter_(gc, nullptr);
+
+	native_class<builtin_types_tester> test_class;
+	test_class.add_method("std_str", &builtin_types_tester::std_str);
+
+	native_object<builtin_types_tester, per_object_native_class<builtin_types_tester>>
+	    obj(policy_arg(), std::ref(test_class));
+
+	run::string std_str("std_str");
+	run::string a("A");
+	run::string b("B");
+
+	BOOST_CHECK_EQUAL("AB",
+	                  run::expect_string(*obj.call_method(run::value(std_str),
+	                      {run::value(a), run::value(b)}, interpreter_)));
+}
+
+BOOST_AUTO_TEST_CASE(native_object_p0_value_test)
+{
+	run::default_garbage_collector gc;
+	run::interpreter interpreter_(gc, nullptr);
+
+	native_class<builtin_types_tester> test_class;
+	test_class.add_method("p0_value", &builtin_types_tester::p0_value);
+
+	native_object<builtin_types_tester, per_object_native_class<builtin_types_tester>>
+	    obj(policy_arg(), std::ref(test_class));
+
+	run::string p0_value("p0_value");
+
+	BOOST_CHECK_EQUAL(run::value(12),
+	                  obj.call_method(run::value(p0_value),
+	                      {run::value(12), run::value(6)}, interpreter_));
 }

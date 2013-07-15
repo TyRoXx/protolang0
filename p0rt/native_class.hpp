@@ -4,6 +4,8 @@
 
 
 #include "p0run/string.hpp"
+#include "p0run/interpreter.hpp"
+#include "p0run/construct.hpp"
 #include <cstddef>
 #include <boost/unordered_map.hpp>
 
@@ -212,19 +214,53 @@ namespace p0
 					F const m_function;
 
 					template <class Integer,
-					          class IsCompatible = boost::is_integral<Integer>>
+					          class IsCompatible = typename std::enable_if<boost::is_integral<Integer>::value, void>::type>
 					static void convert_argument(Integer &to,
-					                             run::value const &from)
+					                             run::value from)
 					{
 						to = static_cast<Integer>(run::to_integer(from));
 					}
 
-					template <class A>
-					static A get_cpp_argument(run::value const &from)
+					static void convert_argument(std::string &to,
+					                             run::value from)
 					{
-						A to;
+						to = run::expect_string(from);
+					}
+
+					static void convert_argument(run::value &to,
+					                             run::value from)
+					{
+						to = from;
+					}
+
+					template <class A,
+					          class a_value = typename std::decay<A>::type>
+					static a_value get_cpp_argument(run::value const &from)
+					{
+						a_value to;
 						convert_argument(to, from);
 						return to;
+					}
+
+					template <class Integer,
+					          class IsCompatible = typename std::enable_if<boost::is_integral<Integer>::value, void>::type>
+					static run::value from_cpp(Integer value,
+					                           run::interpreter &)
+					{
+						return run::value(static_cast<run::integer>(value));
+					}
+
+					static run::value from_cpp(std::string value,
+					                           run::interpreter &interpreter)
+					{
+						auto &gc = interpreter.garbage_collector();
+						return run::value(run::construct<run::string>(gc, std::move(value)));
+					}
+
+					static run::value from_cpp(run::value value,
+					                           run::interpreter &)
+					{
+						return value;
 					}
 
 					template <class C, std::size_t ...Indices>
@@ -244,16 +280,17 @@ namespace p0
 					template <class C, std::size_t ...Indices>
 					run::value do_call(C &&value,
 					                   std::vector<run::value> const &arguments,
-							           run::interpreter &,
+							           run::interpreter &interpreter,
 					                   detail::indices<Indices...>,
 					                   boost::false_type) const
 					{
 						std::size_t expected_arguments = sizeof...(Args);
 						assert(arguments.size() >= expected_arguments);
 						//TODO support more types
-						return run::value(
+						return from_cpp(
 						    m_function(value,
-						               get_cpp_argument<Args>(arguments[Indices])...));
+						               get_cpp_argument<Args>(arguments[Indices])...),
+					        interpreter);
 					}
 				};
 
