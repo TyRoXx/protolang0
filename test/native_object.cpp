@@ -153,17 +153,18 @@ namespace
 		}
 	};
 
-	struct without_default_ctor_policies
+	template <class Native>
+	struct per_object_native_class
 	        : do_not_mark
-	        , native_methods_from_ctor<without_default_ctor>
+	        , native_methods_from_ctor<Native>
 	        , not_callable
 	        , print_object
 	        , compare_object
 	        , no_elements
 	        , not_bindable
 	{
-		explicit without_default_ctor_policies(native_class<without_default_ctor> const &description)
-		    : native_methods_from_ctor<without_default_ctor>(description)
+		explicit per_object_native_class(native_class<Native> const &description)
+		    : native_methods_from_ctor<Native>(description)
 		{
 		}
 	};
@@ -177,7 +178,8 @@ BOOST_AUTO_TEST_CASE(native_object_policy_args_test)
 	native_class<without_default_ctor> wd_class;
 	wd_class.add_method("add_a", &without_default_ctor::add_a);
 
-	native_object<without_default_ctor, without_default_ctor_policies> obj(
+	native_object<without_default_ctor,
+	              per_object_native_class<without_default_ctor>> obj(
 	            policy_arg(), std::ref(wd_class),
 	            123,
 	            "hello");
