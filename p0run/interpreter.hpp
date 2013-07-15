@@ -7,6 +7,7 @@
 #include "value.hpp"
 #include "string_literal_cache.hpp"
 #include <set>
+#include <boost/optional.hpp>
 
 
 namespace p0
@@ -60,6 +61,11 @@ namespace p0
 					intermediate::function_ref const &function);
 			static void mark_values(std::vector<value> const &values);
 		};
+
+
+		boost::optional<value> call(run::value callee,
+		                            std::vector<value> const &arguments,
+		                            interpreter &interpreter);
 	}
 }
 

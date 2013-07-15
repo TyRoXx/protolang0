@@ -9,7 +9,7 @@ return function (assert)
 	std.enumerate([a = 1, b = 2], function (key, value)
 	{
 		assert((key == "a" && value == 1) ||
-		       (key == "b" && value == 2));
+		       (key == "b" && value == 2))
 		enumeration_state.count = enumeration_state.count + 1
 		return 1
 	})

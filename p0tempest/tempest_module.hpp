@@ -10,13 +10,13 @@ namespace p0
 {
 	namespace run
 	{
-		struct garbage_collector;
+		struct interpreter;
 	}
 
 	namespace tempest
 	{
 		extern std::string const default_module_name;
-		run::value register_tempest_module(run::garbage_collector &gc);
+		run::value register_tempest_module(run::interpreter &interpreter);
 	}
 }
 

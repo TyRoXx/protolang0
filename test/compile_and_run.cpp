@@ -39,8 +39,7 @@ namespace
 			[](p0::run::interpreter &interpreter, std::string const &name) -> p0::run::value
 		{
 			BOOST_REQUIRE(name == "std");
-			return p0::rt::register_standard_module(
-						interpreter.garbage_collector());
+			return p0::rt::register_standard_module(interpreter);
 		};
 
 		p0::run::interpreter::load_module_function const deny_module =

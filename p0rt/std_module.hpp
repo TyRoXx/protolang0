@@ -10,12 +10,12 @@ namespace p0
 {
 	namespace run
 	{
-		struct garbage_collector;
+		struct interpreter;
 	}
 
 	namespace rt
 	{
-		run::value register_standard_module(run::garbage_collector &gc);
+		run::value register_standard_module(run::interpreter &interpreter);
 	}
 }
 

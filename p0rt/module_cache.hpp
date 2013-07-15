@@ -14,7 +14,6 @@ namespace p0
 {
 	namespace run
 	{
-		struct garbage_collector;
 		struct interpreter;
 	}
 
@@ -22,7 +21,7 @@ namespace p0
 	{
 		struct lazy_module PROTOLANG0_FINAL_CLASS
 		{
-			typedef std::function<run::value (run::garbage_collector &)> loader;
+			typedef std::function<run::value (run::interpreter &)> loader;
 
 			run::value cached;
 			loader load;
@@ -58,7 +57,7 @@ namespace p0
 				lazy_module module);
 
 			run::value get_module(
-				run::garbage_collector &gc,
+				run::interpreter &interpreter,
 				std::string const &name);
 
 		private:

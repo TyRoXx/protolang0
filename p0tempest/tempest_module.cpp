@@ -1,5 +1,6 @@
 #include "tempest_module.hpp"
 #include "p0run/garbage_collector.hpp"
+#include "p0run/interpreter.hpp"
 #include "p0run/table.hpp"
 #include "p0common/not_implemented.hpp"
 #include "tempest/tcp_acceptor.hpp"
@@ -124,8 +125,9 @@ namespace p0
 			return run::value(run::construct<http_server>(gc, port, on_client));
 		}
 
-		run::value register_tempest_module(run::garbage_collector &gc)
+		run::value register_tempest_module(run::interpreter &interpreter)
 		{
+			auto &gc = interpreter.garbage_collector();
 			auto &module = run::construct<run::table>(gc);
 			rt::inserter inserter(module, gc);
 			inserter.insert_fn("create_http_server",

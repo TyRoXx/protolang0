@@ -1,5 +1,4 @@
 #include "module_cache.hpp"
-#include "p0run/interpreter.hpp"
 #include <stdexcept>
 
 
@@ -82,7 +81,7 @@ namespace p0
 		}
 
 		run::value module_cache::get_module(
-			run::garbage_collector &gc,
+			run::interpreter &interpreter,
 			std::string const &name)
 		{
 			auto const m = m_modules.find(name);
@@ -96,7 +95,7 @@ namespace p0
 
 			if (state.module.cached == run::value())
 			{
-				state.module.cached = state.module.load(gc);
+				state.module.cached = state.module.load(interpreter);
 			}
 
 			return state.module.cached;
@@ -109,7 +108,7 @@ namespace p0
 			return [&modules](p0::run::interpreter &interpreter,
 			                  std::string const &module_name)
 			{
-				return modules.get_module(interpreter.garbage_collector(),
+				return modules.get_module(interpreter,
 			                              module_name);
 			};
 		}

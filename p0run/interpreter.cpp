@@ -701,5 +701,23 @@ namespace p0
 				}
 			});
 		}
+
+
+		boost::optional<value> call(run::value callee,
+		                            std::vector<value> const &arguments,
+		                            interpreter &interpreter)
+		{
+			switch (callee.type)
+			{
+			case value_type::function_ptr:
+				return interpreter.call(*callee.function_ptr, callee, arguments);
+
+			case value_type::object:
+				return callee.obj->call(arguments, interpreter);
+
+			default:
+				return boost::none;
+			}
+		}
 	}
 }

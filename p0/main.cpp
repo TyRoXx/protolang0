@@ -135,10 +135,10 @@ int main(int argc, char **argv)
 		p0::run::default_garbage_collector gc;
 		p0::run::interpreter interpreter(gc, p0::rt::make_import(module_storage));
 		module_storage.add_module("std",
-								  p0::rt::lazy_module(p0::rt::register_standard_module(gc)));
+								  p0::rt::lazy_module(p0::rt::register_standard_module(interpreter)));
 #ifdef PROTOLANG0_WITH_TEMPEST
 		module_storage.add_module(p0::tempest::default_module_name,
-		                          p0::rt::lazy_module(boost::bind(p0::tempest::register_tempest_module, boost::ref(gc))));
+		                          p0::rt::lazy_module(boost::bind(p0::tempest::register_tempest_module, boost::ref(interpreter))));
 #endif
 
 		std::vector<p0::run::value> arguments;

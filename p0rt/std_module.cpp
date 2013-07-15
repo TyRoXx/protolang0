@@ -213,7 +213,8 @@ namespace p0
 				return run::value(result);
 			}
 
-			run::value std_enumerate(std::vector<run::value> const &arguments)
+			run::value std_enumerate(run::interpreter &interpreter,
+			                         std::vector<run::value> const &arguments)
 			{
 				if (arguments.size() < 2 ||
 				    arguments[0].type != run::value_type::object)
@@ -248,17 +249,27 @@ namespace p0
 				}
 
 				run::value const element_callback = arguments[1];
+				std::vector<run::value> callback_arguments(2);
 				BOOST_FOREACH (auto const &element, elements)
 				{
-					assert(nullptr == "TODO");
+					callback_arguments[0] = element.first;
+					callback_arguments[1] = element.second;
+					boost::optional<run::value> const is_next =
+					    call(element_callback, callback_arguments, interpreter);
+					if (is_next &&
+					    !run::to_boolean(*is_next))
+					{
+						break;
+					}
 				}
 				return run::value();
 			}
 		}
 
-		run::value register_standard_module(run::garbage_collector &gc)
+		run::value register_standard_module(run::interpreter &interpreter)
 		{
 			using namespace std::placeholders;
+			auto &gc = interpreter.garbage_collector();
 			auto &module = run::construct<run::table>(gc);
 			rt::inserter(module, gc)
 				.insert_fn("print", &std_print_string)
@@ -267,8 +278,8 @@ namespace p0
 				.insert_fn("to_string", std::bind(std_to_string, std::ref(gc), _1))
 				.insert_fn("class", &std_class)
 				.insert_fn("new", std::bind(std_new, std::ref(gc), _1))
-				.insert_fn("array", std::bind(&std_array, std::ref(gc), _1))
-				.insert_fn("enumerate", &std_enumerate)
+				.insert_fn("array", std::bind(std_array, std::ref(gc), _1))
+				.insert_fn("enumerate", std::bind(std_enumerate, std::ref(interpreter), _1))
 				;
 			return run::value(module);
 		}
