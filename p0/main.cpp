@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 			auto &program = error.function().origin();
 
 			//TODO: generate/load debug info
-			p0::intermediate::unit_info * const info = nullptr;
+			p0::intermediate::unit_info * const debug_info = nullptr;
 
 			auto const function_id = static_cast<size_t>(
 					std::distance(
@@ -162,25 +162,25 @@ int main(int argc, char **argv)
 						&error.function().function()));
 
 			err << "Error ";
-			if (info)
+			if (debug_info)
 			{
-				err << "In unit " << info->name << '\n';
+				err << "In unit " << debug_info->name << '\n';
 			}
 			err	<< error.type()
 				<< " (" << p0::run::runtime_error_code::to_string(error.type()) << ")\n";
 
 			err << "Function id " << function_id << '\n';
-			if (info)
+			if (debug_info)
 			{
 				err << "Function name "
-					<< info->functions[function_id].name << '\n';
+					<< debug_info->functions[function_id].name << '\n';
 			}
 
 			err << "Instruction index " << error.instruction() << '\n';
-			if (info)
+			if (debug_info)
 			{
 				auto const position =
-					info->functions[function_id].instructions[error.instruction()];
+					debug_info->functions[function_id].instructions[error.instruction()];
 				err << "Line " << (1 + position.row)
 					<< ", column " << (1 + position.column) << '\n';
 			}
