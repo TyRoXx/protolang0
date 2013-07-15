@@ -200,7 +200,7 @@ namespace
 		template <class Int>
 		Int test_int(Int a, Int b)
 		{
-			return a + b;
+			return static_cast<Int>(a + b);
 		}
 
 		std::string std_str(std::string a, std::string const &b)
