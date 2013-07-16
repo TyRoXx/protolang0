@@ -69,6 +69,13 @@ BOOST_AUTO_TEST_CASE(immutable_bound_variable_test)
 		"var f = function () { ", "a = a + 1 }\n"));
 }
 
+BOOST_AUTO_TEST_CASE(undefined_identifier_test)
+{
+	//a is used without being declared
+	BOOST_CHECK(test_semantic_error("", "a = 1\n"));
+	BOOST_CHECK(test_semantic_error("var b = ", "a\n"));
+}
+
 BOOST_AUTO_TEST_CASE(invalid_lvalue_test)
 {
 	BOOST_CHECK(test_semantic_error("", "null = null"));
