@@ -5,6 +5,7 @@ project(protolang0)
 if(UNIX OR MINGW)
 	set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -pedantic")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
+#	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Weffc++")
 #	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g")
 endif()
 

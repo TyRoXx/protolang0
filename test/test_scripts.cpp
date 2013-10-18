@@ -30,8 +30,10 @@ namespace
 			p0::run::default_garbage_collector gc;
 			p0::rt::module_cache modules;
 			modules.add_module("std", p0::rt::lazy_module(p0::rt::register_standard_module));
+#ifdef PROTOLANG0_WITH_TEMPEST
 			modules.add_module(p0::tempest::default_module_name,
 			                   p0::rt::lazy_module(p0::tempest::register_tempest_module));
+#endif
 			p0::run::interpreter interpreter(gc, p0::rt::make_import(modules));
 
 			BOOST_REQUIRE(!script.functions().empty());

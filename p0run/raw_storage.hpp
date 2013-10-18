@@ -7,13 +7,14 @@
 #include "p0common/final.hpp"
 #include <cstddef>
 #include <utility>
+#include <boost/noncopyable.hpp>
 
 
 namespace p0
 {
 	namespace run
 	{
-		struct raw_storage PROTOLANG0_FINAL_CLASS
+		struct raw_storage PROTOLANG0_FINAL_CLASS : boost::noncopyable
 		{
 			raw_storage();
 			raw_storage(garbage_collector &gc, std::size_t byte_size);
