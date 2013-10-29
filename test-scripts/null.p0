@@ -1,6 +1,7 @@
 return function (assert)
 {
 	assert(null == null)
+	assert(!(null != null))
 	assert(!null)
 	assert(null != 0)
 	assert(null != 1)
@@ -8,6 +9,12 @@ return function (assert)
 	assert(null != function () {})
 	assert(null != "null")
 	assert(null != "")
+	assert(null <= null)
+	assert(null >= null)
+	assert(null < 0)
+	assert(null < "")
+	assert(null < [])
+	assert(null < function () {})
 
 	var a = null
 	var b = null
