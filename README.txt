@@ -15,9 +15,7 @@ Usually working compilers:
 
 Good chances to work, but tested infrequently:
 	- Clang 3.2
-
-Currently unsupported compilers due to obscure errors or missing C++11 features:
-	- Visual C++ 2010
+	- Visual C++ 2013 (earlier versions do not work because they do not have variadic templates)
 
 TyRoXx
 tyroxxxx@gmail.com
