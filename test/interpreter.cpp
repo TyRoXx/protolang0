@@ -70,16 +70,16 @@ BOOST_AUTO_TEST_CASE(nothing_operation_test)
 
 BOOST_AUTO_TEST_CASE(set_from_constant_operation_test)
 {
-	static std::array<integer, 5> const test_numbers =
+	static std::array<run::integer, 5> const test_numbers =
 	{{
 		0,
 		1,
 		-34,
-		std::numeric_limits<integer>::min(),
-		std::numeric_limits<integer>::max()
+		std::numeric_limits<run::integer>::min(),
+		std::numeric_limits<run::integer>::max()
 	}};
 
-	BOOST_FOREACH (integer const number, test_numbers)
+	BOOST_FOREACH(run::integer const number, test_numbers)
 	{
 		run_single_function(
 			[number](intermediate::emitter &emitter, intermediate::unit::string_vector &)
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(set_null_operation_test)
 
 BOOST_AUTO_TEST_CASE(copy_operation_test)
 {
-	value const test_value(static_cast<integer>(6));
+	value const test_value(static_cast<run::integer>(6));
 
 	run_single_function(
 		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
@@ -135,9 +135,9 @@ namespace
 {
 	void integer_arithmetic_test(
 		intermediate::instruction_type::Enum op,
-		integer left,
-		integer right,
-		integer expected_result
+		run::integer left,
+		run::integer right,
+		run::integer expected_result
 		)
 	{
 		std::vector<value> arguments;
@@ -282,8 +282,8 @@ BOOST_AUTO_TEST_CASE(shift_right_operation_test)
 BOOST_AUTO_TEST_CASE(recursion_test)
 {
 	std::vector<value> arguments;
-	arguments.push_back(value(static_cast<integer>(6)));
-	arguments.push_back(value(static_cast<integer>(0)));
+	arguments.push_back(value(static_cast<run::integer>(6)));
+	arguments.push_back(value(static_cast<run::integer>(0)));
 
 	run_single_function(
 		[](intermediate::emitter &emitter, intermediate::unit::string_vector &)
@@ -308,7 +308,7 @@ BOOST_AUTO_TEST_CASE(recursion_test)
 		arguments,
 		[](value const &result)
 	{
-		BOOST_CHECK(result == value(static_cast<integer>(6 * 3)));
+		BOOST_CHECK(result == value(static_cast<run::integer>(6 * 3)));
 	});
 }
 
@@ -350,7 +350,7 @@ BOOST_AUTO_TEST_CASE(string_get_element_operation_test)
 		std::vector<value>(),
 		[&test_string](value const &result)
 	{
-		BOOST_CHECK(result == value(static_cast<integer>('!')));
+		BOOST_CHECK(result == value(static_cast<run::integer>('!')));
 	});
 }
 
@@ -412,7 +412,7 @@ BOOST_AUTO_TEST_CASE(table_set_element_operation_test)
 		std::vector<value>(),
 		[](value const &result)
 	{
-		BOOST_CHECK(result == value(static_cast<integer>(456)));
+		BOOST_CHECK(result == value(static_cast<run::integer>(456)));
 	});
 }
 
@@ -432,7 +432,7 @@ BOOST_AUTO_TEST_CASE(missing_argument_test)
 		emitter.call(3, 0);
 		emitter.set_null(0);
 	},
-		std::vector<value>(1, value(static_cast<integer>(44))),
+		std::vector<value>(1, value(static_cast<run::integer>(44))),
 		[](value const &result)
 	{
 		BOOST_CHECK(is_null(result));
@@ -464,7 +464,7 @@ namespace
 	{
 		virtual boost::optional<value> get_element(value const & /*key*/) const PROTOLANG0_FINAL_METHOD
 		{
-			return value(static_cast<integer>(456));
+			return value(static_cast<run::integer>(456));
 		}
 
 		virtual bool set_element(value const & /*key*/, value const & /*value*/) PROTOLANG0_FINAL_METHOD
@@ -501,7 +501,7 @@ BOOST_AUTO_TEST_CASE(load_trivial_module_test)
 	{
 		BOOST_REQUIRE(result.type == value_type::object);
 		BOOST_REQUIRE(result.obj == module_ptr);
-		BOOST_CHECK(result.obj->get_element(value()) == value(static_cast<integer>(456)));
+		BOOST_CHECK(result.obj->get_element(value()) == value(static_cast<run::integer>(456)));
 	},
 		[&module_name, &module_loaded, &module_ptr](interpreter &interpreter, std::string const &name)
 			-> p0::run::value

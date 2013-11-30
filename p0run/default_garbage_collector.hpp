@@ -32,7 +32,7 @@ namespace p0
 			std::vector<object_handle> m_objects;
 
 
-			std::unique_ptr<char []> remove_storage(char *storage) noexcept;
+			std::unique_ptr<char[]> remove_storage(char *storage) PROTOLANG0_NOEXCEPT;
 		};
 	}
 }

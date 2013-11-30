@@ -9,6 +9,7 @@
 #	define PROTOLANG0_FINAL_METHOD override
 #	define PROTOLANG0_FINAL_CLASS
 #	define PROTOLANG0_OVERRIDE override
+#	define PROTOLANG0_NOEXCEPT
 
 #elif defined (__clang__)
 
@@ -29,6 +30,8 @@
 #		define PROTOLANG0_FINAL_CLASS
 #		define PROTOLANG0_OVERRIDE
 #	endif
+
+#	define PROTOLANG0_NOEXCEPT noexcept
 
 #else
 #	error Could not detect compiler to apply some workarounds

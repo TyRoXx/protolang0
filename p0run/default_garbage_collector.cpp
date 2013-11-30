@@ -111,7 +111,7 @@ namespace p0
 			m_objects.erase(new_end, m_objects.end());
 		}
 
-		std::unique_ptr<char []> default_garbage_collector::remove_storage(char *storage) noexcept
+		std::unique_ptr<char[]> default_garbage_collector::remove_storage(char *storage) PROTOLANG0_NOEXCEPT
 		{
 			auto const s = std::find_if(begin(m_storage),
 										end(m_storage),

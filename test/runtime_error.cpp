@@ -161,7 +161,7 @@ BOOST_AUTO_TEST_CASE(division_overflow_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_constant(1, std::numeric_limits<run::integer>::min());
 		emitter.set_constant(2, -1);
 		emitter.div(1, 2);
 	});
@@ -171,7 +171,7 @@ BOOST_AUTO_TEST_CASE(division_overflow_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_constant(1, std::numeric_limits<run::integer>::min());
 		emitter.set_constant(2, -1);
 		emitter.mod(1, 2);
 	});
@@ -179,7 +179,7 @@ BOOST_AUTO_TEST_CASE(division_overflow_test)
 
 namespace
 {
-	void test_invalid_shift_amount(integer amount,
+	void test_invalid_shift_amount(run::integer amount,
 								   intermediate::instruction_type::Enum shift)
 	{
 		expect_arithmetic_error([amount, shift](
@@ -197,7 +197,7 @@ namespace
 		test_invalid_shift_amount(-1, operation);
 		test_invalid_shift_amount(-2, operation);
 		test_invalid_shift_amount(-64, operation);
-		test_invalid_shift_amount(std::numeric_limits<integer>::min(), operation);
+		test_invalid_shift_amount(std::numeric_limits<run::integer>::min(), operation);
 	}
 }
 
@@ -214,11 +214,11 @@ namespace
 {
 	void test_big_shift(intermediate::instruction_type::Enum operation)
 	{
-		integer const max_shift = sizeof(integer) * CHAR_BIT - 1;
+		run::integer const max_shift = sizeof(run::integer) * CHAR_BIT - 1;
 		test_invalid_shift_amount(max_shift + 1, operation);
 		test_invalid_shift_amount(max_shift * 2, operation);
 		test_invalid_shift_amount(max_shift + 64, operation);
-		test_invalid_shift_amount(std::numeric_limits<integer>::max(), operation);
+		test_invalid_shift_amount(std::numeric_limits<run::integer>::max(), operation);
 	}
 }
 
@@ -233,8 +233,7 @@ BOOST_AUTO_TEST_CASE(big_shift_amount_test)
 
 namespace
 {
-	void test_add_overflow(integer left,
-						   integer right,
+	void test_add_overflow(run::integer left, run::integer right,
 						   intermediate::instruction_type::Enum add)
 	{
 		expect_arithmetic_error([left, right, add](
@@ -252,7 +251,7 @@ BOOST_AUTO_TEST_CASE(add_overflow_test)
 {
 	using intermediate::instruction_type::add;
 
-	auto const max_int = std::numeric_limits<integer>::max();
+	auto const max_int = std::numeric_limits<run::integer>::max();
 
 	test_add_overflow(max_int, 1, add);
 	test_add_overflow(max_int - 66, 1 + 66, add);
@@ -263,7 +262,7 @@ BOOST_AUTO_TEST_CASE(sub_overflow_test)
 {
 	using intermediate::instruction_type::sub;
 
-	auto const min_int = std::numeric_limits<integer>::min();
+	auto const min_int = std::numeric_limits<run::integer>::min();
 
 	test_add_overflow(min_int, 1, sub);
 	test_add_overflow(min_int + 66, 1 + 66, sub);
@@ -276,7 +275,7 @@ BOOST_AUTO_TEST_CASE(negation_overflow_test)
 		intermediate::emitter &emitter,
 		intermediate::unit::string_vector &)
 	{
-		emitter.set_constant(1, std::numeric_limits<integer>::min());
+		emitter.set_constant(1, std::numeric_limits<run::integer>::min());
 		emitter.negate(1);
 	});
 }
