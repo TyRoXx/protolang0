@@ -34,7 +34,7 @@ namespace p0
 
 		private:
 
-			F const m_functor;
+			F m_functor;
 
 
 			virtual void mark_recursively() PROTOLANG0_FINAL_METHOD

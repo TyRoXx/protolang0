@@ -44,6 +44,16 @@ namespace p0
 				template <class Class>
 				struct basic_method
 				{
+					typedef
+#ifdef _MSC_VER
+					//VC++ 2013 is stupid and somehow cannot insert unique_ptr into unordered_map
+					//but we need to do that in native_class, so we use shared_ptr instead.
+					std::shared_ptr
+#else
+					std::unique_ptr
+#endif
+					<basic_method> stored_method_ptr;
+
 					virtual ~basic_method()
 					{
 					}
@@ -53,17 +63,16 @@ namespace p0
 					        std::vector<run::value> const &arguments,
 					        run::interpreter &interpreter) const = 0;
 					virtual void overload(
-					        std::unique_ptr<basic_method> &this_,
-					        std::unique_ptr<basic_method> new_method,
-					        std::size_t argument_count
+							stored_method_ptr &this_,
+							stored_method_ptr new_method,
+							std::size_t argument_count
 					        ) = 0;
 				};
 
 				template <class Class>
 				struct overloaded_method : basic_method<Class>
 				{
-					void add_method(std::size_t argument_count,
-					                std::unique_ptr<basic_method<Class>> method)
+					void add_method(std::size_t argument_count, stored_method_ptr method)
 					{
 						m_overloads.insert(
 						    std::make_pair(argument_count, std::move(method)));
@@ -79,9 +88,9 @@ namespace p0
 					}
 
 					virtual void overload(
-					        std::unique_ptr<basic_method<Class>> &this_,
-					        std::unique_ptr<basic_method<Class>> new_method,
-					        std::size_t argument_count
+						stored_method_ptr &this_,
+						stored_method_ptr new_method,
+						std::size_t argument_count
 					        ) PROTOLANG0_OVERRIDE
 					{
 						assert(this == this_.get());
@@ -90,7 +99,7 @@ namespace p0
 
 				private:
 
-					typedef boost::unordered_map<std::size_t, std::unique_ptr<basic_method<Class>>> overloads;
+					typedef boost::unordered_map<std::size_t, stored_method_ptr> overloads;
 
 					overloads m_overloads;
 
@@ -134,17 +143,17 @@ namespace p0
 					}
 
 					virtual void overload(
-					        std::unique_ptr<basic_method<Class>> &this_,
-					        std::unique_ptr<basic_method<Class>> new_method,
-					        std::size_t argument_count
+						stored_method_ptr &this_,
+						stored_method_ptr new_method,
+						std::size_t argument_count
 					        ) PROTOLANG0_OVERRIDE
 					{
 						//TODO make this method exception-safe
 						assert(this == this_.get());
-						std::unique_ptr<overloaded_method<Class>> methods(
-						            new overloaded_method<Class>);
-						methods->add_method(argument_count, std::move(new_method));
-						methods->add_method(sizeof...(Args), std::move(this_));
+						stored_method_ptr methods(new overloaded_method<Class>);
+						auto &overloaded_methods = static_cast<overloaded_method<Class> &>(*methods);
+						overloaded_methods.add_method(argument_count, std::move(new_method));
+						overloaded_methods.add_method(sizeof...(Args), std::move(this_));
 						this_ = std::move(methods);
 					}
 
@@ -227,7 +236,7 @@ namespace p0
 				                F &&method)
 				{
 					typedef detail::non_overloaded_method<Class, F, Result, Args...> wrapper_type;
-					std::unique_ptr<wrapper_type> method_wrapper(
+					typename detail::basic_method<Class>::stored_method_ptr method_wrapper(
 					            new wrapper_type(std::forward<F>(method)));
 
 					auto const i = m_methods.find(name);
@@ -260,8 +269,8 @@ namespace p0
 
 			private:
 
-				typedef boost::unordered_map<std::string,
-				                             std::unique_ptr<detail::basic_method<Class>>> methods_by_name;
+				typedef detail::basic_method<Class> method;
+				typedef boost::unordered_map<std::string, typename method::stored_method_ptr> methods_by_name;
 
 				methods_by_name m_methods;
 			};
