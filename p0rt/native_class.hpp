@@ -72,6 +72,8 @@ namespace p0
 				template <class Class>
 				struct overloaded_method : basic_method<Class>
 				{
+					typedef typename basic_method<Class>::stored_method_ptr stored_method_ptr;
+
 					void add_method(std::size_t argument_count, stored_method_ptr method)
 					{
 						m_overloads.insert(
@@ -119,6 +121,8 @@ namespace p0
 				template <class Class, class F, class Result, class ...Args>
 				struct non_overloaded_method : basic_method<Class>
 				{
+					typedef typename basic_method<Class>::stored_method_ptr stored_method_ptr;
+
 					template <class G>
 					explicit non_overloaded_method(G &&function)
 					    : m_function(std::forward<G>(function))
