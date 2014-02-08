@@ -76,6 +76,13 @@ BOOST_AUTO_TEST_CASE(remove_no_ops_jump_2)
 	BOOST_CHECK(expected_code == cleaned_code);
 }
 
+BOOST_AUTO_TEST_CASE(remove_no_ops_empty)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	BOOST_CHECK(original_code == cleaned_code);
+}
+
 BOOST_AUTO_TEST_CASE(fold_constants_add)
 {
 	p0::intermediate::function::instruction_vector original_code;
@@ -140,6 +147,15 @@ BOOST_AUTO_TEST_CASE(fold_constants_do_not_follow_jump)
 
 	//We expect fold_constants not to follow jump paths. That is the job of earlier passes.
 	BOOST_CHECK(original_code == folded_code);
+}
+
+BOOST_AUTO_TEST_CASE(fold_constants_empty)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	p0::intermediate::function original_function(original_code, 0, 0);
+	p0::intermediate::function::instruction_vector const optimized = p0::fold_constants(original_function);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == optimized);
 }
 
 BOOST_AUTO_TEST_CASE(remove_dead_code_empty)
