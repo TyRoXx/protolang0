@@ -163,3 +163,26 @@ BOOST_AUTO_TEST_CASE(fold_constants_copy)
 	}
 	BOOST_CHECK(expected_code == simplified_code);
 }
+
+namespace
+{
+	template <class CodeGenerator>
+	bool check_no_constant_folding(CodeGenerator const &generate)
+	{
+		p0::intermediate::function::instruction_vector original_code;
+		{
+			p0::intermediate::emitter emitter(original_code);
+			generate(emitter);
+		}
+		p0::intermediate::function::instruction_vector const simplified_code = p0::fold_constants(original_code);
+		return (original_code == simplified_code);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(fold_constants_non_optimizable)
+{
+	BOOST_CHECK(check_no_constant_folding([](p0::intermediate::emitter &e) { e.copy(0, 1); }));
+	BOOST_CHECK(check_no_constant_folding([](p0::intermediate::emitter &e) { e.add(0, 1); }));
+	BOOST_CHECK(check_no_constant_folding([](p0::intermediate::emitter &e) { e.set_constant(0, 1); }));
+	BOOST_CHECK(check_no_constant_folding([](p0::intermediate::emitter &e) { e.set_constant(1, 1); }));
+}
