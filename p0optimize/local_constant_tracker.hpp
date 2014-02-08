@@ -22,6 +22,8 @@ namespace p0
 
 		std::unordered_map<local_address, integer> m_known_values;
 	};
+
+	void track_instruction(local_constant_tracker &locals, intermediate::instruction const &instruction);
 }
 
 

@@ -21,50 +21,21 @@ namespace p0
 			}
 
 			auto const &original_instruction = original[i];
+			track_instruction(known_locals, original_instruction);
 			optimized.push_back(original_instruction);
 
 			switch (original_instruction.type())
 			{
-			case p0::intermediate::instruction_type::set_from_constant:
-				{
-					known_locals.update_value(static_cast<local_address>(original_instruction.arguments()[0]), original_instruction.arguments()[1]);
-					break;
-				}
-
 			case p0::intermediate::instruction_type::copy:
-				{
-					auto const destination = static_cast<local_address>(original_instruction.arguments()[0]);
-					auto const source = original_instruction.arguments()[1];
-					auto const known_source = known_locals.find_current_value(source);
-					if (!known_source)
-					{
-						known_locals.set_unknown(destination);
-					}
-					else
-					{
-						known_locals.update_value(destination, *known_source);
-					}
-					break;
-				}
-
 			case p0::intermediate::instruction_type::add:
 				{
 					auto const destination = static_cast<local_address>(original_instruction.arguments()[0]);
 					auto const known_destination = known_locals.find_current_value(destination);
-
-					auto const source = static_cast<local_address>(original_instruction.arguments()[1]);
-					auto const known_source = known_locals.find_current_value(source);
-
-					if (known_source &&
-						known_destination)
+					if (known_destination)
 					{
-						//TODO: check overflow
-						auto const result = (*known_source + *known_destination);
 						optimized.pop_back();
 						p0::intermediate::emitter emitter(optimized);
-						emitter.set_constant(destination, result);
-
-						known_locals.update_value(destination, result);
+						emitter.set_constant(destination, *known_destination);
 					}
 					break;
 				}
