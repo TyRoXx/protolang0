@@ -387,5 +387,14 @@ namespace p0
 		{
 			m_destination.push_back(instruction);
 		}
+
+		instruction make_set_from_constant(local_address destination, integer value)
+		{
+			//TODO optimize
+			std::vector<instruction> v;
+			emitter e(v);
+			e.set_constant(destination, value);
+			return v.front();
+		}
 	}
 }

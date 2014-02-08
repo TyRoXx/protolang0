@@ -143,6 +143,8 @@ namespace p0
 
 			instruction_vector &m_destination;
 		};
+
+		instruction make_set_from_constant(local_address destination, integer value);
 	}
 }
 
