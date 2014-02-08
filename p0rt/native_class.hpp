@@ -9,7 +9,6 @@
 #include "p0rt/from_cpp.hpp"
 #include "p0rt/to_cpp.hpp"
 #include <cstddef>
-#include <boost/unordered_map.hpp>
 
 
 namespace p0
@@ -101,7 +100,7 @@ namespace p0
 
 				private:
 
-					typedef boost::unordered_map<std::size_t, stored_method_ptr> overloads;
+					typedef std::unordered_map<std::size_t, stored_method_ptr> overloads;
 
 					overloads m_overloads;
 
