@@ -4,7 +4,7 @@ file(GLOB files
 
 add_executable(test ${files})
 
-target_link_libraries(test p0compile p0run p0rt p0i)
+target_link_libraries(test p0compile p0optimize p0run p0rt p0i)
 
 if(P0_WITH_TEMPEST)
 	target_link_libraries(test p0tempest)

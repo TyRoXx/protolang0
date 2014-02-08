@@ -1,5 +1,7 @@
 #include "instruction.hpp"
 #include <string>
+#include <boost/tuple/tuple_comparison.hpp>
+#include <boost/tuple/tuple.hpp>
 
 
 namespace p0
@@ -152,6 +154,12 @@ namespace p0
 		instruction::argument_array &instruction::arguments()
 		{
 			return m_arguments;
+		}
+
+
+		bool operator == (instruction const &left, instruction const &right)
+		{
+			return boost::make_tuple(left.type(), left.arguments()) == boost::make_tuple(right.type(), right.arguments());
 		}
 	}
 }

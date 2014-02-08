@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 
 project(protolang0)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+
 if(UNIX OR MINGW)
 	set(CMAKE_CXX_FLAGS "-std=c++0x -Wall -Wextra -pedantic")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wconversion")
@@ -43,6 +45,7 @@ if(P0_WITH_TEMPEST)
 endif()
 
 add_subdirectory(p0i)
+add_subdirectory(p0optimize)
 add_subdirectory(p0compile)
 add_subdirectory(p0run)
 add_subdirectory(p0c)
@@ -59,6 +62,9 @@ install(FILES ${headers} DESTINATION include/p0common)
 
 file(GLOB headers "p0i/*.hpp")
 install(FILES ${headers} DESTINATION include/p0i)
+
+file(GLOB headers "p0optimize/*.hpp")
+install(FILES ${headers} DESTINATION include/p0optimize)
 
 file(GLOB headers "p0run/*.hpp")
 install(FILES ${headers} DESTINATION include/p0run)

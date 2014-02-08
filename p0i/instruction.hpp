@@ -114,6 +114,8 @@ namespace p0
 			instruction_type::Enum m_type;
 			argument_array m_arguments;
 		};
+
+		bool operator == (instruction const &left, instruction const &right);
 	}
 }
 
