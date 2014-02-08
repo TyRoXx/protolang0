@@ -7,19 +7,19 @@
 
 namespace p0
 {
-	p0::intermediate::function::instruction_vector fold_constants(p0::intermediate::function const &original)
+	p0::intermediate::function::instruction_vector fold_constants(p0::intermediate::function::instruction_vector const &original)
 	{
 		p0::intermediate::function::instruction_vector optimized;
 		boost::unordered_map<p0::local_address, p0::integer> known_locals;
-		auto const jump_destinations = find_all_jump_destinations(original.body());
-		for (std::size_t i = 0; i < original.body().size(); ++i)
+		auto const jump_destinations = find_all_jump_destinations(original);
+		for (std::size_t i = 0; i < original.size(); ++i)
 		{
 			if (jump_destinations.find(i) != jump_destinations.end())
 			{
 				known_locals.clear();
 			}
 
-			p0::intermediate::instruction const &original_instruction = original.body()[i];
+			p0::intermediate::instruction const &original_instruction = original[i];
 			optimized.push_back(original_instruction);
 
 			switch (original_instruction.type())

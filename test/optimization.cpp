@@ -92,8 +92,7 @@ BOOST_AUTO_TEST_CASE(fold_constants_add)
 		emitter.set_constant(1, 3);
 		emitter.add(0, 1);
 	}
-	p0::intermediate::function original_function(original_code, 0, 0);
-	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_function);
+	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_code);
 	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(folded_code);
 	p0::intermediate::function::instruction_vector expected_code;
 	{
@@ -117,8 +116,7 @@ BOOST_AUTO_TEST_CASE(fold_constants_tree)
 		emitter.set_constant(1, 1);
 		emitter.add(0, 1);
 	}
-	p0::intermediate::function original_function(original_code, 0, 0);
-	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_function);
+	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_code);
 	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(folded_code);
 	p0::intermediate::function::instruction_vector expected_code;
 	{
@@ -142,8 +140,7 @@ BOOST_AUTO_TEST_CASE(fold_constants_do_not_follow_jump)
 		/*6*/ emitter.jump(3);
 		/*7 return*/
 	}
-	p0::intermediate::function original_function(original_code, 0, 0);
-	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_function);
+	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_code);
 
 	//We expect fold_constants not to follow jump paths. That is the job of earlier passes.
 	BOOST_CHECK(original_code == folded_code);
@@ -152,8 +149,7 @@ BOOST_AUTO_TEST_CASE(fold_constants_do_not_follow_jump)
 BOOST_AUTO_TEST_CASE(fold_constants_empty)
 {
 	p0::intermediate::function::instruction_vector original_code;
-	p0::intermediate::function original_function(original_code, 0, 0);
-	p0::intermediate::function::instruction_vector const optimized = p0::fold_constants(original_function);
+	p0::intermediate::function::instruction_vector const optimized = p0::fold_constants(original_code);
 	p0::intermediate::function::instruction_vector expected_code;
 	BOOST_CHECK(expected_code == optimized);
 }
@@ -161,8 +157,7 @@ BOOST_AUTO_TEST_CASE(fold_constants_empty)
 BOOST_AUTO_TEST_CASE(remove_dead_code_empty)
 {
 	p0::intermediate::function::instruction_vector original_code;
-	p0::intermediate::function original_function(original_code, 0, 0);
-	p0::intermediate::function::instruction_vector const living_code = p0::remove_dead_code(original_function.body());
+	p0::intermediate::function::instruction_vector const living_code = p0::remove_dead_code(original_code);
 	p0::intermediate::function::instruction_vector expected_code;
 	BOOST_CHECK(expected_code == living_code);
 }

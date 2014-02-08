@@ -8,7 +8,7 @@
 
 namespace p0
 {
-	p0::intermediate::function::instruction_vector fold_constants(p0::intermediate::function const &original);
+	p0::intermediate::function::instruction_vector fold_constants(p0::intermediate::function::instruction_vector const &original);
 }
 
 
