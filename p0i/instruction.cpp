@@ -97,6 +97,7 @@ namespace p0
 		instruction::instruction()
 			: m_type(instruction_type::nothing)
 		{
+			m_arguments.fill(0);
 		}
 
 		instruction::instruction(
@@ -114,6 +115,7 @@ namespace p0
 			)
 			: m_type(type)
 		{
+			m_arguments.fill(0);
 			m_arguments[0] = argument0;
 		}
 
@@ -124,6 +126,7 @@ namespace p0
 			)
 			: m_type(type)
 		{
+			m_arguments.fill(0);
 			m_arguments[0] = argument0;
 			m_arguments[1] = argument1;
 		}
@@ -136,6 +139,7 @@ namespace p0
 			)
 			: m_type(type)
 		{
+			m_arguments.fill(0);
 			m_arguments[0] = argument0;
 			m_arguments[1] = argument1;
 			m_arguments[2] = argument2;
