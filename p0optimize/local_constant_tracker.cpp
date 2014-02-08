@@ -3,7 +3,7 @@
 
 namespace p0
 {
-	void local_constant_tracker::handle_incoming_jump()
+	void local_constant_tracker::invalidate()
 	{
 		m_known_values.clear();
 	}

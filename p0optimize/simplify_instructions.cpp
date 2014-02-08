@@ -18,7 +18,7 @@ namespace p0
 		{
 			if (jump_destinations.find(i) != jump_destinations.end())
 			{
-				known_locals.handle_incoming_jump();
+				known_locals.invalidate();
 			}
 
 			auto &instruction = optimized[i];
