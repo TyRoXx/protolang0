@@ -12,13 +12,11 @@ BOOST_AUTO_TEST_CASE(remove_no_ops_set_from_constant)
 		emitter.set_constant(0, 3);
 	}
 	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
-
 	p0::intermediate::function::instruction_vector expected_code;
 	{
 		p0::intermediate::emitter emitter(expected_code);
 		emitter.set_constant(0, 3);
 	}
-
 	BOOST_CHECK(expected_code == cleaned_code);
 }
 
@@ -30,9 +28,7 @@ BOOST_AUTO_TEST_CASE(remove_no_ops_nothing)
 		emitter.nothing();
 	}
 	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
-
 	p0::intermediate::function::instruction_vector expected_code;
-
 	BOOST_CHECK(expected_code == cleaned_code);
 }
 
@@ -48,12 +44,10 @@ BOOST_AUTO_TEST_CASE(fold_constants_add)
 	p0::intermediate::function original_function(original_code, 0, 0);
 	p0::intermediate::function::instruction_vector const folded_code = p0::fold_constants(original_function);
 	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(folded_code);
-
 	p0::intermediate::function::instruction_vector expected_code;
 	{
 		p0::intermediate::emitter emitter(expected_code);
 		emitter.set_constant(0, 5);
 	}
-
 	BOOST_CHECK(expected_code == cleaned_code);
 }
