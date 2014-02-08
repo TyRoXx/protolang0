@@ -2,6 +2,7 @@
 #include "analyzation.hpp"
 #include "local_constant_tracker.hpp"
 #include <p0i/emitter.hpp>
+#include <p0run/value.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/foreach.hpp>
@@ -36,6 +37,29 @@ namespace p0
 						optimized.pop_back();
 						p0::intermediate::emitter emitter(optimized);
 						emitter.set_constant(destination, *known_destination);
+					}
+					break;
+				}
+
+			case p0::intermediate::instruction_type::jump_if:
+			case p0::intermediate::instruction_type::jump_if_not:
+				{
+					auto const condition = static_cast<local_address>(original_instruction.arguments()[1]);
+					auto const value = known_locals.find_current_value(condition);
+					if (value)
+					{
+						optimized.pop_back();
+						p0::intermediate::emitter emitter(optimized);
+						auto const destination = original_instruction.arguments()[0];
+						bool const value_for_jump = (original_instruction.type() == p0::intermediate::instruction_type::jump_if);
+						if (run::to_boolean(run::value(*value)) == value_for_jump)
+						{
+							emitter.jump(destination);
+						}
+						else
+						{
+							emitter.nothing();
+						}
 					}
 					break;
 				}
