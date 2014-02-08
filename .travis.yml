@@ -7,7 +7,9 @@ script:
   - cd build
   - cmake ../protolang0 -DCMAKE_BUILD_TYPE=DEBUG
   - make -j2
-  - ./bin/test
+  - cd bin
+  - ln -s ../../protolang0/test-scripts
+  - ./test
 before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq -y libboost-all-dev
