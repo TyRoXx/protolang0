@@ -1,4 +1,5 @@
 #include "constant_folding.hpp"
+#include "analyzation.hpp"
 #include <p0i/emitter.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/unordered_set.hpp>
@@ -6,30 +7,6 @@
 
 namespace p0
 {
-	namespace
-	{
-		boost::unordered_set<std::size_t> find_all_jump_destinations(p0::intermediate::function::instruction_vector const &code)
-		{
-			boost::unordered_set<std::size_t> destinations;
-			BOOST_FOREACH (p0::intermediate::instruction const &instruction, code)
-			{
-				switch (instruction.type())
-				{
-				case p0::intermediate::instruction_type::jump:
-				case p0::intermediate::instruction_type::jump_if:
-				case p0::intermediate::instruction_type::jump_if_not:
-					destinations.insert(instruction.arguments()[0]);
-					break;
-
-				default:
-					assert(!p0::intermediate::is_any_jump(instruction.type()));
-					break;
-				}
-			}
-			return destinations;
-		}
-	}
-
 	p0::intermediate::function::instruction_vector fold_constants(p0::intermediate::function const &original)
 	{
 		p0::intermediate::function::instruction_vector optimized;
