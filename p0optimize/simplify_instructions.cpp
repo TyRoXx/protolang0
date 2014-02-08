@@ -22,10 +22,15 @@ namespace p0
 			}
 
 			auto &instruction = optimized[i];
-			known_locals.handle_instruction(instruction);
 
 			switch (instruction.type())
 			{
+			case p0::intermediate::instruction_type::set_from_constant:
+				{
+					known_locals.update_value(static_cast<local_address>(instruction.arguments()[0]), instruction.arguments()[1]);
+					break;
+				}
+
 			case p0::intermediate::instruction_type::copy:
 				{
 					auto const source = static_cast<local_address>(instruction.arguments()[1]);

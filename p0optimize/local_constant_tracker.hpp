@@ -14,7 +14,8 @@ namespace p0
 	struct local_constant_tracker
 	{
 		void handle_incoming_jump();
-		void handle_instruction(intermediate::instruction const &instruction);
+		void update_value(local_address where, integer value);
+		void set_unknown(local_address where);
 		boost::optional<integer> find_current_value(local_address where);
 
 	private:

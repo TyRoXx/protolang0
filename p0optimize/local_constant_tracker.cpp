@@ -8,39 +8,14 @@ namespace p0
 		m_known_values.clear();
 	}
 
-	void local_constant_tracker::handle_instruction(intermediate::instruction const &instruction)
+	void local_constant_tracker::update_value(local_address where, integer value)
 	{
-		switch (instruction.type())
-		{
-		case p0::intermediate::instruction_type::set_from_constant:
-			{
-				m_known_values[static_cast<local_address>(instruction.arguments()[0])] = instruction.arguments()[1];
-				break;
-			}
+		m_known_values[where] = value;
+	}
 
-		case p0::intermediate::instruction_type::copy:
-			{
-				auto const destination = static_cast<local_address>(instruction.arguments()[0]);
-				auto const source = instruction.arguments()[1];
-				auto const known_source = m_known_values.find(source);
-				if (known_source == m_known_values.end())
-				{
-					m_known_values.erase(destination);
-				}
-				else
-				{
-					m_known_values[destination] = known_source->second;
-				}
-				break;
-			}
-
-		case p0::intermediate::instruction_type::add:
-			{
-				break;
-			}
-
-			//TODO erase from known_locals on write operations
-		}
+	void local_constant_tracker::set_unknown(local_address where)
+	{
+		m_known_values.erase(where);
 	}
 
 	boost::optional<integer> local_constant_tracker::find_current_value(local_address where)
