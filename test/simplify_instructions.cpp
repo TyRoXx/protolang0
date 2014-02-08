@@ -32,7 +32,7 @@ BOOST_AUTO_TEST_CASE(simplify_instructions_jump_if_negative)
 	p0::intermediate::function::instruction_vector expected_code;
 	{
 		p0::intermediate::emitter emitter(expected_code);
-		emitter.set_constant(1, 1);
+		emitter.set_constant(1, 0);
 		emitter.nothing();
 	}
 	BOOST_CHECK(expected_code == simplified_code);
@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE(simplify_instructions_jump_if_not_positive)
 	p0::intermediate::function::instruction_vector expected_code;
 	{
 		p0::intermediate::emitter emitter(expected_code);
-		emitter.set_constant(1, 1);
+		emitter.set_constant(1, 0);
 		emitter.jump(2);
 	}
 	BOOST_CHECK(expected_code == simplified_code);
