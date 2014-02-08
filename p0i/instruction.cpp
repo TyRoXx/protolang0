@@ -8,50 +8,66 @@ namespace p0
 {
 	namespace intermediate
 	{
+		std::vector<instruction_argument_type> make_binary_arguments()
+		{
+			std::vector<instruction_argument_type> arguments;
+			arguments.push_back(instruction_argument_type::read_write_local);
+			arguments.push_back(instruction_argument_type::read_local);
+			return arguments;
+		}
+
+		std::vector<instruction_argument_type> make_constant_arguments()
+		{
+			std::vector<instruction_argument_type> arguments;
+			arguments.push_back(instruction_argument_type::read_write_local);
+			arguments.push_back(instruction_argument_type::constant);
+			return arguments;
+		}
+
 		instruction_info const &get_instruction_info(instruction_type::Enum instruction)
 		{
 			static_assert(instruction_type::count_ == 38, "Update the 'infos' array");
 
 			static std::array<instruction_info, instruction_type::count_> const infos =
 			{{
-				{"nothing", 0},
-				{"set_from_constant", 2},
-				{"set_null", 1},
-				{"set_function", 2},
-				{"set_string", 2},
-				{"bind", 3},
-				{"get_bound", 3},
-				{"current_function", 1},
-				{"copy", 2},
-				{"add", 2},
-				{"sub", 2},
-				{"mul", 2},
-				{"div", 2},
-				{"mod", 2},
-				{"not", 1},
-				{"invert", 1},
-				{"negate", 1},
-				{"and", 2},
-				{"or", 2},
-				{"xor", 2},
-				{"shift_left", 2},
-				{"shift_right", 2},
-				{"shift_signed", 2},
-				{"equal", 2},
-				{"not_equal", 2},
-				{"less", 2},
-				{"less_equal", 2},
-				{"greater", 2},
-				{"greater_equal", 2},
-				{"call", 2},
-				{"call_method", 3},
-				{"jump", 1},
-				{"jump_if", 2},
-				{"jump_if_not", 2},
-				{"new_table", 1},
-				{"set_element", 3},
-				{"get_element", 3},
-				{"load_module", 1},
+				{"nothing", std::vector<instruction_argument_type>()},
+				{"set_from_constant", make_constant_arguments()},
+				{"set_null", {instruction_argument_type::read_write_local}},
+				{"set_function", make_constant_arguments()},
+				{"set_string", make_constant_arguments()},
+				{"bind", {instruction_argument_type::read_local, instruction_argument_type::constant, instruction_argument_type::read_local}},
+				{"get_bound", {instruction_argument_type::read_local, instruction_argument_type::constant, instruction_argument_type::read_write_local}},
+				{"current_function", {instruction_argument_type::read_write_local}},
+				{"copy", make_binary_arguments()},
+				{"add", make_binary_arguments()},
+				{"sub", make_binary_arguments()},
+				{"mul", make_binary_arguments()},
+				{"div", make_binary_arguments()},
+				{"mod", make_binary_arguments()},
+				{"not", {instruction_argument_type::read_write_local}},
+				{"invert", {instruction_argument_type::read_write_local}},
+				{"negate", {instruction_argument_type::read_write_local}},
+				{"and", make_binary_arguments()},
+				{"or", make_binary_arguments()},
+				{"xor", make_binary_arguments()},
+				{"shift_left", make_binary_arguments()},
+				{"shift_right", make_binary_arguments()},
+				{"shift_signed", make_binary_arguments()},
+				{"equal", make_binary_arguments()},
+				{"not_equal", make_binary_arguments()},
+				{"less", make_binary_arguments()},
+				{"less_equal", make_binary_arguments()},
+				{"greater", make_binary_arguments()},
+				{"greater_equal", make_binary_arguments()},
+				{"call", make_constant_arguments()},
+				{"call_method", {instruction_argument_type::read_write_local, instruction_argument_type::constant, instruction_argument_type::read_local}},
+				{"jump", {instruction_argument_type::constant}},
+				{"jump_if", {instruction_argument_type::constant, instruction_argument_type::read_local}},
+				{"jump_if_not", {instruction_argument_type::constant, instruction_argument_type::read_local}},
+				{"new_table", {instruction_argument_type::read_write_local}},
+				{"set_element", {instruction_argument_type::read_local, instruction_argument_type::read_local, instruction_argument_type::read_local}},
+				{"get_element", {instruction_argument_type::read_local, instruction_argument_type::read_local, instruction_argument_type::read_write_local}},
+				{"load_module", {instruction_argument_type::read_write_local}},
 			}};
 
 			return infos[instruction];

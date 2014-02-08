@@ -13,7 +13,7 @@ namespace
 		BOOST_REQUIRE_EQUAL(first.type(), second.type());
 
 		for (size_t i = 0, c = p0::intermediate::get_instruction_info(
-			first.type()).argument_count; i < c; ++i)
+			first.type()).arguments.size(); i < c; ++i)
 		{
 			BOOST_CHECK_EQUAL(first.arguments()[i], second.arguments()[i]);
 		}

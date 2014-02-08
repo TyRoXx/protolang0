@@ -39,7 +39,7 @@ namespace p0
 
 				std::for_each(
 					begin(instruction.arguments()),
-					begin(instruction.arguments()) + info.argument_count,
+					begin(instruction.arguments()) + info.arguments.size(),
 					[&file](instruction_argument arg)
 				{
 					file << ' ' << std::setw(9) << std::right << arg;

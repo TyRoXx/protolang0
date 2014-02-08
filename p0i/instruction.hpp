@@ -8,6 +8,7 @@
 #include <array>
 #include <string>
 #include <cstddef>
+#include <vector>
 
 
 namespace p0
@@ -63,10 +64,17 @@ namespace p0
 		}
 
 
+		enum class instruction_argument_type
+		{
+			constant,
+			read_local,
+			read_write_local
+		};
+
 		struct instruction_info PROTOLANG0_FINAL_CLASS
 		{
 			char const *name;
-			size_t argument_count;
+			std::vector<instruction_argument_type> arguments;
 		};
 
 		instruction_info const &get_instruction_info(instruction_type::Enum instruction);
