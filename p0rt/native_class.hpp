@@ -273,7 +273,7 @@ namespace p0
 			private:
 
 				typedef detail::basic_method<Class> method;
-				typedef boost::unordered_map<std::string, typename method::stored_method_ptr> methods_by_name;
+				typedef std::unordered_map<std::string, typename method::stored_method_ptr> methods_by_name;
 
 				methods_by_name m_methods;
 			};
