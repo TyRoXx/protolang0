@@ -2,7 +2,7 @@
 #include "p0compile/compiler_error.hpp"
 #include <boost/test/unit_test.hpp>
 #include <boost/lexical_cast.hpp>
-
+#include <boost/cstdint.hpp>
 
 namespace
 {
