@@ -1,4 +1,4 @@
-#include "p0optimize/constant_folding.hpp"
+#include "p0optimize/fold_constants.hpp"
 #include "p0optimize/remove_no_ops.hpp"
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>

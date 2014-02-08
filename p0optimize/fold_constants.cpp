@@ -1,4 +1,4 @@
-#include "constant_folding.hpp"
+#include "fold_constants.hpp"
 #include "analyzation.hpp"
 #include <p0i/emitter.hpp>
 #include <boost/unordered_map.hpp>
