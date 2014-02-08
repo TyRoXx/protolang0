@@ -1,11 +1,12 @@
 #include "analyzation.hpp"
 #include <boost/foreach.hpp>
+#include <cassert>
 
 namespace p0
 {
-	boost::unordered_set<std::size_t> find_all_jump_destinations(p0::intermediate::function::instruction_vector const &code)
+	std::unordered_set<std::size_t> find_all_jump_destinations(p0::intermediate::function::instruction_vector const &code)
 	{
-		boost::unordered_set<std::size_t> destinations;
+		std::unordered_set<std::size_t> destinations;
 		BOOST_FOREACH (p0::intermediate::instruction const &instruction, code)
 		{
 			switch (instruction.type())
