@@ -33,12 +33,17 @@ namespace p0
 
 			case p0::intermediate::instruction_type::copy:
 				{
+					auto const destination = static_cast<local_address>(instruction.arguments()[0]);
 					auto const source = static_cast<local_address>(instruction.arguments()[1]);
 					auto const value = known_locals.find_current_value(source);
 					if (value)
 					{
-						auto const destination = static_cast<local_address>(instruction.arguments()[0]);
 						instruction = intermediate::make_set_from_constant(destination, *value);
+						known_locals.update_value(destination, *value);
+					}
+					else
+					{
+						known_locals.set_unknown(destination);
 					}
 					break;
 				}
