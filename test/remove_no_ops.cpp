@@ -81,24 +81,26 @@ BOOST_AUTO_TEST_CASE(remove_no_ops_empty)
 	BOOST_CHECK(original_code == cleaned_code);
 }
 
-BOOST_AUTO_TEST_CASE(remove_no_ops_add)
+BOOST_AUTO_TEST_CASE(remove_no_ops_preserve_calculations)
 {
 	p0::intermediate::function::instruction_vector original_code;
 	{
 		p0::intermediate::emitter emitter(original_code);
 		emitter.set_constant(0, 2);
 		emitter.set_constant(1, 3);
+		emitter.set_constant(2, 3);
+		emitter.set_constant(3, 3);
+		emitter.set_constant(4, 3);
+		emitter.set_constant(5, 3);
+		emitter.set_constant(6, 3);
+		emitter.set_constant(7, 3);
 		emitter.add(0, 1);
-		emitter.set_constant(0, 4);
+		emitter.sub(2, 3);
+		emitter.mul(4, 5);
+		emitter.div(6, 7);
+		//none of the instructions should be removed by remove_no_ops because that is the job of
+		//fold_constants
 	}
 	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
-	p0::intermediate::function::instruction_vector expected_code;
-	{
-		p0::intermediate::emitter emitter(expected_code);
-		emitter.set_constant(0, 2);
-		emitter.set_constant(1, 3);
-		emitter.add(0, 1);
-		emitter.set_constant(0, 4);
-	}
-	BOOST_CHECK(expected_code == cleaned_code);
+	BOOST_CHECK(original_code == cleaned_code);
 }

@@ -46,11 +46,6 @@ namespace p0
 					write_local(instruction.arguments()[0]);
 					break;
 
-				case p0::intermediate::instruction_type::add:
-					read_local(instruction.arguments()[0]);
-					read_local(instruction.arguments()[1]);
-					break;
-
 				case p0::intermediate::instruction_type::jump:
 					//a jump that does nothing but go to next instruction is equivalent to a no-op
 					if (instruction.arguments()[0] == (i + 1))
@@ -59,6 +54,24 @@ namespace p0
 					}
 					break;
 
+				default:
+					{
+						auto const &info = intermediate::get_instruction_info(instruction.type());
+						for (std::size_t i = 0; i < info.arguments.size(); ++i)
+						{
+							switch (info.arguments[i])
+							{
+							case intermediate::instruction_argument_type::read_local:
+							case intermediate::instruction_argument_type::read_write_local:
+								read_local(instruction.arguments()[i]);
+								break;
+
+							case intermediate::instruction_argument_type::constant:
+								break;
+							}
+						}
+						break;
+					}
 					//TODO
 				}
 			}
