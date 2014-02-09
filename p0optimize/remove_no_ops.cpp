@@ -47,7 +47,7 @@ namespace p0
 					break;
 
 				case p0::intermediate::instruction_type::add:
-					write_local(instruction.arguments()[0]);
+					read_local(instruction.arguments()[0]);
 					read_local(instruction.arguments()[1]);
 					break;
 
