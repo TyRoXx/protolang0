@@ -33,6 +33,90 @@ BOOST_AUTO_TEST_CASE(remove_no_ops_set_from_constant)
 	BOOST_CHECK(expected_code == cleaned_code);
 }
 
+BOOST_AUTO_TEST_CASE(remove_no_ops_set_null)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.set_null(1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_set_string)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.set_string(1, 0);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_set_function)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.set_function(1, 0);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_not)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.not_(1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_negate)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.negate(1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_invert)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.invert(1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_new_table)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.new_table(1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
 BOOST_AUTO_TEST_CASE(remove_no_ops_nothing)
 {
 	p0::intermediate::function::instruction_vector original_code;
@@ -71,6 +155,30 @@ BOOST_AUTO_TEST_CASE(remove_no_ops_jump_2)
 		p0::intermediate::emitter emitter(expected_code);
 		emitter.set_constant(0, 2);
 	}
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_jump_if)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.jump_if(1, 1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
+	BOOST_CHECK(expected_code == cleaned_code);
+}
+
+BOOST_AUTO_TEST_CASE(remove_no_ops_jump_if_not)
+{
+	p0::intermediate::function::instruction_vector original_code;
+	{
+		p0::intermediate::emitter emitter(original_code);
+		emitter.jump_if_not(1, 1);
+	}
+	p0::intermediate::function::instruction_vector const cleaned_code = p0::remove_no_ops(original_code);
+	p0::intermediate::function::instruction_vector expected_code;
 	BOOST_CHECK(expected_code == cleaned_code);
 }
 

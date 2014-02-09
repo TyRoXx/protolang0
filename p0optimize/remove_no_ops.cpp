@@ -43,10 +43,19 @@ namespace p0
 					break;
 
 				case p0::intermediate::instruction_type::set_from_constant:
+				case p0::intermediate::instruction_type::set_function:
+				case p0::intermediate::instruction_type::set_null:
+				case p0::intermediate::instruction_type::set_string:
+				case p0::intermediate::instruction_type::new_table:
+				case p0::intermediate::instruction_type::not_:
+				case p0::intermediate::instruction_type::negate:
+				case p0::intermediate::instruction_type::invert:
 					write_local(instruction.arguments()[0]);
 					break;
 
 				case p0::intermediate::instruction_type::jump:
+				case p0::intermediate::instruction_type::jump_if:
+				case p0::intermediate::instruction_type::jump_if_not:
 					//a jump that does nothing but go to next instruction is equivalent to a no-op
 					if (instruction.arguments()[0] == (i + 1))
 					{
