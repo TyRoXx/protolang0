@@ -25,16 +25,20 @@ namespace p0
 				std::ostream &file,
 				instruction const &instruction,
 				size_t address,
-				size_t address_width
+				size_t address_width,
+				bool with_jump_label
 				)
 			{
 				using namespace std;
 
 				auto const &info = get_instruction_info(instruction.type());
 
-				file << std::setw(static_cast<int>(address_width))
-					 << std::setfill('0') << address << std::setfill(' ');
-				file << ": ";
+				if (with_jump_label)
+				{
+					file << std::setw(static_cast<int>(address_width))
+						 << std::setfill('0') << address << std::setfill(' ');
+					file << ": ";
+				}
 				file << std::setw(18) << std::left << info.name;
 
 				std::for_each(
@@ -51,7 +55,8 @@ namespace p0
 			void save_function(
 				std::ostream &file,
 				function const &function,
-				size_t index
+				size_t index,
+				bool with_jump_labels
 				)
 			{
 				file << "function " << index << "\n";
@@ -61,7 +66,7 @@ namespace p0
 
 				for (size_t i = 0; i < body.size(); ++i)
 				{
-					save_instruction(file, body[i], i, base10_address_width);
+					save_instruction(file, body[i], i, base10_address_width, with_jump_labels);
 					file.flush();
 				}
 				file << "end\n";
@@ -101,13 +106,14 @@ namespace p0
 
 		void save_unit(
 			std::ostream &file,
-			unit const &unit
+			unit const &unit,
+			bool with_jump_labels
 			)
 		{
 			auto const &functions = unit.functions();
 			for (size_t i = 0; i < functions.size(); ++i)
 			{
-				save_function(file, functions[i], i);
+				save_function(file, functions[i], i, with_jump_labels);
 
 				file << '\n';
 			}

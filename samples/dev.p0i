@@ -1,294 +1,285 @@
 function 0
-000: set_string                 1         0
-001: load_module                1
-002: copy                       3         1
-003: set_string                 4         1
-004: get_element                3         4         3
-005: new_table                  4
-006: set_string                 5         2
-007: set_function               6         1
-008: set_element                4         5         6
-009: set_string                 5         5
-010: set_function               6         2
-011: set_element                4         5         6
-012: call                       3         1
-013: copy                       2         3
-014: copy                       4         1
-015: set_string                 5         6
-016: get_element                4         5         4
-017: copy                       5         2
-018: call                       4         1
-019: copy                       3         4
-020: copy                       5         3
-021: set_string                 4         2
-022: set_from_constant          6         1
-023: set_from_constant          7         2
-024: call_method                5         2         4
-025: copy                       5         1
-026: set_string                 6         6
-027: get_element                5         6         5
-028: copy                       6         2
-029: call                       5         1
-030: copy                       4         5
-031: copy                       6         4
-032: set_string                 5         2
-033: set_from_constant          7         5
-034: set_from_constant          8         5
-035: negate                     8
-036: call_method                6         2         5
-037: copy                       6         3
-038: set_string                 5         5
-039: copy                       7         4
-040: call_method                6         1         5
-041: copy                       5         1
-042: set_string                 6         7
-043: get_element                5         6         5
-044: copy                       7         3
-045: set_string                 8         3
-046: get_element                7         8         7
-047: set_from_constant          8         6
-048: equal                      7         8
-049: copy                       6         7
-050: call                       5         1
-051: copy                       5         1
-052: set_string                 6         7
-053: get_element                5         6         5
-054: copy                       7         3
-055: set_string                 8         4
-056: get_element                7         8         7
-057: set_from_constant          8         3
-058: negate                     8
-059: equal                      7         8
-060: copy                       6         7
-061: call                       5         1
-062: copy                       5         1
-063: set_string                 6         8
-064: get_element                5         6         5
-065: copy                       6         3
-066: set_string                 7         9
-067: copy                       8         3
-068: set_string                12         3
-069: get_element                8        12         8
-070: set_string                 9         9
-071: copy                      10         3
-072: set_string                12         4
-073: get_element               10        12        10
-074: set_string                11        10
-075: call                       5         6
-076: copy                       6         1
-077: set_string                 7         1
-078: get_element                6         7         6
-079: new_table                  7
-080: set_string                 8        11
-081: set_function               9         3
-082: set_element                7         8         9
-083: set_string                 8        17
-084: set_function               9         4
-085: bind                       9         0         1
-086: set_element                7         8         9
-087: set_string                 8        18
-088: set_function               9         5
-089: bind                       9         0         1
-090: set_element                7         8         9
-091: set_string                 8        19
-092: set_function               9         6
-093: set_element                7         8         9
-094: call                       6         1
-095: copy                       5         6
-096: copy                       7         1
-097: set_string                 8         6
-098: get_element                7         8         7
-099: copy                       8         5
-100: call                       7         1
-101: copy                       6         7
-102: copy                       7         1
-103: set_string                 8         7
-104: get_element                7         8         7
-105: copy                      10         6
-106: set_string                 9        19
-107: call_method               10         0         9
-108: copy                       8        10
-109: call                       7         1
-110: copy                       8         6
-111: set_string                 7        11
-112: set_from_constant          9         2
-113: call_method                8         1         7
-114: copy                       7         1
-115: set_string                 8         7
-116: get_element                7         8         7
-117: copy                      11         6
-118: set_string                10        18
-119: call_method               11         0        10
-120: copy                       9        11
-121: set_from_constant         10         2
-122: equal                      9        10
-123: copy                       8         9
-124: call                       7         1
-125: copy                       8         6
-126: set_string                 7        11
-127: set_from_constant          9         3
-128: call_method                8         1         7
-129: copy                       7         1
-130: set_string                 8         7
-131: get_element                7         8         7
-132: copy                      11         6
-133: set_string                10        18
-134: call_method               11         0        10
-135: copy                       9        11
-136: set_from_constant         10         3
-137: equal                      9        10
-138: copy                       8         9
-139: call                       7         1
-140: copy                       8         6
-141: set_string                 7        17
-142: call_method                8         0         7
-143: copy                       7         1
-144: set_string                 8         7
-145: get_element                7         8         7
-146: copy                      11         6
-147: set_string                10        18
-148: call_method               11         0        10
-149: copy                       9        11
-150: set_from_constant         10         2
-151: equal                      9        10
-152: copy                       8         9
-153: call                       7         1
-154: copy                       8         6
-155: set_string                 7        17
-156: call_method                8         0         7
-157: copy                       7         1
-158: set_string                 8         7
-159: get_element                7         8         7
-160: copy                      10         6
-161: set_string                 9        19
-162: call_method               10         0         9
-163: copy                       8        10
-164: call                       7         1
+set_string                 1         0
+load_module                1
+copy                       3         1
+set_string                 4         1
+get_element                3         4         3
+new_table                  4
+set_string                 5         2
+set_function               6         1
+set_element                4         5         6
+set_string                 5         5
+set_function               6         2
+set_element                4         5         6
+call                       3         1
+copy                       2         3
+copy                       4         1
+set_string                 5         6
+get_element                4         5         4
+copy                       5         2
+call                       4         1
+copy                       3         4
+copy                       5         3
+set_string                 4         2
+call_method                5         2         4
+copy                       5         1
+set_string                 6         6
+get_element                5         6         5
+copy                       6         2
+call                       5         1
+copy                       4         5
+copy                       6         4
+set_string                 5         2
+set_from_constant          7         5
+call_method                6         2         5
+copy                       6         3
+set_string                 5         5
+copy                       7         4
+call_method                6         1         5
+copy                       5         1
+set_string                 6         7
+get_element                5         6         5
+copy                       7         3
+set_string                 8         3
+get_element                7         8         7
+set_from_constant          8         6
+equal                      7         8
+copy                       6         7
+call                       5         1
+copy                       5         1
+set_string                 6         7
+get_element                5         6         5
+copy                       7         3
+set_string                 8         4
+get_element                7         8         7
+negate                     8
+equal                      7         8
+copy                       6         7
+call                       5         1
+copy                       5         1
+set_string                 6         8
+get_element                5         6         5
+copy                       6         3
+copy                       8         3
+set_string                12         3
+get_element                8        12         8
+copy                      10         3
+set_string                12         4
+get_element               10        12        10
+set_string                11        10
+call                       5         6
+copy                       6         1
+set_string                 7         1
+get_element                6         7         6
+new_table                  7
+set_string                 8        11
+set_function               9         3
+set_element                7         8         9
+set_string                 8        17
+set_function               9         4
+bind                       9         0         1
+set_element                7         8         9
+set_string                 8        18
+set_function               9         5
+bind                       9         0         1
+set_element                7         8         9
+set_string                 8        19
+set_function               9         6
+set_element                7         8         9
+call                       6         1
+copy                       5         6
+copy                       7         1
+set_string                 8         6
+get_element                7         8         7
+copy                       8         5
+call                       7         1
+copy                       6         7
+copy                       7         1
+set_string                 8         7
+get_element                7         8         7
+copy                      10         6
+set_string                 9        19
+call_method               10         0         9
+copy                       8        10
+call                       7         1
+copy                       8         6
+set_string                 7        11
+set_from_constant          9         2
+call_method                8         1         7
+copy                       7         1
+set_string                 8         7
+get_element                7         8         7
+copy                      11         6
+set_string                10        18
+call_method               11         0        10
+copy                       9        11
+set_from_constant         10         2
+equal                      9        10
+copy                       8         9
+call                       7         1
+copy                       8         6
+set_string                 7        11
+set_from_constant          9         3
+call_method                8         1         7
+copy                       7         1
+set_string                 8         7
+get_element                7         8         7
+copy                      11         6
+set_string                10        18
+call_method               11         0        10
+copy                       9        11
+set_from_constant         10         3
+equal                      9        10
+copy                       8         9
+call                       7         1
+copy                       8         6
+set_string                 7        17
+call_method                8         0         7
+copy                       7         1
+set_string                 8         7
+get_element                7         8         7
+copy                      11         6
+set_string                10        18
+call_method               11         0        10
+copy                       9        11
+set_from_constant         10         2
+equal                      9        10
+copy                       8         9
+call                       7         1
+copy                       8         6
+set_string                 7        17
+call_method                8         0         7
+copy                       7         1
+set_string                 8         7
+get_element                7         8         7
+copy                      10         6
+set_string                 9        19
+call_method               10         0         9
+copy                       8        10
+call                       7         1
 end
 
 function 1
-0: copy                       4         2
-1: copy                       5         1
-2: set_string                 6         3
-3: set_element                5         6         4
-4: copy                       4         3
-5: copy                       5         1
-6: set_string                 6         4
-7: set_element                5         6         4
+copy                       4         2
+copy                       5         1
+set_string                 6         3
+set_element                5         6         4
+copy                       4         3
+copy                       5         1
+set_string                 6         4
+set_element                5         6         4
 end
 
 function 2
-00: copy                       4         1
-01: set_string                 5         3
-02: get_element                4         5         4
-03: copy                       5         2
-04: set_string                 6         3
-05: get_element                5         6         5
-06: add                        4         5
-07: copy                       3         4
-08: copy                       4         1
-09: set_string                 5         3
-10: set_element                4         5         3
-11: copy                       4         1
-12: set_string                 5         4
-13: get_element                4         5         4
-14: copy                       5         2
-15: set_string                 6         4
-16: get_element                5         6         5
-17: add                        4         5
-18: copy                       3         4
-19: copy                       4         1
-20: set_string                 5         4
-21: set_element                4         5         3
+copy                       4         1
+set_string                 5         3
+get_element                4         5         4
+copy                       5         2
+set_string                 6         3
+get_element                5         6         5
+add                        4         5
+copy                       3         4
+copy                       4         1
+set_string                 5         3
+set_element                4         5         3
+copy                       4         1
+set_string                 5         4
+get_element                4         5         4
+copy                       5         2
+set_string                 6         4
+get_element                5         6         5
+add                        4         5
+copy                       3         4
+copy                       4         1
+set_string                 5         4
+set_element                4         5         3
 end
 
 function 3
-00: copy                       3         1
-01: set_string                 4        12
-02: get_element                3         4         3
-03: new_table                  4
-04: set_string                 5        13
-05: copy                       6         2
-06: set_element                4         5         6
-07: set_string                 5        14
-08: copy                       6         3
-09: set_element                4         5         6
-10: copy                       5         3
-11: jump_if_not               17         5
-12: copy                       6         4
-13: copy                       7         3
-14: set_string                 8        15
-15: set_element                7         8         6
-16: jump                      21
-17: copy                       6         4
-18: copy                       7         1
-19: set_string                 8        16
-20: set_element                7         8         6
-21: copy                       5         4
-22: copy                       6         1
-23: set_string                 7        12
-24: set_element                6         7         5
+copy                       3         1
+set_string                 4        12
+get_element                3         4         3
+new_table                  4
+set_string                 5        13
+copy                       6         2
+set_element                4         5         6
+set_string                 5        14
+copy                       6         3
+set_element                4         5         6
+copy                       5         3
+jump_if_not               17         5
+copy                       6         4
+copy                       7         3
+set_string                 8        15
+set_element                7         8         6
+jump                      21
+copy                       6         4
+copy                       7         1
+set_string                 8        16
+set_element                7         8         6
+copy                       5         4
+copy                       6         1
+set_string                 7        12
+set_element                6         7         5
 end
 
 function 4
-00: current_function           3
-01: get_bound                  3         0         2
-02: set_string                 3         7
-03: get_element                2         3         2
-04: copy                       3         1
-05: set_string                 4        12
-06: get_element                3         4         3
-07: call                       2         1
-08: copy                       2         1
-09: set_string                 3        12
-10: get_element                2         3         2
-11: set_string                 3        14
-12: get_element                2         3         2
-13: copy                       3         1
-14: set_string                 4        12
-15: set_element                3         4         2
-16: copy                       2         1
-17: set_string                 3        12
-18: get_element                2         3         2
-19: jump_if_not               27         2
-20: set_null                   3
-21: copy                       4         1
-22: set_string                 5        12
-23: get_element                4         5         4
-24: set_string                 5        15
-25: set_element                4         5         3
-26: jump                      31
-27: set_null                   3
-28: copy                       4         1
-29: set_string                 5        16
-30: set_element                4         5         3
+current_function           3
+get_bound                  3         0         2
+set_string                 3         7
+get_element                2         3         2
+copy                       3         1
+set_string                 4        12
+get_element                3         4         3
+call                       2         1
+copy                       2         1
+set_string                 3        12
+get_element                2         3         2
+set_string                 3        14
+get_element                2         3         2
+copy                       3         1
+set_string                 4        12
+set_element                3         4         2
+copy                       2         1
+set_string                 3        12
+get_element                2         3         2
+jump_if_not               27         2
+set_null                   3
+copy                       4         1
+set_string                 5        12
+get_element                4         5         4
+set_string                 5        15
+set_element                4         5         3
+jump                      31
+set_null                   3
+copy                       4         1
+set_string                 5        16
+set_element                4         5         3
 end
 
 function 5
-00: current_function           3
-01: get_bound                  3         0         2
-02: set_string                 3         7
-03: get_element                2         3         2
-04: copy                       3         1
-05: set_string                 4        12
-06: get_element                3         4         3
-07: call                       2         1
-08: copy                       0         1
-09: set_string                 2        12
-10: get_element                0         2         0
-11: set_string                 2        13
-12: get_element                0         2         0
-13: jump                      14
+current_function           3
+get_bound                  3         0         2
+set_string                 3         7
+get_element                2         3         2
+copy                       3         1
+set_string                 4        12
+get_element                3         4         3
+call                       2         1
+copy                       0         1
+set_string                 2        12
+get_element                0         2         0
+set_string                 2        13
+get_element                0         2         0
 end
 
 function 6
-0: copy                       2         1
-1: set_string                 3        16
-2: get_element                2         3         2
-3: set_null                   3
-4: equal                      2         3
-5: copy                       0         2
-6: jump                       7
+copy                       2         1
+set_string                 3        16
+get_element                2         3         2
+set_null                   3
+equal                      2         3
+copy                       0         2
 end
 
 00: std

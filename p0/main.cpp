@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 					<< intermediate_output_file << '\n';
 				return 1;
 			}
-			p0::intermediate::save_unit(out_file, program);
+			p0::intermediate::save_unit(out_file, program, true);
 		}
 
 		p0::intermediate::function const *entry_point = 0;

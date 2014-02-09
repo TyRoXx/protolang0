@@ -15,7 +15,8 @@ namespace p0
 
 		void save_unit(
 			std::ostream &file,
-			unit const &unit
+			unit const &unit,
+			bool with_jump_labels
 			);
 	}
 }
