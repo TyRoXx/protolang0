@@ -24,4 +24,9 @@ namespace p0
 		}
 		return destinations;
 	}
+
+	function_section_graph dissect_function(p0::intermediate::function::instruction_vector const &code)
+	{
+		return function_section_graph{};
+	}
 }
