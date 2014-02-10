@@ -41,7 +41,6 @@ BOOST_AUTO_TEST_CASE(dissect_function_jump)
 {
 	p0::intermediate::function::instruction_vector code;
 	{
-		// return (arg0 ? 2 : 3)
 		p0::intermediate::emitter emitter(code);
 		//section 0
 		emitter.set_constant(0, 2);
