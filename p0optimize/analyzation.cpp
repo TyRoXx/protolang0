@@ -32,13 +32,13 @@ namespace p0
 		struct section_end
 		{
 			p0::intermediate::instruction const *instruction_after;
-			std::vector<std::size_t> destinations;
+			std::unordered_set<std::size_t> destinations;
 		};
 
 		template <class InstructionPtrPredicate>
 		section_end find_section_end(const_instruction_range code, InstructionPtrPredicate const &is_jump_destination, std::size_t code_offset)
 		{
-			std::set<std::size_t> destinations;
+			std::unordered_set<std::size_t> destinations;
 			auto i = code.begin();
 			for (;;)
 			{
@@ -60,7 +60,7 @@ namespace p0
 					if (i->type() != p0::intermediate::instruction_type::jump)
 					{
 						//jump_if, jump_if_not
-						destinations.insert(code_offset + std::distance(code.begin(), i) + 1);
+						destinations.emplace(code_offset + std::distance(code.begin(), i) + 1);
 					}
 					++i;
 					break;
@@ -68,7 +68,7 @@ namespace p0
 
 				++i;
 			}
-			return section_end{i, std::vector<std::size_t>(begin(destinations), end(destinations))};
+			return section_end{i, std::move(destinations)};
 		}
 	}
 
@@ -97,12 +97,27 @@ namespace p0
 			rest = {section_end.instruction_after, rest.end()};
 		}
 		instruction_to_section.insert(std::make_pair(code.size(), sections.size()));
-		BOOST_FOREACH (auto &section, sections)
+		for (std::size_t i = 0; i < sections.size(); ++i)
 		{
-			std::for_each(begin(section.destinations), end(section.destinations), [&instruction_to_section](std::size_t &destination)
+			auto &section = sections[i];
+			std::unordered_set<std::size_t> real_destinations;
+			std::for_each(begin(section.destinations),
+						  end(section.destinations),
+						  [&instruction_to_section, i, &sections, &real_destinations](std::size_t destination)
 			{
-				destination = instruction_to_section[destination];
+				auto const real_destination = instruction_to_section[destination];
+				real_destinations.emplace(real_destination);
+				if (real_destination < sections.size())
+				{
+					sections[real_destination].origins.emplace(i);
+				}
 			});
+			section.destinations = std::move(real_destinations);
+		}
+		if (!sections.empty())
+		{
+			sections.front().origins.emplace(calling_section);
+			sections.back().destinations.emplace(sections.size());
 		}
 		return function_section_graph{std::move(sections)};
 	}

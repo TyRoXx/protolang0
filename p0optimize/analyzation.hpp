@@ -16,10 +16,13 @@ namespace p0
 
 	typedef std::size_t section_id;
 
+	static section_id const calling_section = ~static_cast<section_id>(0);
+
 	struct linear_section
 	{
 		const_instruction_range code;
-		std::vector<section_id> destinations;
+		std::unordered_set<section_id> destinations;
+		std::unordered_set<section_id> origins;
 	};
 
 	struct function_section_graph

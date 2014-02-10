@@ -27,13 +27,15 @@ BOOST_AUTO_TEST_CASE(dissect_function_jump_if)
 		p0::linear_section const &section = g.sections[0];
 		BOOST_CHECK(section.code.begin() == code.data());
 		BOOST_CHECK(section.code.end() == code.data() + 2);
-		BOOST_CHECK((section.destinations == std::vector<p0::section_id>{1, 2}));
+		BOOST_CHECK((section.destinations == std::unordered_set<p0::section_id>{1, 2}));
+		BOOST_CHECK((section.origins == std::unordered_set<p0::section_id>{p0::calling_section}));
 	}
 	{
 		p0::linear_section const &section = g.sections[1];
 		BOOST_CHECK(section.code.begin() == code.data() + 2);
 		BOOST_CHECK(section.code.end() == code.data() + 3);
-		BOOST_CHECK(section.destinations == std::vector<p0::section_id>{2});
+		BOOST_CHECK(section.destinations == std::unordered_set<p0::section_id>{2});
+		BOOST_CHECK(section.origins == std::unordered_set<p0::section_id>{0});
 	}
 }
 
@@ -54,12 +56,14 @@ BOOST_AUTO_TEST_CASE(dissect_function_jump)
 		p0::linear_section const &section = g.sections[0];
 		BOOST_CHECK(section.code.begin() == code.data());
 		BOOST_CHECK(section.code.end() == code.data() + 2);
-		BOOST_CHECK((section.destinations == std::vector<p0::section_id>{2}));
+		BOOST_CHECK((section.destinations == std::unordered_set<p0::section_id>{2}));
+		BOOST_CHECK(section.origins == std::unordered_set<p0::section_id>{p0::calling_section});
 	}
 	{
 		p0::linear_section const &section = g.sections[1];
 		BOOST_CHECK(section.code.begin() == code.data() + 2);
 		BOOST_CHECK(section.code.end() == code.data() + 3);
-		BOOST_CHECK(section.destinations == std::vector<p0::section_id>{2});
+		BOOST_CHECK(section.destinations == std::unordered_set<p0::section_id>{2});
+		BOOST_CHECK(section.origins == std::unordered_set<p0::section_id>{});
 	}
 }
