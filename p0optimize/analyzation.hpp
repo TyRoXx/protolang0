@@ -30,18 +30,6 @@ namespace p0
 		std::vector<linear_section> sections;
 	};
 
-	struct instruction_info
-	{
-		section_id preliminary_section;
-		bool is_jump_destination;
-
-		explicit instruction_info(section_id preliminary_section)
-			: preliminary_section(preliminary_section)
-			, is_jump_destination(false)
-		{
-		}
-	};
-
 	function_section_graph dissect_function(p0::intermediate::function::instruction_vector const &code);
 }
 
