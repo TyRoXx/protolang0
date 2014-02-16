@@ -18,7 +18,7 @@ endif()
 
 if(NOT MSVC)
 	set(Boost_USE_STATIC_LIBS OFF)
-	find_package(Boost REQUIRED unit_test_framework program_options filesystem date_time system)
+	find_package(Boost REQUIRED unit_test_framework program_options filesystem date_time system context)
 	include_directories(${Boost_INCLUDE_DIRS})
 endif()
 
