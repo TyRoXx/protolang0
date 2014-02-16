@@ -149,11 +149,12 @@ namespace p0
 
 			void start()
 		    {
-		        coroutine = coro_t(boost::bind(&session::handle_read, shared_from_this(), _1));
+		        coroutine = coro_t(boost::bind(&session::handle_read, this, _1));
 		    }
 
 			void handle_read(coro_t::caller_type &ca)
 			{
+				auto const keep_alive = shared_from_this();
 		        inbuf buf(socket, coroutine, ca);
 		        std::istream in(&buf);
 				auto const request = ::tempest::parse_request(in);
