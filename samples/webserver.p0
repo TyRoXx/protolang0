@@ -1,9 +1,14 @@
 var tempest = import "tempest"
 var std = import "std"
-var server = tempest.create_http_server(8080, function (request)
+var server = tempest.create_http_server(8080, function (request, respond)
 {
 	std.print(request.method, "\n")
 	std.print(request.file, "\n")
 	std.print(request.version, "\n")
+
+	var headers = []
+	headers["Content-Type"] = "text/html"
+
+	respond(200, "OK", headers, "Hello world")
 })
 server:run()

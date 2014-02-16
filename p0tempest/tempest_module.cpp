@@ -4,16 +4,17 @@
 #include "p0run/table.hpp"
 #include "p0common/not_implemented.hpp"
 #include "http/http_request.hpp"
+#include "http/http_response.hpp"
 #include "p0rt/insert.hpp"
 #include <boost/bind.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/asio/ip/tcp.hpp>
-#include <boost/asio/placeholders.hpp>
 #include <boost/coroutine/coroutine.hpp>
 #include <boost/make_shared.hpp>
 #include <boost/foreach.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/function.hpp>
 #include <boost/enable_shared_from_this.hpp>
+#include <boost/asio.hpp>
 
 namespace p0
 {
@@ -130,13 +131,15 @@ namespace p0
 			string_to_method m_mapping;
 		};
 
-		typedef boost::function<void (::tempest::http_request const &)> request_handler;
+		typedef boost::function<void (::tempest::http_response, std::string)> response_sender;
+		typedef boost::function<void (::tempest::http_request const &, response_sender const &)> request_handler;
 
 		struct session : boost::enable_shared_from_this<session>
 		{
 			boost::asio::ip::tcp::socket socket;
 			coro_t coroutine;
 			request_handler const &on_request;
+			std::string sending;
 
 			explicit session(boost::asio::io_service &io, request_handler const &on_request)
 				: socket(io)
@@ -154,7 +157,28 @@ namespace p0
 		        inbuf buf(socket, coroutine, ca);
 		        std::istream in(&buf);
 				auto const request = ::tempest::parse_request(in);
-				on_request(request);
+				auto const respond = [this](::tempest::http_response response, std::string content)
+				{
+					//respond can be called at most once
+					if (!this->sending.empty())
+					{
+						return;
+					}
+					std::ostringstream all;
+					response.headers.insert(std::make_pair("Content-Length", boost::lexical_cast<std::string>(content.size())));
+					::tempest::print_response(response, all);
+					all.write(content.data(), content.size());
+					this->sending = all.str();
+					auto const this_ = this->shared_from_this();
+					boost::asio::async_write(
+								this->socket,
+								boost::asio::buffer(this->sending.data(), this->sending.size()),
+								boost::asio::transfer_all(),
+								[this_](boost::system::error_code, std::size_t)
+					{
+					});
+				};
+				on_request(request, respond);
 		    }
 		};
 
@@ -237,6 +261,22 @@ namespace p0
 			}
 		};
 
+		struct response_header_builder : run::object_element_callback
+		{
+			::tempest::http_response::header_map &headers;
+
+			explicit response_header_builder(::tempest::http_response::header_map &headers)
+				: headers(headers)
+			{
+			}
+
+			virtual bool handle_element(run::value key, run::value value) PROTOLANG0_OVERRIDE
+			{
+				headers.insert(std::make_pair(run::expect_string(key), run::expect_string(value)));
+				return true;
+			}
+		};
+
 		run::value create_http_server(std::vector<run::value> const &arguments,
 									  run::interpreter &interpreter)
 		{
@@ -247,7 +287,7 @@ namespace p0
 			auto const port = static_cast<boost::uint16_t>(run::to_integer(arguments[0]));
 			auto const callback = arguments[1];
 			//TODO: mark the callback when collecting garbage!
-			auto const on_request = [callback, &interpreter](::tempest::http_request const &request)
+			auto const on_request = [callback, &interpreter](::tempest::http_request const &request, response_sender const &respond)
 			{
 				auto &gc = interpreter.garbage_collector();
 				run::object &request_table = run::construct<run::table>(gc);
@@ -262,6 +302,30 @@ namespace p0
 				rt::insert(request_table, gc, "headers", run::value(headers_table));
 				std::vector<run::value> arguments;
 				arguments.emplace_back(request_table);
+				auto const respond_ = [&respond](std::vector<run::value> const &arguments) -> boost::optional<run::value>
+				{
+					if (arguments.size() != 4)
+					{
+						return boost::none;
+					}
+					::tempest::http_response response;
+					response.version = "HTTP/1.1";
+					response.status = run::to_integer(arguments[0]);
+					response.reason = run::expect_string(arguments[1]);
+					auto * const headers = run::to_object<run::object>(arguments[2]);
+					if (!headers)
+					{
+						return boost::none;
+					}
+					{
+						response_header_builder builder(response.headers);
+						headers->enumerate_elements(builder);
+					}
+					auto content = run::expect_string(arguments[3]);
+					respond(std::move(response), std::move(content));
+					return run::value(1);
+				};
+				arguments.emplace_back(rt::expose(gc, rt::function_tag(), respond_));
 				//TODO: mark request_table when collecting garbage!
 				p0::run::call(callback, arguments, interpreter);
 				//ignore result
