@@ -21,6 +21,7 @@ namespace p0
 				{
 					out << argument;
 				}
+				out.flush();
 				return run::value();
 			}
 
