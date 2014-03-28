@@ -106,18 +106,18 @@ namespace p0
 						  [&instruction_to_section, i, &sections, &real_destinations](std::size_t destination)
 			{
 				auto const real_destination = instruction_to_section[destination];
-				real_destinations.emplace(real_destination);
+				real_destinations.insert(real_destination);
 				if (real_destination < sections.size())
 				{
-					sections[real_destination].origins.emplace(i);
+					sections[real_destination].origins.insert(i);
 				}
 			});
 			section.destinations = std::move(real_destinations);
 		}
 		if (!sections.empty())
 		{
-			sections.front().origins.emplace(calling_section);
-			sections.back().destinations.emplace(sections.size());
+			sections.front().origins.insert(calling_section);
+			sections.back().destinations.insert(sections.size());
 		}
 		return function_section_graph{std::move(sections)};
 	}
