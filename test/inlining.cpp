@@ -2,6 +2,8 @@
 #include "p0i/emitter.hpp"
 #include <boost/test/unit_test.hpp>
 
+#if 0 //disabled because the tested features will not be implemented very soon
+
 BOOST_AUTO_TEST_CASE(inlining_empty_callee)
 {
 	p0::intermediate::function empty_function({}, 0, 0);
@@ -45,3 +47,5 @@ BOOST_AUTO_TEST_CASE(inlining_trivially_returning_callee)
 	}
 	BOOST_CHECK(expected_code == optimized);
 }
+
+#endif
