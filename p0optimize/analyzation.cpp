@@ -60,7 +60,7 @@ namespace p0
 					if (i->type() != p0::intermediate::instruction_type::jump)
 					{
 						//jump_if, jump_if_not
-						destinations.emplace(code_offset + std::distance(code.begin(), i) + 1);
+						destinations.insert(code_offset + std::distance(code.begin(), i) + 1);
 					}
 					++i;
 					break;
